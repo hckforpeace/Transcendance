@@ -1,0 +1,182 @@
+{
+  "main": {
+    "id": "0f08a26ab3be863f",
+    "type": "split",
+    "children": [
+      {
+        "id": "0fad0aea3b3e7769",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f19654ee6f33e646",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "NODE.js.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "NODE.js"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "c2eee0dc7363bbf9",
+    "type": "split",
+    "children": [
+      {
+        "id": "78eb86e5b77dd155",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f3550dc459547853",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "de1ad656a4fd2710",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "tag:#pierre",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "72750d7268d7ede0",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 255.5,
+    "collapsed": true
+  },
+  "right": {
+    "id": "add6360e0a00d883",
+    "type": "split",
+    "children": [
+      {
+        "id": "023285e1a88b4616",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3570fbe4a3f20c09",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "NODE.js.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for NODE.js"
+            }
+          },
+          {
+            "id": "bb8caa89c8ed9605",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Organisation.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Organisation"
+            }
+          },
+          {
+            "id": "7a1fa0d3069a7bc5",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "1880f8f842296803",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Organisation.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Organisation"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "f19654ee6f33e646",
+  "lastOpenFiles": [
+    "Node.js Crash Course.md",
+    "NODE.js.md",
+    "Resources NodeJs.md",
+    "Organisation.md",
+    "Minimal Technical Requirement.md",
+    "Fastify.md",
+    "link.md",
+    "Untitled.canvas"
+  ]
+}
