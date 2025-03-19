@@ -1,6 +1,6 @@
 // ESM
 import Fastify from 'fastify'
-import firstRoute from './route.js'
+import firstRoute from './ourfirst-route.js'
 /**
  * @type {import('fastify').FastifyInstance} Instance of Fastify
  */
