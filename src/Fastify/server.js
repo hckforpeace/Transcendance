@@ -1,5 +1,5 @@
 import Fastify from 'fastify'
-import routes from './routes.js'
+import routes from './routes/items.js'
 
 // enable logger messages
 const fastify = Fastify({

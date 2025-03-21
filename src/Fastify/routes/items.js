@@ -1,5 +1,5 @@
-// items
-import  items  from './items.js' 
+import itemsControllers  from '../controllers/items.mjs'
+const {getItems, getItem} = itemsControllers;
 
 // Item schema 
 const Item = {
@@ -23,9 +23,10 @@ const getItemsOpts = {
       200:  {
         type: 'array',
         items: Item,
-      }
-    }
-  }
+      },
+    },
+  },
+  handler: getItems
 }
 
 // Options for getting one Item
@@ -35,25 +36,16 @@ const getItemOpts = {
       200: Item, 
     },
   },
+  handler: getItem
 }
 
 
 // routes
 async function routes (fastify, options) {
   // get all items
-  fastify.get('/items', getItemsOpts, (req, rep) => {
-    rep.send(items);
-  })
-
+  fastify.get('/items', getItemsOpts) 
   // get single id
-  fastify.get('/items/:id', getItemOpts, (req, rep) => {
-    
-    const { id } = req.params
-
-    const item = items.find((item) => item.id == id)
-
-    rep.send(item);
-  })
+  fastify.get('/items/:id', getItemOpts)
 }
 
 
