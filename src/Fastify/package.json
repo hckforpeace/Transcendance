@@ -1,0 +1,17 @@
+{
+  "name": "fastify",
+  "version": "1.0.0",
+  "main": "sevrer.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "fastify": "^5.2.1",
+    "nodemon": "^3.1.9"
+  }
+}
