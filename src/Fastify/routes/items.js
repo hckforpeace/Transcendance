@@ -29,6 +29,7 @@ const getItemsOpts = {
   handler: getItems
 }
 
+
 // Options for getting one Item
 const getItemOpts = {
   schema: {
@@ -39,6 +40,15 @@ const getItemOpts = {
   handler: getItem
 }
 
+// Options for get all items
+// const postItemOpts = {
+//   schema: {
+//     response: {
+//       201: Item, 
+//     },
+//   },
+//   handler: addItem,
+// }
 
 // routes
 async function routes (fastify, options) {
@@ -46,6 +56,8 @@ async function routes (fastify, options) {
   fastify.get('/items', getItemsOpts) 
   // get single id
   fastify.get('/items/:id', getItemOpts)
+  // add item
+  // fastify.post('items', postItemOpts)
 }
 
 
