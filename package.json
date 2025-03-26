@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "main": "sevrer.js",
   "scripts": {
-    "start": "node server",
-    "dev": "nodemon server"
+    "start": "node ./src/server",
+    "dev": "nodemon ./src/server",
+    "test": "nodemon app.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +17,7 @@
     "fastify": "^5.2.1",
     "fastify-swagger": "^5.1.1",
     "nodemon": "^3.1.9",
+    "typescript": "^5.8.2",
     "uuid": "^11.1.0"
   }
 }
