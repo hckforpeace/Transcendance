@@ -58,6 +58,7 @@ async function routes (fastify, options) {
   fastify.get('/items/:id', getItemOpts)
   // add item
   // fastify.post('items', postItemOpts)
+  // fastify.get('/', )
 }
 
 

@@ -7,3 +7,19 @@ TypeScript checks a program for errors before execution, and does so based on th
 
 ### Syntax
 TypeScript is a language that is a _superset_ of JavaScript: JS syntax is therefore legal TS.
+
+
+### Install Typescript
+`npm i -g typescript`: This will install typescript and also the CLI ==tsc==
+
+### Create a the config file for TS
+``tsc --init``: Will create the file tscconfig.json
+#### Interesting Parameters:
+-     **"rootDir"**: "relative path",    **/* Specify the root folder within your source files. */**
+-     **"outDir"**: "relative path",       **/* Specify an output folder for all emitted files. */**
+
+
+
+### Compile a .ts file into a .js
+`tsc filename.ts`: will give you **filename.js**
+`tsc`: Will compile all the file in the directory specified in the parameter **rootDir**, of the **package.json**  and out the .js in the **outDir** path.
