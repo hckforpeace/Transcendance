@@ -10,6 +10,13 @@ import ejs from 'ejs'
 import { fileURLToPath } from 'url'
 import path from 'path'
 import fastifyStatic from '@fastify/static'
+import { defineConfig } from 'vite'
+// import tailwindcss from '@tailwindcss/vite'
+// export default defineConfig({
+//   plugins: [
+//     tailwindcss(),
+//   ],
+// })
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -32,9 +39,8 @@ fastify.register(fastifyStatic, {
 
 // view
 fastify.register(view, {
-  engine: {
-    ejs
-  },
+  engine: { ejs },
+  layout: "index.ejs",
   root: __dirname + '/views/'
 });
 

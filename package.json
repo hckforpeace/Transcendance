@@ -2,6 +2,7 @@
   "name": "fastify",
   "version": "1.0.0",
   "main": "sevrer.js",
+  "type": "module",
   "scripts": {
     "start": "node ./src/server",
     "dev": "tsc && nodemon ./src/server",
@@ -21,6 +22,10 @@
     "fastify-swagger": "^5.1.1",
     "nodemon": "^3.1.9",
     "typescript": "^5.8.2",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "vite": "^6.2.3"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.0.17"
   }
 }
