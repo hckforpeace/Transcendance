@@ -1,6 +1,9 @@
+import fs from 'fs'
+import jwtPlugin from './plugins/jwtPlugin.js'
 import Fastify from 'fastify'
 import routesItems from './routes/items.js'
 import routesPong from './routes/pong.js'
+import routesApi from './routes/api.js'
 import swagger from '@fastify/swagger'
 import swaggerUi from '@fastify/swagger-ui'
 import swaggerConfig from './swagger.js'
@@ -10,13 +13,6 @@ import ejs from 'ejs'
 import { fileURLToPath } from 'url'
 import path from 'path'
 import fastifyStatic from '@fastify/static'
-import { defineConfig } from 'vite'
-// import tailwindcss from '@tailwindcss/vite'
-// export default defineConfig({
-//   plugins: [
-//     tailwindcss(),
-//   ],
-// })
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -25,17 +21,26 @@ const PORT = 8080;
 
 // enable logger messages
 const fastify = Fastify({
-  logger: true
+  logger: true,
+  https: {
+      key: fs.readFileSync(path.join(__dirname, 'server.key')),
+      cert: fs.readFileSync(path.join(__dirname, 'server.crt')),
+}
 })
 
 /*
  * REGISTER */
+
+// jwt plugin
+fastify.register(jwtPlugin)
+
 
 // fastify/static
 fastify.register(fastifyStatic, {
   root: path.join(__dirname, '/public'),
   prefix: '/',
 })
+
 
 // view
 fastify.register(view, {
@@ -51,6 +56,7 @@ fastify.register(swaggerUi, swgUI_config)
 // regiter routes
 fastify.register(routesItems);
 fastify.register(routesPong);
+fastify.register(routesApi);
 
 
 // server is listening
