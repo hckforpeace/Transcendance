@@ -58,7 +58,6 @@ fastify.register(routesItems);
 fastify.register(routesPong);
 fastify.register(routesApi);
 
-
 // server is listening
 fastify.listen({ port: PORT }, (err, address) => {
   if (err) {

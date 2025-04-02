@@ -1,4 +1,3 @@
-
 import fp from "fastify-plugin";
 import jwt from "@fastify/jwt";
 
