@@ -13,6 +13,7 @@ import ejs from 'ejs'
 import { fileURLToPath } from 'url'
 import path from 'path'
 import fastifyStatic from '@fastify/static'
+import websockets from '@fastify/websocket'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -41,6 +42,7 @@ fastify.register(fastifyStatic, {
   prefix: '/',
 })
 
+fastify.register(websockets)
 
 // view
 fastify.register(view, {

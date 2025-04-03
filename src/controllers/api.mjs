@@ -14,4 +14,13 @@ const auth = async (req, reply) => {
   }
 };
 
-export default auth;
+const sock_con =  (socket, req) => {
+  // the connection will only be opened for authenticated incoming requests
+  socket.on('message', message => {
+    console.log('Received message:', message.toString());
+    socket.send(`Echo: ${message}`);
+  });
+}
+
+
+export default {auth, sock_con};
