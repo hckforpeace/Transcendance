@@ -154,13 +154,14 @@ function update_ball_state() {
 	if ((ball.pos.x > p1.pos.x && ball.pos.x < p1.pos.x + PLAYER_HEIGHT)
 		&& (ball.pos.y > p1.pos.y && ball.pos.y < p1.pos.y + PLAYER_WIDTH)) {
 		dir.x = -dir.x;
-		game.ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
+		game.ball.speed = Math.random() * (14 - 7) + 7;
 	}
 	/* Check if player 2 touch the ball */
 	if ((ball.pos.x > p2.pos.x && ball.pos.x < p2.pos.x + PLAYER_HEIGHT)
 		&& (ball.pos.y > p2.pos.y && ball.pos.y < p2.pos.y + PLAYER_WIDTH)) {
 		dir.x = -dir.x;
-		game.ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
+		game.ball.speed = Math.random() * (14 - 7) + 7;
+
 	}
 	/* Check if player1 win a point */
 	if (ball_next_pos.x > canvas.width - BALL_RADIUS) {
@@ -199,18 +200,17 @@ function update_ia_pos()
 		last_p2_pos_y = p2.pos.y;
 		
 		// Mettre à jour la stratégie de l'IA basée sur la balle
-		if (ball.pos.y < p2.pos.y + (PLAYER_WIDTH / 2))
+		if (ball.pos.y < p2.pos.y + (PLAYER_WIDTH / 2) && ball.direction.x > 0 && ball.direction.y < 0)
 			p2.pos.y -= PLAYER_SPEED; // Se déplacer vers le haut si la balle est plus haute
-		else if (ball.pos.y > p2.pos.y + (PLAYER_WIDTH / 2))
+		else if (ball.pos.y > p2.pos.y + (PLAYER_WIDTH / 2) && ball.direction.x > 0 && ball.direction.y > 0)
 			p2.pos.y += PLAYER_SPEED; // Se déplacer vers le bas si la balle est plus basse
-		
 		lastTime = currentTime;
 	}
 	else
 	{
-		if (last_p2_pos_y - p2.pos.y > 0 && ball.direction.x < 0 && ball.pos.x > screenX / 4)
+		if (last_p2_pos_y - p2.pos.y > 0 /* && ball.direction.x > 0 && ball.pos.x > screenX / 4 */)
 			p2.pos.y -= PLAYER_SPEED;
-		if (last_p2_pos_y - p2.pos.y < 0 && ball.direction.x < 0 && ball.pos.x > screenX / 4)
+		if (last_p2_pos_y - p2.pos.y < 0 /* && ball.direction.x > 0 && ball.pos.x > screenX / 4 */)
 			p2.pos.y += PLAYER_SPEED;
 
 		console.log("ball.dir.x");
