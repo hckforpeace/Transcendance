@@ -4,7 +4,6 @@ const auth = async (req, reply) => {
     
     // Use the JWT functionality from the fastify instance
     const token = await reply.jwtSign(user_data, { expiresIn: "17s" });
-    
     return reply.status(200).send({ 
       message: 'Login successful', 
       token: token 
