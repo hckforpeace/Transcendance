@@ -1,5 +1,19 @@
 {
-  "dependencies": {
-    "fastify": "^3.0.0"
-  }
+  "name": "ft_pong",
+  "version": "1.0.0",
+  "description": "Build docker image ```bash docker build -t pong . --progress=plain --no-cache ``` Start docker container ```bash docker run -d -p 3000:3000 --name pong pong ``` Stop docker container ```bash docker stop pong ``` Delete container ```bash docker rm pong ```",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/salamientark/ft_pong.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/salamientark/ft_pong/issues"
+  },
+  "homepage": "https://github.com/salamientark/ft_pong#readme"
 }
