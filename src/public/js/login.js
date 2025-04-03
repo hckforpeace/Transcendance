@@ -56,7 +56,7 @@ function socket_connect() {
     function connect(event) {
         const socket = new WebSocket("wss://localhost:8080/api/remote");
         socket.onopen = function (event) {
-            socket.send("Hello Server i am gay!");
+            socket.send("Hello hdhdhd i am gay!");
         };
         socket.onmessage = function (event) {
             alert(`[message] Data received from server: ${event.data}`);
