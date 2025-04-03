@@ -94,7 +94,7 @@ class Pong {
 		this.player_2 = new Player(player_2_name,
 			{ x: canvas.width - player_offset - PLAYER_HEIGHT, y: (canvas.height - PLAYER_WIDTH) / 2 });
 		this.ball = new Ball(center);
-		this.score_max = 1;
+		this.score_max = 5;
 		this.new_round = true;
 	}
 }
@@ -208,9 +208,9 @@ function update_ia_pos()
 	}
 	else
 	{
-		if (last_p2_pos_y - p2.pos.y > 0)
+		if (last_p2_pos_y - p2.pos.y > 0 && ball.direction.x < 0 && ball.pos.x > screenX / 4)
 			p2.pos.y -= PLAYER_SPEED;
-		if (last_p2_pos_y - p2.pos.y < 0)
+		if (last_p2_pos_y - p2.pos.y < 0 && ball.direction.x < 0 && ball.pos.x > screenX / 4)
 			p2.pos.y += PLAYER_SPEED;
 
 		console.log("ball.dir.x");
