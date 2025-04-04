@@ -46,6 +46,15 @@ var p1_downPressed: boolean = false;
 var p2_upPressed: boolean = false;
 var p2_downPressed: boolean = false;
 
+/* IA Q_algorythm value */
+var NUM_ACTIONS: number = 3;
+var NUM_STATES: number = 3;
+const ALPHA: number = 0.1;
+const GAMMA: number = 0.9;
+const EPSILON: number = 0.1;
+const TRAINING: boolean = true;
+let Q_table: number[][] = Array(NUM_STATES).fill([]).map(() => Array(NUM_ACTIONS).fill(0));
+
 /* ************************************************************************** */
 /*                              CLASSES && INTERFACES                         */
 /* ************************************************************************** */
@@ -94,7 +103,7 @@ class Pong {
 		this.player_2 = new Player(player_2_name,
 			{ x: canvas.width - player_offset - PLAYER_HEIGHT, y: (canvas.height - PLAYER_WIDTH) / 2 });
 		this.ball = new Ball(center);
-		this.score_max = 5;
+		this.score_max = 115;
 		this.new_round = true;
 	}
 }
@@ -154,15 +163,20 @@ function update_ball_state() {
 	if ((ball.pos.x > p1.pos.x && ball.pos.x < p1.pos.x + PLAYER_HEIGHT)
 		&& (ball.pos.y > p1.pos.y && ball.pos.y < p1.pos.y + PLAYER_WIDTH)) {
 		dir.x = -dir.x;
+		// let randomFactor = (Math.random() - 0.5) * 2; // Valeur entre -1 et 1 pour un rebond plus varié
+		// dir.y = randomFactor;
 		game.ball.speed = Math.random() * (14 - 7) + 7;
 	}
 	/* Check if player 2 touch the ball */
 	if ((ball.pos.x > p2.pos.x && ball.pos.x < p2.pos.x + PLAYER_HEIGHT)
 		&& (ball.pos.y > p2.pos.y && ball.pos.y < p2.pos.y + PLAYER_WIDTH)) {
 		dir.x = -dir.x;
+		// let randomFactor = (Math.random() - 0.5) * 2; // Valeur entre -1 et 1 pour un rebond plus varié
+		// dir.y = randomFactor;
 		game.ball.speed = Math.random() * (14 - 7) + 7;
 
 	}
+
 	/* Check if player1 win a point */
 	if (ball_next_pos.x > canvas.width - BALL_RADIUS) {
 		game.player_1.score += 1;
@@ -185,46 +199,92 @@ function update_ball_state() {
  * @brief Move player
  */
 
+/* IA Q_LEARNING MOVES */
+
+/* choose a state in function of the position of the ball in the screen, which is divide by 3 */
+function getState(): number {
+	let ball_pos = game.ball.pos.y;
+
+	if (ball_pos < screen.height / 3)
+		return (2);
+	if (ball_pos < 2 * screen.height / 3)
+		return (1);
+	return (0);
+}
+
+/* choose an action according to the epsilon value : this is called the epsilon-greedy */
+function chooseAction(state: number): number {
+	if (Math.random() < EPSILON)
+		return (Math.floor(Math.random() * NUM_ACTIONS));
+	else {
+		let best_action = Q_table[state].indexOf(Math.max(...Q_table[state]));
+		return (best_action);
+	}
+}
+
+/* Use the formula of the algorithm */
+function updateTable(state: number, action: number, reward: number, next_state: number) {
+	// Récupérer la valeur actuelle de Q pour l'état et l'action choisis
+	const current_q = Q_table[state][action];
+
+	// Trouver la valeur maximale de Q pour le prochain état (next_state)
+	const max_future_q = Math.max(...Q_table[next_state]);
+
+	// Calculer la nouvelle valeur de Q en appliquant la formule de Q-learning
+	const new_q = current_q + ALPHA * (reward + GAMMA * max_future_q - current_q);
+
+	// Mettre à jour la Q-table avec la nouvelle valeur de Q
+	Q_table[state][action] = new_q;
+}
+
 let lastTime = Date.now(); // Variable globale pour stocker le temps du dernier rafraîchissement de l'IA
+let currTime = 0;
 let last_p2_pos_y = 0;
+let action = 0;
+let state = 0;
 
 function update_ia_pos()
 {
+	currTime = Date.now();
+
+	if (currTime - lastTime > 200)
+	{
+		state = getState();
+		action = chooseAction(state);  // Action choisie par l'IA
+		lastTime = currTime;
+	}
 	let p2 = game.player_2; // Référence à l'IA
 	let ball = game.ball; // Référence à la balle
-	let currentTime = Date.now(); // Récupérer le timestamp actuel en millisecondes
 
-	//On rafraîchit la stratégie de l'IA une fois par seconde
-	if (currentTime - lastTime >= 1000)
-	{
-		last_p2_pos_y = p2.pos.y;
-		
-		// Mettre à jour la stratégie de l'IA basée sur la balle
-		if (ball.pos.y < p2.pos.y + (PLAYER_WIDTH / 2) && ball.direction.x > 0 && ball.direction.y < 0)
-			p2.pos.y -= PLAYER_SPEED; // Se déplacer vers le haut si la balle est plus haute
-		else if (ball.pos.y > p2.pos.y + (PLAYER_WIDTH / 2) && ball.direction.x > 0 && ball.direction.y > 0)
-			p2.pos.y += PLAYER_SPEED; // Se déplacer vers le bas si la balle est plus basse
-		lastTime = currentTime;
-	}
-	else
-	{
-		if (last_p2_pos_y - p2.pos.y > 0 /* && ball.direction.x > 0 && ball.pos.x > screenX / 4 */)
-			p2.pos.y -= PLAYER_SPEED;
-		if (last_p2_pos_y - p2.pos.y < 0 /* && ball.direction.x > 0 && ball.pos.x > screenX / 4 */)
-			p2.pos.y += PLAYER_SPEED;
+	let reward = 0; // Variable pour la récompense de l'IA
 
-		console.log("ball.dir.x");
-		console.log(Number(ball.direction.x));
-		console.log("ball.dir.y = ");
-		console.log(Number(ball.direction.y));
+	// Déplacement de l'IA en fonction de l'action choisie
+	if (action === 0) {
+		p2.pos.y += PLAYER_SPEED; // Déplacement vers le haut
+	} else if (action === 2) {
+		p2.pos.y -= PLAYER_SPEED; // Déplacement vers le bas
 	}
+
+	if (ball.pos.x == p2.pos.x && (ball.pos.y >= p2.pos.y || ball.pos.y <= p2.pos.y + PLAYER_WIDTH)) {
+		reward = 1; // Récompense si l'IA touche la balle en haut
+	} else
+		reward = -1; // Pénalité si l'IA ne touche pas la balle
+
+	// Mise à jour de la Q-table de l'IA après le déplacement
+	let next_state = getState();
+	updateTable(state, action, reward, next_state);
 
 	// Empêcher l'IA de sortir des limites du canvas
-	if (p2.pos.y > canvas.height - PLAYER_WIDTH)
-		p2.pos.y = canvas.height - PLAYER_WIDTH; // Limiter la position de l'IA en bas
-	if (p2.pos.y < 0)
-		p2.pos.y = 0; // Limiter la position de l'IA en haut
+	if (p2.pos.y < 0) p2.pos.y = 0; // Limite en haut
+	if (p2.pos.y > canvas.height - PLAYER_WIDTH) p2.pos.y = canvas.height - PLAYER_WIDTH; // Limite en bas
+
+	// Affichage du mouvement pour le débogage (facultatif)
+	console.log("IA - position Y:", p2.pos.y);
+	console.log("Action choisie:", action);
+	console.log("Balle - position Y:", ball.pos.y);
+	console.log(Q_table);
 }
+
 
 function update_player_pos() {
 	let p1 = game.player_1;
