@@ -19,11 +19,11 @@ async function routes (fastify, options) {
   // Define the routes
   fastify.post('/api/login', {schema: loginSchema}, api_controllers.auth);
    // {onRequest: [fastify.authenticate]}, 
-  fastify.get('/api/pong', { preHandler: [fastify.authenticate] } ,(req, reply) => {
-    console.log(req.headers.authorization);
-    reply.send({ message: 'pong' });
-  });
-
+  fastify.get('/api/pong', { preHandler: [fastify.authenticate] } , api_controllers.pong_view);
+// (req, reply) => {
+//     console.log(req.headers.authorization);
+//     reply.send({ message: 'pong' });
+//   });
   // remote connection
   fastify.get('/api/remote', {websocket: true}, api_controllers.sock_con);
 
