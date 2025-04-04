@@ -1,6 +1,10 @@
 
 // login.ts
 
+const currentUrl = window.location.hostname;
+const currentPort = window.location.port;
+const currentRoot = currentUrl + ":" + currentPort;
+
 const headerLoginRequest = (uname: string, pw: string ) => ({
   method: 'POST',
   headers: {"Content-Type": "application/json",
@@ -50,7 +54,8 @@ function socket_connect() {
   if (!remote)
     return;
   function connect(event: any) {
-    const socket = new WebSocket("wss://localhost:8080/api/remote");
+    console.log(currentRoot);
+    const socket = new WebSocket('wss://' + currentRoot + '/api/remote');
     socket.onopen = function (event) {
       socket.send("Hello hdhdhd i am gay!");
       };

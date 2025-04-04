@@ -47,7 +47,7 @@ fastify.register(websockets)
 // view
 fastify.register(view, {
   engine: { ejs },
-  layout: "index.ejs",
+  layout: "layout.ejs",
   root: __dirname + '/views/'
 });
 
@@ -61,7 +61,7 @@ fastify.register(routesPong);
 fastify.register(routesApi);
 
 // server is listening
-fastify.listen({ port: PORT }, (err, address) => {
+fastify.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);

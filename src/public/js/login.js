@@ -9,6 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+const currentUrl = window.location.hostname;
+const currentPort = window.location.port;
+const currentRoot = currentUrl + ":" + currentPort;
 const headerLoginRequest = (uname, pw) => ({
     method: 'POST',
     headers: { "Content-Type": "application/json",
@@ -54,7 +57,8 @@ function socket_connect() {
     if (!remote)
         return;
     function connect(event) {
-        const socket = new WebSocket("wss://localhost:8080/api/remote");
+        console.log(currentRoot);
+        const socket = new WebSocket('wss://' + currentRoot + '/api/remote');
         socket.onopen = function (event) {
             socket.send("Hello hdhdhd i am gay!");
         };
