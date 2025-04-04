@@ -1,10 +1,15 @@
 // Import the required modules
-import auth from '../controllers/api.mjs';
+import api from '../controllers/api.mjs';
 
 // routes/api.js
 async function routes (fastify, options) {
   // Define the routes
-  fastify.post('/api/login', auth);
+  fastify.post('/api/login', api.login);
+  fastify.get('/ping', async () => {
+  return { message: 'pong' };
+});
+
+  fastify.post('/api/register', api.register);
    // {onRequest: [fastify.authenticate]}, 
   fastify.get('/api/pong', { preHandler: [fastify.authenticate] } ,(req, reply) => {
     console.log(req.headers.authorization);
