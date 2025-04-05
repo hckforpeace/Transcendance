@@ -23,7 +23,11 @@ function changeRegion() {
     newTag.id = "dynamic-script";
     newTag.type = "text/javascript";
     newTag.src = 'js/pong.js';
-    document.head.appendChild(newTag);
+    var footer = document.getElementById("footer");
+    if (!footer) {
+        return;
+    }
+    footer.appendChild(newTag);
 }
 // json object for login request
 const headerLoginRequest = (uname, pw) => ({
@@ -66,20 +70,20 @@ function wsEvent(event) {
         socket.send("Hello hdhdhd i am gay!");
     };
     socket.onmessage = function (event) {
-        alert(`[message] Data received from server: ${event.data}`);
+        console.log(`[message] Data received from server: ${event.data}`);
     };
     socket.onclose = function (event) {
         if (event.wasClean) {
-            alert(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+            console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
         }
         else {
             // par exemple : processus serveur arrêté ou réseau en panne
             // event.code est généralement 1006 dans ce cas
-            alert('[close] Connection died');
+            console.log('[close] Connection died');
         }
     };
     socket.onerror = function (error) {
-        alert(`[error]`);
+        console.log(`[error]`);
     };
     fetchPong();
 }

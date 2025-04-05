@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node ./src/server",
     "dev": "tsc && nodemon ./src/server",
-    "ndm": "nodemon",
-    "test": "nodemon app.ts"
+    "ndm": "nodemon"
   },
   "keywords": [],
   "author": "",

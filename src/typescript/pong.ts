@@ -306,7 +306,6 @@ function draw_finish() {
  * Check if one player want to move
  */
 function pressedKeyHandler(e: KeyboardEvent) {
-  console.log(e.key);
 	if (e.key === "Up" || e.key === "ArrowUp")
 		p2_upPressed = true;
 	if (e.key === "Down" || e.key === "ArrowDown")
@@ -467,29 +466,31 @@ function load_script() {
 
 		/* Set events listeners */
 		// start_button.addEventListener("click", () => {
-			canvas.style.display = 'block';
 			// start_button.style.display = 'none';
 			// reset_button.style.display = 'block';
 			/* Start game */
+      canvas.style.display = 'block';
 			resizeCanvas();
 			launch_game("Jojo", "Lili");
-    document.addEventListener("keydown", pressedKeyHandler, false);
 		// });
-		document.addEventListener("keyup", releasedKeyHandler, false);
-		window.addEventListener("resize", resizeCanvas); /* Resize
-														  * "Responsivness" attempt
-														  */
-	}
-	catch(err: any) {
-		console.log(err);
-	}
-}
 		// reset_button.addEventListener("click", () => {
 		// 	canvas.style.display = 'none';
 		// 	start_button.style.display = 'block';
 		// 	reset_button.style.display = 'none';
 
 		// });
+		document.addEventListener("keydown", pressedKeyHandler, false);
+		document.addEventListener("keyup", releasedKeyHandler, false);
+		window.addEventListener("resize", resizeCanvas); /* Resize
+														  * "Responsivness" attempt
+														  */
+
+	}
+	catch(err: any) {
+		console.log(err);
+	}
+}
+
 
 load_script(); /* Should be called when the right html is loaded */
 
