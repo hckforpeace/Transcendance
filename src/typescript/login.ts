@@ -7,17 +7,17 @@ const loginURL:string = "https://localhost:8080/api/login"
 
 function changeRegion()
 {
-    var s = document.createElement("script");
-    s.type = "text/javascript";
-    s.src = "pong.js";
-    s.innerHTML = "";
-    s.id = "map";
-    var scriptdiv =  document.getElementById("script-div");
-    if (!scriptdiv) {
+    var tag = document.getElementById("dynamic-script") as HTMLScriptElement;
+    if (!tag) {
       return
     }
-    scriptdiv.innerHTML = "";
-    scriptdiv.appendChild(s);
+    tag.remove(); // remove the old script tag
+  
+    var newTag = document.createElement("script");
+    newTag.id = "dynamic-script";
+    newTag.type = "text/javascript";
+    newTag.src = 'js/pong.js';
+    document.head.appendChild(newTag);
 }
 
 // json object for login request
@@ -101,7 +101,7 @@ async function fetchPong() {
       if (!content)
         throw new Error("Content div not found");
       content.innerHTML = html;
-    
+      changeRegion();
     })
     .catch((error) => {
       console.error("Error:", error);

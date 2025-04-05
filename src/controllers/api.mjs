@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 const auth = async (req, reply) => {
   try {
     const user_data = { username: req.body.username, password: req.body.password };
@@ -23,8 +25,9 @@ const sock_con =  (socket, req) => {
   
 }
 
-const pong_view = (req, reply) => {
-  reply.view('pong.ejs', {layout: false});
+const pong_view = (req, rep) => {
+  const data = fs.readFileSync('/home/pierre/Documents/Transcendance/src/views/pong.ejs', 'utf-8');
+  rep.send(data);
 }
 
 export default {auth, sock_con, pong_view};

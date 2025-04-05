@@ -259,6 +259,7 @@ function draw_finish() {
  * Check if one player want to move
  */
 function pressedKeyHandler(e) {
+    console.log(e.key);
     if (e.key === "Up" || e.key === "ArrowUp")
         p2_upPressed = true;
     if (e.key === "Down" || e.key === "ArrowDown")
@@ -392,12 +393,12 @@ function resizeCanvas() {
 function load_script() {
     try {
         /* Set var */
-        start_button = document.getElementById("button_start_game");
-        if (!start_button)
-            throw new Error("Start button not found.");
-        reset_button = document.getElementById("reset_button");
-        if (!reset_button)
-            throw new Error("Reset button not found.");
+        // start_button = document.getElementById("button_start_game") as HTMLButtonElement;
+        // if (!start_button)
+        // 	throw new Error("Start button not found.");
+        // reset_button = document.getElementById("reset_button") as HTMLButtonElement;
+        // if (!reset_button)
+        // 	throw new Error("Reset button not found.");
         canvas = document.getElementById("pong_canvas");
         if (!canvas)
             throw new Error("Canvas not found");
@@ -405,20 +406,15 @@ function load_script() {
         if (!ctx)
             throw new Error("Context not found");
         /* Set events listeners */
-        start_button.addEventListener("click", () => {
-            canvas.style.display = 'block';
-            start_button.style.display = 'none';
-            reset_button.style.display = 'block';
-            /* Start game */
-            resizeCanvas();
-            launch_game("Jojo", "Lili");
-        });
-        reset_button.addEventListener("click", () => {
-            canvas.style.display = 'none';
-            start_button.style.display = 'block';
-            reset_button.style.display = 'none';
-        });
+        // start_button.addEventListener("click", () => {
+        canvas.style.display = 'block';
+        // start_button.style.display = 'none';
+        // reset_button.style.display = 'block';
+        /* Start game */
+        resizeCanvas();
+        launch_game("Jojo", "Lili");
         document.addEventListener("keydown", pressedKeyHandler, false);
+        // });
         document.addEventListener("keyup", releasedKeyHandler, false);
         window.addEventListener("resize", resizeCanvas); /* Resize
                                                           * "Responsivness" attempt
@@ -428,4 +424,9 @@ function load_script() {
         console.log(err);
     }
 }
+// reset_button.addEventListener("click", () => {
+// 	canvas.style.display = 'none';
+// 	start_button.style.display = 'block';
+// 	reset_button.style.display = 'none';
+// });
 load_script(); /* Should be called when the right html is loaded */
