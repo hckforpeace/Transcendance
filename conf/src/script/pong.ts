@@ -12,12 +12,12 @@ var reset_button: HTMLButtonElement;
  * Define drawing var
  */
 const GOLDEN_NUMBER: number = 1.618033;
-const PLAYER_WIDTH_RATIO: number = 0.09;
-const PLAYER_WIDTH_HEIGHT_RATIO: number = 10;
-var PLAYER_HEIGHT: number;
+const PLAYER_HEIGHT_RATIO: number = 0.09;
+const PLAYER_HEIGHT_HEIGHT_RATIO: number = 10;
 var PLAYER_WIDTH: number;
+var PLAYER_HEIGHT: number;
 const PLAYER_COLOR: string = "#FFFFFF";
-const PLAYER_SPEED: number = 7;
+const PLAYER_SPEED: number = 10;
 
 /* Score + Text */
 const FONT_NAME: string = "sans-serif";
@@ -48,11 +48,12 @@ var p2_downPressed: boolean = false;
 
 /* IA Q_algorythm value */
 var NUM_ACTIONS: number = 3;
-var NUM_STATES: number = 3;
-const ALPHA: number = 0.1;
-const GAMMA: number = 0.9;
-const EPSILON: number = 0.1;
+var NUM_STATES: number = 4;
+const ALPHA: number = 0.4;
+const GAMMA: number = 0.7;
+let EPSILON: number = 0.1;
 const TRAINING: boolean = true;
+const epsilon_decay_rate: number = 0.001;
 let Q_table: number[][] = Array(NUM_STATES).fill([]).map(() => Array(NUM_ACTIONS).fill(0));
 
 /* ************************************************************************** */
@@ -99,9 +100,9 @@ class Pong {
 			throw new Error("Canvas not found.");
 		const player_offset = 0.05 * canvas.width;
 		this.player_1 = new Player(player_1_name,
-			{ x: player_offset, y: (canvas.height - PLAYER_WIDTH) / 2 });
+			{ x: player_offset, y: (canvas.height - PLAYER_HEIGHT) / 2 });
 		this.player_2 = new Player(player_2_name,
-			{ x: canvas.width - player_offset - PLAYER_HEIGHT, y: (canvas.height - PLAYER_WIDTH) / 2 });
+			{ x: canvas.width - player_offset - PLAYER_WIDTH, y: (canvas.height - PLAYER_HEIGHT) / 2 });
 		this.ball = new Ball(center);
 		this.score_max = 115;
 		this.new_round = true;
@@ -160,20 +161,20 @@ function update_ball_state() {
 	if (ball_next_pos.y > canvas.height - BALL_RADIUS || ball_next_pos.y < BALL_RADIUS)
 		dir.y = -dir.y;
 	/* Check if player 1 touch the ball */
-	if ((ball.pos.x > p1.pos.x && ball.pos.x < p1.pos.x + PLAYER_HEIGHT)
-		&& (ball.pos.y > p1.pos.y && ball.pos.y < p1.pos.y + PLAYER_WIDTH)) {
+	if ((ball.pos.x > p1.pos.x && ball.pos.x < p1.pos.x + PLAYER_WIDTH)
+		&& (ball.pos.y > p1.pos.y && ball.pos.y < p1.pos.y + PLAYER_HEIGHT)) {
 		dir.x = -dir.x;
 		// let randomFactor = (Math.random() - 0.5) * 2; // Valeur entre -1 et 1 pour un rebond plus varié
 		// dir.y = randomFactor;
-		game.ball.speed = Math.random() * (14 - 7) + 7;
+		game.ball.speed += 8;
 	}
 	/* Check if player 2 touch the ball */
-	if ((ball.pos.x > p2.pos.x && ball.pos.x < p2.pos.x + PLAYER_HEIGHT)
-		&& (ball.pos.y > p2.pos.y && ball.pos.y < p2.pos.y + PLAYER_WIDTH)) {
+	if ((ball.pos.x > p2.pos.x && ball.pos.x < p2.pos.x + PLAYER_WIDTH)
+		&& (ball.pos.y > p2.pos.y && ball.pos.y < p2.pos.y + PLAYER_HEIGHT)) {
 		dir.x = -dir.x;
 		// let randomFactor = (Math.random() - 0.5) * 2; // Valeur entre -1 et 1 pour un rebond plus varié
 		// dir.y = randomFactor;
-		game.ball.speed = Math.random() * (14 - 7) + 7;
+		game.ball.speed += 8;
 
 	}
 
@@ -190,8 +191,8 @@ function update_ball_state() {
 
 	/* Update ball position */
 	game.ball.pos = {
-		x: game.ball.pos.x + game.ball.direction.x * game.ball.speed,
-		y: game.ball.pos.y + game.ball.direction.y * game.ball.speed
+		x: game.ball.pos.x + game.ball.direction.x * 7,
+		y: game.ball.pos.y + game.ball.direction.y * 7
 	};
 }
 
@@ -202,22 +203,45 @@ function update_ball_state() {
 /* IA Q_LEARNING MOVES */
 
 /* choose a state in function of the position of the ball in the screen, which is divide by 3 */
-function getState(): number {
-	let ball_pos = game.ball.pos.y;
+/* function getState(): number {
+	let ball = game.ball;
 
-	if (ball_pos < screen.height / 3)
-		return (2);
-	if (ball_pos < 2 * screen.height / 3)
+	if(ball.direction.y < 0 && ball.direction.x > 0 && ball.pos.y < game.player_2.pos.y)
+		return(1);
+	else if(ball.direction.x > 0  && ball.direction.y > 0 && ball.pos.y > game.player_2.pos.y)
+		return(2);
+	return (0);
+} */
+
+function getState(): number {
+	let ball = game.ball;
+	let p2 = game.player_2;
+
+	if (ball.pos.y > p2.pos.y && ball.pos.y < p2.pos.y + PLAYER_HEIGHT) {
+		console.log("CENTER");
+		return (0);
+	}
+	if (ball.pos.y < p2.pos.y - PLAYER_HEIGHT / 2) {
+		console.log("BEFORE");
 		return (1);
+	}
+	if (ball.pos.y > p2.pos.y + PLAYER_HEIGHT / 2) {
+		console.log("AFTER");
+		return (2);
+	}
 	return (0);
 }
 
+
 /* choose an action according to the epsilon value : this is called the epsilon-greedy */
 function chooseAction(state: number): number {
-	if (Math.random() < EPSILON)
+	if (Math.random() < EPSILON) {
+		EPSILON = Math.max(EPSILON * 0.999, 0.01);
 		return (Math.floor(Math.random() * NUM_ACTIONS));
+	}
 	else {
 		let best_action = Q_table[state].indexOf(Math.max(...Q_table[state]));
+		// console.log("best action index : ", best_action);
 		return (best_action);
 	}
 }
@@ -237,52 +261,55 @@ function updateTable(state: number, action: number, reward: number, next_state: 
 	Q_table[state][action] = new_q;
 }
 
+function get_reward() : number {
+	const max_reward = PLAYER_HEIGHT / 2;
+	const min_reward = -max_reward;
+	const y_distance = Math.abs(game.player_2.pos.y - PLAYER_HEIGHT / 2 - game.ball.pos.y);
+	let reward = -(y_distance / screen.height) * max_reward;
+
+	if (y_distance < PLAYER_HEIGHT / 2) {
+		reward += max_reward;
+	}
+
+	return Math.max(min_reward, reward);
+}
+
 let lastTime = Date.now(); // Variable globale pour stocker le temps du dernier rafraîchissement de l'IA
 let currTime = 0;
 let last_p2_pos_y = 0;
 let action = 0;
 let state = 0;
 
-function update_ia_pos()
-{
+function update_ia_pos() {
 	currTime = Date.now();
 
-	if (currTime - lastTime > 200)
-	{
+	// if (currTime - lastTime > 1) {
 		state = getState();
 		action = chooseAction(state);  // Action choisie par l'IA
 		lastTime = currTime;
-	}
+	// }
 	let p2 = game.player_2; // Référence à l'IA
 	let ball = game.ball; // Référence à la balle
 
-	let reward = 0; // Variable pour la récompense de l'IA
-
-	// Déplacement de l'IA en fonction de l'action choisie
-	if (action === 0) {
-		p2.pos.y += PLAYER_SPEED; // Déplacement vers le haut
-	} else if (action === 2) {
-		p2.pos.y -= PLAYER_SPEED; // Déplacement vers le bas
+	if (state == 1) {
+		p2.pos.y -= PLAYER_SPEED;
 	}
+	else if(state == 2)
+		p2.pos.y += PLAYER_SPEED;
 
-	if (ball.pos.x == p2.pos.x && (ball.pos.y >= p2.pos.y || ball.pos.y <= p2.pos.y + PLAYER_WIDTH)) {
-		reward = 1; // Récompense si l'IA touche la balle en haut
-	} else
-		reward = -1; // Pénalité si l'IA ne touche pas la balle
+	// Empêcher l'IA de sortir des limites du canvas
+	if (p2.pos.y < 0) p2.pos.y = 0; // Limite en haut
+	if (p2.pos.y > canvas.height - PLAYER_HEIGHT) p2.pos.y = canvas.height - PLAYER_HEIGHT; // Limite en bas	
 
+	let reward = get_reward();
 	// Mise à jour de la Q-table de l'IA après le déplacement
 	let next_state = getState();
 	updateTable(state, action, reward, next_state);
 
-	// Empêcher l'IA de sortir des limites du canvas
-	if (p2.pos.y < 0) p2.pos.y = 0; // Limite en haut
-	if (p2.pos.y > canvas.height - PLAYER_WIDTH) p2.pos.y = canvas.height - PLAYER_WIDTH; // Limite en bas
 
 	// Affichage du mouvement pour le débogage (facultatif)
-	console.log("IA - position Y:", p2.pos.y);
-	console.log("Action choisie:", action);
-	console.log("Balle - position Y:", ball.pos.y);
-	console.log(Q_table);
+	// console.log("State:", state);
+	// console.log(Q_table);
 }
 
 
@@ -302,12 +329,12 @@ function update_player_pos() {
 	// 	p2.pos.y += PLAYER_SPEED;
 
 	/* Check for out of bound */
-	if (p1.pos.y > canvas.height - PLAYER_WIDTH)
-		p1.pos.y = canvas.height - PLAYER_WIDTH;
+	if (p1.pos.y > canvas.height - PLAYER_HEIGHT)
+		p1.pos.y = canvas.height - PLAYER_HEIGHT;
 	if (p1.pos.y < 0)
 		p1.pos.y = 0;
-	// if (p2.pos.y > canvas.height - PLAYER_WIDTH)
-	// 	p2.pos.y = canvas.height - PLAYER_WIDTH;
+	// if (p2.pos.y > canvas.height - PLAYER_HEIGHT)
+	// 	p2.pos.y = canvas.height - PLAYER_HEIGHT;
 	// if (p2.pos.y < 0)
 	// 	p2.pos.y = 0;
 }
@@ -322,7 +349,7 @@ function draw_player(player: Player) {
 		throw new Error("Context not found");
 
 	// ctx.beginPath();
-	ctx.rect(player.pos.x, player.pos.y, PLAYER_HEIGHT, PLAYER_WIDTH);
+	ctx.rect(player.pos.x, player.pos.y, PLAYER_WIDTH, PLAYER_HEIGHT);
 	ctx.fillStyle = PLAYER_COLOR;
 	ctx.fill();
 	// ctx.closePath();
@@ -447,8 +474,8 @@ function reset_ball() {
  */
 function reset_player_pos() {
 	const player_offset = 0.05 * canvas.width;
-	game.player_1.pos = { x: player_offset, y: (canvas.height - PLAYER_WIDTH) / 2 };
-	game.player_2.pos = { x: canvas.width - player_offset - PLAYER_HEIGHT, y: (canvas.height - PLAYER_WIDTH) / 2 };
+	game.player_1.pos = { x: player_offset, y: (canvas.height - PLAYER_HEIGHT) / 2 };
+	game.player_2.pos = { x: canvas.width - player_offset - PLAYER_WIDTH, y: (canvas.height - PLAYER_HEIGHT) / 2 };
 }
 
 /**
@@ -532,8 +559,8 @@ function resizeCanvas() {
 		/* Rotate */
 		ctx.rotate(0); // No rotation needed for portrait
 	}
-	PLAYER_WIDTH = canvas.width * PLAYER_WIDTH_RATIO;
-	PLAYER_HEIGHT = PLAYER_WIDTH / PLAYER_WIDTH_HEIGHT_RATIO;
+	PLAYER_HEIGHT = canvas.width * PLAYER_HEIGHT_RATIO;
+	PLAYER_WIDTH = PLAYER_HEIGHT / PLAYER_HEIGHT_HEIGHT_RATIO;
 	TERRAIN_LINE_FAT = 0.01 * Math.max(canvas.width, canvas.height);
 	BALL_RADIUS = 0.01 * Math.min(canvas.width, canvas.height);
 	FONT_SIZE = 0.08 * Math.min(canvas.width, canvas.height);
