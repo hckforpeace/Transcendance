@@ -1,4 +1,8 @@
 import fs from 'fs';
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const auth = async (req, reply) => {
   try {
@@ -26,7 +30,7 @@ const sock_con =  (socket, req) => {
 }
 
 const pong_view = (req, rep) => {
-  const data = fs.readFileSync('/home/pierre/Documents/Transcendance/src/views/pong.ejs', 'utf-8');
+  const data = fs.readFileSync( path.join(__dirname, '../views/pong.ejs'), 'utf-8');
   rep.send(data);
 }
 
