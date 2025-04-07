@@ -25,7 +25,7 @@ async function routes (fastify, options) {
 //     reply.send({ message: 'pong' });
 //   });
   // remote connection
-  fastify.get('/api/remote', {websocket: true}, api_controllers.sock_con);
+  fastify.get('/api/remote', {preHandler: [fastify.authenticate], websocket: true}, api_controllers.sock_con);
 
 }
 

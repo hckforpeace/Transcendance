@@ -391,33 +391,15 @@ function resizeCanvas() {
  */
 function load_script() {
     try {
-        /* Set var */
-        // start_button = document.getElementById("button_start_game") as HTMLButtonElement;
-        // if (!start_button)
-        // 	throw new Error("Start button not found.");
-        // reset_button = document.getElementById("reset_button") as HTMLButtonElement;
-        // if (!reset_button)
-        // 	throw new Error("Reset button not found.");
         canvas = document.getElementById("pong_canvas");
         if (!canvas)
             throw new Error("Canvas not found");
         ctx = canvas.getContext("2d");
         if (!ctx)
             throw new Error("Context not found");
-        /* Set events listeners */
-        // start_button.addEventListener("click", () => {
-        // start_button.style.display = 'none';
-        // reset_button.style.display = 'block';
-        /* Start game */
         canvas.style.display = 'block';
         resizeCanvas();
         launch_game("Jojo", "Lili");
-        // });
-        // reset_button.addEventListener("click", () => {
-        // 	canvas.style.display = 'none';
-        // 	start_button.style.display = 'block';
-        // 	reset_button.style.display = 'none';
-        // });
         document.addEventListener("keydown", pressedKeyHandler, false);
         document.addEventListener("keyup", releasedKeyHandler, false);
         window.addEventListener("resize", resizeCanvas); /* Resize

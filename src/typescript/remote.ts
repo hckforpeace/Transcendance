@@ -1,0 +1,83 @@
+const currentUrl = window.location.hostname;
+const currentPort = window.location.port;
+const currentRoot = currentUrl + ":" + currentPort;
+var socket: WebSocket;
+
+function changeRegion()
+{
+    var tag = document.getElementById("dynamic-script") as HTMLScriptElement;
+    if (!tag) {
+      return
+    }
+    tag.remove(); // remove the old script tag
+  
+    var newTag = document.createElement("script");
+    newTag.id = "dynamic-script";
+    newTag.type = "text/javascript";
+    newTag.src = 'js/pong.js';
+    var footer = document.getElementById("footer");
+    if (!footer) {
+      return ;
+    }
+    footer.appendChild(newTag);
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  socket_connect();
+});
+
+async function fetchPong() {
+  await fetch("https://localhost:8080/api/pong", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  })
+    .then(response => response.text())
+    .then(html => {
+      var content = document.getElementById("content-div");
+      if (!content)
+        throw new Error("Content div not found");
+      content.innerHTML = html;
+      changeRegion();
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    }); 
+}
+
+// TODO: do something with event parameter
+function wsEvent(event: any) 
+{
+  console.log(currentRoot);
+  socket = new WebSocket('wss://' + currentRoot + '/api/remote', localStorage.getItem("token")?.toString());
+  socket.onopen = function (event) {
+    socket.send("Hello hdhdhd i am gay!");
+    fetchPong();
+  };
+  socket.onmessage = function(event) {
+    console.log(`[message] Data received from server: ${event.data}`);
+
+  };
+
+  socket.onclose = function(event) {
+    if (event.wasClean) {
+      console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+    } else {
+      // par exemple : processus serveur arrêté ou réseau en panne
+      // event.code est généralement 1006 dans ce cas
+      console.log('[close] Connection died');
+    }
+  };
+
+  socket.onerror = function(error) {
+    console.log('connection refused');
+  };
+
+}
+
+function socket_connect() {
+  const remote = document.getElementById("start") ;
+  if (!remote)
+    return;
+  remote.addEventListener("click", wsEvent);
+}
