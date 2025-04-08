@@ -1,4 +1,4 @@
-import fastify from 'fastify';
+import remoteObj from '../obj/remoteGame.js';
 import fs from 'fs';
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -23,12 +23,15 @@ const auth = async (req, reply) => {
 const sock_con =  async (socket, req) => {
   // var data = JSON.parse(socket);
   try {
-    // Verify the JWT token from the request
-    // await req.jwtVerify()
     
+     
+    
+    remoteObj.addPlayer(req.headers['sec-websocket-protocol']);
     socket.on('message', message => {
-    console.log('Received message:', message.toString());
-    socket.send(`Echo: ${message}`);
+
+      console.log('Received message:', message.toString());
+      
+      socket.send(`Echo: ${message}`);
     });
 
   } catch (error) {
