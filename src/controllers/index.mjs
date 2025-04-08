@@ -8,8 +8,8 @@
 // }
 // Handler for index route
 const dispIndex = (req, rep) => {
-  rep.view('login.ejs', {
-    text: 'login'
+  rep.view('index.ejs', {
+    text: 'index'
     // Add any other variables you might need
   })
 }

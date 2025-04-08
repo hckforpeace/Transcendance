@@ -1,11 +1,11 @@
-import dispIndex from '../controllers/index.mjs'
+//import dispIndex from '../controllers/index.mjs'
 
-// routes
-async function routes (fastify, options) {
-  fastify.get('/', dispIndex);
-}
+// // routes
+// async function routes (fastify, options) {
+//   fastify.get('/', dispIndex);
+// }
 
 
 // ESM 
-export default routes;
+//export default routes;
 

@@ -5,11 +5,13 @@ import api from '../controllers/api.mjs';
 async function routes (fastify, options) {
   // Define the routes
   fastify.post('/api/login', api.login);
-  fastify.get('/ping', async () => {
-  return { message: 'pong' };
-});
+  fastify.get('/api/login', async (req, reply) => { return reply.view('login.ejs', { text: 'Login Test' }); });
+
+  fastify.get('/ping', async () => { return { message: 'pong' }; });
 
   fastify.post('/api/register', api.register);
+  fastify.get('/api/register', async (req, reply) => { return reply.view('register.ejs', { text: 'Register Test' }); });
+
    // {onRequest: [fastify.authenticate]}, 
   fastify.get('/api/pong', { preHandler: [fastify.authenticate] } ,(req, reply) => {
     console.log(req.headers.authorization);

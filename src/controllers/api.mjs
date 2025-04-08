@@ -1,4 +1,7 @@
 import bcrypt from 'bcryptjs';
+import { getDB } from "../database/database.js"
+
+const db = getDB();
 
 const login = async (req, reply) => {
 	try {
@@ -7,7 +10,7 @@ const login = async (req, reply) => {
 			return reply.status(400).send({ error: "Email and password are required" });
 		}
 
-		const user = await db.get("SELECT * FROM userts WHERE email = ?", [email]);
+		const user = await db.get("SELECT * FROM users WHERE email = ?", [email]);
 
 		if (!user || !(await bcrypt.compare(password, user.password))) {
         	return reply.status(401).send({ error: "Invalid email or password" });
@@ -16,7 +19,15 @@ const login = async (req, reply) => {
 		// Use the JWT functionality from the fastify instance
 		const token = await reply.jwtSign({ userId: user.id, email: user.email }, { expiresIn: "1m" });
 
-		return reply.status(200).send({ message: 'Login successful', token: token });
+		reply.setCookie("token", token, {
+			httpOnly: true,
+			secure: true,
+			sameSite: "lax",
+			path: "/"
+		});
+
+		//return reply.redirect("/");
+		//return reply.status(200).send({ message: 'Login successful', token: token });
 	} catch (error) {
 		req.log.error(error);
 		return reply.status(500).send({ message: 'Internal server error' });
@@ -34,7 +45,18 @@ const register = async (req, reply) => {
 	try {
 		await db.run("INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
 			[name, email, hashedPassword]);
-		reply.send({ message: "User registered successfully!" });
+
+		const token = await reply.jwtSign({ userId: email, name }, { expiresIn: '1m' });
+
+		reply.setCookie('token', token, {
+      		httpOnly: true,
+      		secure: true,
+      		path: '/',
+      		sameSite: 'lax'
+    	});
+
+		//return reply.redirect('/');
+		//reply.send({ message: "User registered successfully!" });
 	} catch (err) {
 		reply.status(500).send({ error: "User already exists or database error" });
 	}
