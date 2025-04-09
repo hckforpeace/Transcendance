@@ -4,21 +4,24 @@ import { open } from 'sqlite';
 let db;
 
 export const initDB = async () => {
-  db = await open({
-    filename: 'mydatabase.db',
-    driver: sqlite3.Database,
-  });
+  try {
+    db = await open({ filename: 'mydatabase.db', driver: sqlite3.Database });
+    console.log('Database opened successfully.');
 
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      password TEXT NOT NULL,
-      email TEXT UNIQUE NOT NULL
-    )
-  `);
-
-  console.log("Database and table initialized.");
+    await db.exec(`CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE NOT NULL,
+        hashed_password TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL
+    )`);
+  } catch (error) {
+    console.error('Error initializing the database:', error);
+  }
 };
 
-export const getDB = () => db;
+export const getDB = () => {
+  if (!db)
+    console.error('Database not initialized.');
+  return db;
+};
+

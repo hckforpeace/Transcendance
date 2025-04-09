@@ -2,7 +2,7 @@ import fs from 'fs'
 import jwtPlugin from './plugins/jwtPlugin.js'
 import Fastify from 'fastify'
 import routesItems from './routes/items.js'
-//import routesPong from './routes/pong.js'
+import routesPong from './routes/pong.js'
 import routesApi from './routes/api.js'
 import swagger from '@fastify/swagger'
 import swaggerUi from '@fastify/swagger-ui'
@@ -36,8 +36,6 @@ const fastify = Fastify({
  * REGISTER */
 
 await initDB();
-
-fastify.register(pages);
 
 // cookies
 fastify.register(fastifyCookie);
@@ -78,7 +76,7 @@ fastify.addHook('preHandler', async (req, reply) => {
 // view
 fastify.register(view, {
   engine: { ejs },
-  layout: "home.ejs",
+  layout: "index.ejs",
   root: __dirname + '/views/'
 });
 
@@ -88,7 +86,7 @@ fastify.register(swaggerUi, swgUI_config)
 
 // regiter routes
 fastify.register(routesItems);
-//fastify.register(routesPong);
+fastify.register(routesPong);
 fastify.register(routesApi);
 
 
