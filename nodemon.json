@@ -1,0 +1,6 @@
+{
+  "watch": ["src"],
+  "ignore": ["./src/public/js"],
+  "ext": "ts,js,mjs,ejs",
+  "exec": "tsc && node ./src/server.js"
+}
