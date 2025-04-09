@@ -3,8 +3,8 @@
 // const currentUrl = window.location.hostname;
 // const currentPort = window.location.port;
 // const currentRoot = currentUrl + ":" + currentPort;
-const loginURL:string = "https://localhost:8080/api/login"
-
+const loginURL:string = "https://" + currentUrl + ':' + currentPort + '/api/login';
+var local_user:string;
 // function changeRegion()
 // {
 //     var tag = document.getElementById("dynamic-script") as HTMLScriptElement;
@@ -54,6 +54,7 @@ function submitEvent(event: any)
 {
   event.preventDefault(); // Prevent default form submission
   const uname = document.getElementById('uname') as HTMLInputElement;
+  local_user = uname.value;
   const pw = document.getElementById('pw') as HTMLInputElement;
   if (!uname || !pw) 
     return;

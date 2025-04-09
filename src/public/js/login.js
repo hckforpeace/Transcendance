@@ -12,7 +12,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 // const currentUrl = window.location.hostname;
 // const currentPort = window.location.port;
 // const currentRoot = currentUrl + ":" + currentPort;
-const loginURL = "https://localhost:8080/api/login";
+const loginURL = "https://" + currentUrl + ':' + currentPort + '/api/login';
+var local_user;
 // function changeRegion()
 // {
 //     var tag = document.getElementById("dynamic-script") as HTMLScriptElement;
@@ -59,6 +60,7 @@ function login(url, header) {
 function submitEvent(event) {
     event.preventDefault(); // Prevent default form submission
     const uname = document.getElementById('uname');
+    local_user = uname.value;
     const pw = document.getElementById('pw');
     if (!uname || !pw)
         return;

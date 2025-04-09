@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import remoteObj from '../obj/remoteGame.js';
 import fs from 'fs';
 import path from 'path'
@@ -6,10 +7,11 @@ import { fileURLToPath } from 'url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const auth = async (req, reply) => {
-  try { const user_data = { username: req.body.username, password: req.body.password };
+  // password: req.body.password 
+  try { const user_data = { username: req.body.username, id: uuidv4() };
     
-    // Use the JWT functionality from the fastify instance
     const token = await reply.jwtSign(user_data, { expiresIn: "1h" });
+
     return reply.status(200).send({ 
       message: 'Login successful', 
       token: token 
@@ -20,21 +22,47 @@ const auth = async (req, reply) => {
   }
 };
 
-const sock_con =  async (socket, req) => {
-  // var data = JSON.parse(socket);
-  try {
+const sock_con =  async (socket, req, fastify) => {
+  try
+  {
+    // var id = uuidvw();
+    var token = req.headers['sec-websocket-protocol'];
+    if (!token) 
+      throw new Error('No token provided');
     
-     
-    
-    remoteObj.addPlayer(req.headers['sec-websocket-protocol']);
-    socket.on('message', message => {
+    var decodedToken = fastify.jwt.verify(token);
+    if (!decodedToken) 
+      throw new Error('failed to decode token');
 
-      console.log('Received message:', message.toString());
-      
-      socket.send(`Echo: ${message}`);
+    var username = decodedToken['username'];
+    var id = decodedToken['id']
+
+    remoteObj.addPlayer(id, token, username, socket); 
+    
+    remoteObj.sendCurrentUsers(id);
+     // remoteObj.getUsers();
+
+    socket.on('message', message => {
+      console.log('Received message:', message);
+      try {
+        message = JSON.parse(message);
+        if (message.type == 'invite')
+          remoteObj.invitePlayer(message, socket);
+
+      } catch (error)
+      {
+        console.log(error)
+        socket.send(error);
+      }
     });
 
-  } catch (error) {
+    socket.on('close', () => {
+      console.log('Connection closed:', id);
+      remoteObj.removePlayer(id);
+      remoteObj.sendCurrentUsers(id);
+    });
+  }
+  catch (error) {
     console.log(error);
     socket.close(4001, 'Unauthorized');
   }
