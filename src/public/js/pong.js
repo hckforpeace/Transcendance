@@ -259,14 +259,14 @@ function draw_finish() {
  * Check if one player want to move
  */
 function pressedKeyHandler(e) {
-    if (e.key === "Up" || e.key === "ArrowUp")
-        p2_upPressed = true;
-    if (e.key === "Down" || e.key === "ArrowDown")
-        p2_downPressed = true;
-    if (e.key === "w" || e.key === "W") // || e.key === "z" || e.key === "Z") // AZERTY keyboard
+    if (e.key === "Up" || e.key === "ArrowUp") {
         p1_upPressed = true;
-    if (e.key === "s" || e.key === "S")
+        socket.send(JSON.stringify({ type: 'pressed', direction: 'up', opponent: opponent, gameid: gameId }));
+    }
+    if (e.key === "Down" || e.key === "ArrowDown") {
         p1_downPressed = true;
+        socket.send(JSON.stringify({ type: 'pressed', direction: 'down', opponent: opponent, gameid: gameId }));
+    }
 }
 /**
  * @brief Released key handler
@@ -274,14 +274,14 @@ function pressedKeyHandler(e) {
  * Check if one player want to stop move
  */
 function releasedKeyHandler(e) {
-    if (e.key === "Up" || e.key === "ArrowUp")
-        p2_upPressed = false;
-    if (e.key === "Down" || e.key === "ArrowDown")
-        p2_downPressed = false;
-    if (e.key === "w" || e.key === "W") // || e.key === "z" || e.key === "Z") // AZERTY keyboard
+    if (e.key === "Up" || e.key === "ArrowUp") {
         p1_upPressed = false;
-    if (e.key === "s" || e.key === "S")
+        socket.send(JSON.stringify({ type: 'released', direction: 'up', opponent: opponent, gameid: gameId }));
+    }
+    if (e.key === "Down" || e.key === "ArrowDown") {
         p1_downPressed = false;
+        socket.send(JSON.stringify({ type: 'released', direction: 'down', opponent: opponent, gameid: gameId }));
+    }
 }
 /* ************************************************************************** */
 /*                                      GAME                                  */
@@ -399,7 +399,7 @@ function load_script() {
             throw new Error("Context not found");
         canvas.style.display = 'block';
         resizeCanvas();
-        launch_game("Jojo", "Lili");
+        launch_game(local_user, opponent);
         document.addEventListener("keydown", pressedKeyHandler, false);
         document.addEventListener("keyup", releasedKeyHandler, false);
         window.addEventListener("resize", resizeCanvas); /* Resize

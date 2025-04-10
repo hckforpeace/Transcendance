@@ -2,7 +2,65 @@ const currentUrl = window.location.hostname;
 const currentPort = window.location.port;
 const currentRoot = currentUrl + ":" + currentPort;
 var socket: WebSocket;
+var gameId: number;
+var opponent: string;
 
+function IncomingInvitationAlert(data: any)
+{
+  if (confirm('Player: ' + data.user + ' is inviting you to play !'))
+    socket.send(JSON.stringify({type: 'accept', user: data.src, src: local_user}));
+  else
+    socket.send(JSON.stringify({type: 'refuse', user: data.src, src: local_user}));
+}
+
+function launchPongRemote(data:any)
+{
+  gameId = data.gameid;
+  opponent = data.opponent;
+  console.log()
+  fetchPong();
+}
+
+function moveOpponent(data:any)
+{
+  var type = data.type;
+  var dir = data.direction;
+
+  if (type == 'pressed') {
+    console.log("MOVING OPPONENT");
+    if (dir == 'up')
+      p2_upPressed = true;
+    else 
+      p2_downPressed = true;
+  } else {
+    console.log("MOVING OPPONENT");
+    if (dir == 'up')
+      p2_upPressed = false;
+    else 
+      p2_downPressed = false;
+  }
+}
+
+function parseIncommingSocketMsg(data: any)
+{
+  // const jsonData = JSON.parse(data);
+  try {
+    if (!data.users && !data.type)
+      throw new Error("wrong data format server error");
+    if (data.users != null)
+      updateLobbyUsers(data); 
+    else if (data.type == 'invite')
+      IncomingInvitationAlert(data);
+    else if (data.type == 'startgame')
+      launchPongRemote(data); 
+    else if (data.type == 'pressed' || data.type == 'released')
+      moveOpponent(data); 
+  }
+  catch (error)
+  {
+    console.log(error);
+  }
+}
 
 function listclick()
 {
@@ -62,14 +120,6 @@ function updateLobbyUsers(data: any)
     element.innerHTML = data.users[i];
     users_tag.appendChild(element);
   }
-  if (numberofusers > 0)
-  {
-    var request_btn = document.createElement('input');
-    request_btn.type = 'button';
-    request_btn.value = 'send invitation';
-    request_btn.id = 'request';
-    content_div.appendChild(request_btn);    
-  }
 }
 
 function renderLobby()
@@ -83,6 +133,12 @@ function renderLobby()
     var list = document.createElement("ul");
     list.id = 'users_list';
     content_div.appendChild(list);
+  
+    var request_btn = document.createElement('input');
+    request_btn.type = 'button';
+    request_btn.value = 'send invitation';
+    request_btn.id = 'request';
+    content_div.appendChild(request_btn);    
   }
   catch (error)
   {
@@ -120,16 +176,15 @@ function wsEvent(event: any)
   socket = new WebSocket('wss://' + currentRoot + '/api/remote', localStorage.getItem("token")?.toString());
   socket.onopen = function (event) {
     renderLobby();
-	listclick();
+    listclick();
   };
 
   socket.onmessage = function(event) {
     let data = JSON.parse(event.data);
-    if (!data)
-      return;
-    updateLobbyUsers(data); 
-    console.log(data);
-
+    // if (!data)
+    //   return ;
+    console.log('received: ' + data);
+    parseIncommingSocketMsg(data);
   };
 
   socket.onclose = function(event) {
