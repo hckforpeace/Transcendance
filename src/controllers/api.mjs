@@ -45,7 +45,7 @@ const sock_con =  async (socket, req, fastify) => {
     socket.on('message', message => {
       try {
         message = JSON.parse(message);
-        console.log('Received message:', message);
+        // console.log('Received message:', message);
         if (message != null && message.type == 'invite')
           remoteObj.invitePlayer(message, socket);
         else if (message.type == 'accept')

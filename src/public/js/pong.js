@@ -64,7 +64,7 @@ class Pong {
         this.player_1 = new Player(player_1_name, { x: player_offset, y: (canvas.height - PLAYER_WIDTH) / 2 });
         this.player_2 = new Player(player_2_name, { x: canvas.width - player_offset - PLAYER_HEIGHT, y: (canvas.height - PLAYER_WIDTH) / 2 });
         this.ball = new Ball(center);
-        this.score_max = 5;
+        this.score_max = 30000;
         this.new_round = true;
     }
 }

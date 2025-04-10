@@ -90,10 +90,14 @@ function moveOpponent(data) {
 
     if (!game)
       throw new Error("wrong parameters");
-    if (game.p1.username == opponent)
+    if (game.p1.username == opponent){
+      console.log('p1: ' + game.p1.username);
       game.p1.socket.send(JSON.stringify(data));
-    else if (game.p2.username == opponent)
+    }
+    else if (game.p2.username == opponent) {
+      console.log('p2: ' + game.p2.username);
       game.p2.socket.send(JSON.stringify(data));
+    }
     else
       throw new Error("wrong parameters");
   } catch (error) {

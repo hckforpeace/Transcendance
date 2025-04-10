@@ -27,18 +27,23 @@ function moveOpponent(data:any)
   var dir = data.direction;
 
   if (type == 'pressed') {
-    console.log("MOVING OPPONENT");
     if (dir == 'up')
+  {
       p2_upPressed = true;
-    else 
+      console.log('move up');
+    }
+    else {
       p2_downPressed = true;
+      console.log('move down');
+    } 
   } else {
-    console.log("MOVING OPPONENT");
     if (dir == 'up')
       p2_upPressed = false;
     else 
       p2_downPressed = false;
   }
+  // console.log("p2_upPressed:&&  " + p2_upPressed);
+  // console.log("p2_downPressed: " + p2_downPressed);
 }
 
 function parseIncommingSocketMsg(data: any)
@@ -151,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 async function fetchPong() {
-  await fetch("https://localhost:8080/api/pong", {
+  await fetch("https://" + currentUrl + ":" + currentPort + "/api/pong", {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
