@@ -4,10 +4,10 @@ import api from '../controllers/api.mjs';
 // routes/api.js
 async function routes (fastify, options) {
   // Define the routes
-  fastify.get('/api/register', async (req, reply) => { return reply.view('register.ejs', { text: 'Register Test' }); });
+  fastify.get('/api/register', async (req, reply) => { return reply.view('register.ejs', { text: 'Register' }); });
   fastify.post('/api/register', api.register);
   
-  fastify.get('/api/login', async (req, reply) => { return reply.view('login.ejs', { text: 'Login Test' }); });
+  fastify.get('/api/login', async (req, reply) => { return reply.view('login.ejs', { text: 'Login' }); });
   fastify.post('/api/login', api.login);
 
   fastify.get('/ping', async () => { return { message: 'pong' }; });
@@ -22,4 +22,4 @@ async function routes (fastify, options) {
   });
 }
 
-export default routes; 
+export default routes;
