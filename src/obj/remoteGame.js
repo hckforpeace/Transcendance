@@ -128,8 +128,8 @@ function startGame(data, gameId)
     Games.set(gameId, new Game(p1, p2));
 
     console.log('gameid: ' + gameId);
-    p1.socket.send(JSON.stringify({type: 'startgame', opponent: uname2, gameid: gameId}));
-    p2.socket.send(JSON.stringify({type: 'startgame', opponent: uname1, gameid: gameId}));
+    p1.socket.send(JSON.stringify({type: 'startgame', opponent: uname2, gameid: gameId, side: 'p1'}));
+    p2.socket.send(JSON.stringify({type: 'startgame', opponent: uname1, gameid: gameId, side : 'p2'}));
 
   } catch (error){
     console.log(error);

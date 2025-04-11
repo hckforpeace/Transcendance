@@ -12,6 +12,7 @@ const currentUrl = window.location.hostname;
 const currentPort = window.location.port;
 const currentRoot = currentUrl + ":" + currentPort;
 var socket;
+var playerSide;
 var gameId;
 var opponent;
 function IncomingInvitationAlert(data) {
@@ -22,6 +23,7 @@ function IncomingInvitationAlert(data) {
 }
 function launchPongRemote(data) {
     gameId = data.gameid;
+    playerSide = data.side;
     opponent = data.opponent;
     console.log();
     fetchPong();
@@ -31,19 +33,33 @@ function moveOpponent(data) {
     var dir = data.direction;
     if (type == 'pressed') {
         if (dir == 'up') {
-            p2_upPressed = true;
-            console.log('move up');
+            if (playerSide == 'p1')
+                p2_upPressed = true;
+            else
+                p1_upPressed = true;
         }
         else {
-            p2_downPressed = true;
-            console.log('move down');
+            if (playerSide == 'p1')
+                p2_downPressed = true;
+            else
+                p1_downPressed = true;
         }
     }
     else {
-        if (dir == 'up')
-            p2_upPressed = false;
-        else
-            p2_downPressed = false;
+        if (dir == 'up') {
+            if (playerSide == 'p1')
+                p2_upPressed = false;
+            else
+                p1_upPressed = false;
+            // p2_upPressed = false;
+        }
+        else {
+            if (playerSide == 'p1')
+                p2_downPressed = false;
+            else
+                p1_downPressed = false;
+            // p2_downPressed = false;
+        }
     }
     // console.log("p2_upPressed:&&  " + p2_upPressed);
     // console.log("p2_downPressed: " + p2_downPressed);
