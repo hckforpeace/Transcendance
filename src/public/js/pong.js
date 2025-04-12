@@ -148,8 +148,11 @@ function update_ball_state() {
         game.new_round = true;
     }
     /* Update ball position */
+    socket.send(JSON.stringify({ type: 'moveBall', x: ball.pos.x, y: ball.pos.y, gameid: gameId }));
     game.ball.pos = { x: game.ball.pos.x + game.ball.direction.x * game.ball.speed,
         y: game.ball.pos.y + game.ball.direction.y * game.ball.speed };
+    console.log("Sended ball pos x: " + game.ball.pos.x);
+    console.log("Sended ball pos y: " + game.ball.pos.y);
 }
 /**
  * @brief Move player
@@ -221,7 +224,8 @@ function draw() {
     draw_score();
     ctx.closePath();
     update_player_pos();
-    update_ball_state();
+    if (truePong)
+        update_ball_state();
 }
 /**
  * @brief Draw fianal state, when player win

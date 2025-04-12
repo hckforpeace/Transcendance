@@ -5,10 +5,19 @@ var PlayerId = 0;
 class Player {
   constructor(Token, PlayerID, username, socket) {
     this._Token = Token;
+    this._truePlayer = 'false';
     this._username = username;
     this._PlayerID = PlayerID;
     this._socket = socket;
     this._inGame = false;
+  }
+
+  get truePlayer() {
+    return this._truePlayer;
+  }
+
+  set truePlayer(val) {
+    this._truePlayer = val;
   }
 
   get inGame() {
@@ -76,6 +85,26 @@ function addPlayer(uid, Token, username, socket){
   PlayerId++;
 }
 
+function moveBall(data) {
+  
+  var gameid = data.gameid;
+  var game;
+  try
+  {
+    if (!gameid) 
+      throw new Error("wrong parameters");
+    game = Games.get(gameid);
+    if (!game)
+      throw new Error("wrong parameters");
+    if (game.p1.truePlayer == 'false')
+      game.p1.socket.send(JSON.stringify(data));
+    else
+      game.p2.socket.send(JSON.stringify(data));
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 function moveOpponent(data) {
   
   var gameid = data.gameid;
@@ -123,17 +152,17 @@ function startGame(data, gameId)
     if (!p1 || !p2)
       throw new Error("wrong data format"); 
     p1.inGame = true; 
-    p1.inGame = true; 
+    p1.truePlayer = 'true';
+    p2.inGame = true; 
 
     Games.set(gameId, new Game(p1, p2));
 
     console.log('gameid: ' + gameId);
-    p1.socket.send(JSON.stringify({type: 'startgame', opponent: uname2, gameid: gameId, side: 'p1'}));
-    p2.socket.send(JSON.stringify({type: 'startgame', opponent: uname1, gameid: gameId, side : 'p2'}));
+    p1.socket.send(JSON.stringify({type: 'startgame', opponent: uname2, gameid: gameId, side: 'p1', truePong: p1.truePlayer}));
+    p2.socket.send(JSON.stringify({type: 'startgame', opponent: uname1, gameid: gameId, side : 'p2', truePong: p2.truePlayer}));
 
   } catch (error){
     console.log(error);
-    // todo
   }
 }
 
@@ -200,4 +229,4 @@ function isValidGame(game){
   return true;
 }
 
-export default {addPlayer, getUsers, removePlayer, sendCurrentUsers, invitePlayer, startGame, moveOpponent}; 
+export default {addPlayer, getUsers, removePlayer, sendCurrentUsers, invitePlayer, startGame, moveOpponent, moveBall}; 

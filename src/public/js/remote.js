@@ -15,6 +15,7 @@ var socket;
 var playerSide;
 var gameId;
 var opponent;
+var truePong = false;
 function IncomingInvitationAlert(data) {
     if (confirm('Player: ' + data.user + ' is inviting you to play !'))
         socket.send(JSON.stringify({ type: 'accept', user: data.src, src: local_user }));
@@ -25,8 +26,16 @@ function launchPongRemote(data) {
     gameId = data.gameid;
     playerSide = data.side;
     opponent = data.opponent;
-    console.log();
+    if (data.truePong == 'true')
+        truePong = true;
     fetchPong();
+}
+function moveBall(data) {
+    game.ball.pos.x = Number(data.x);
+    game.ball.pos.y = Number(data.y);
+    console.log("ball pos x: " + game.ball.pos.x);
+    console.log("ball pos y: " + game.ball.pos.y);
+    // ball.style.top = data.y + 'px';
 }
 function moveOpponent(data) {
     var type = data.type;
@@ -77,6 +86,8 @@ function parseIncommingSocketMsg(data) {
             launchPongRemote(data);
         else if (data.type == 'pressed' || data.type == 'released')
             moveOpponent(data);
+        else if (data.type == 'moveBall')
+            moveBall(data);
     }
     catch (error) {
         console.log(error);

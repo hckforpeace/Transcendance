@@ -52,6 +52,8 @@ const sock_con =  async (socket, req, fastify) => {
           remoteObj.startGame(message, uuidv4());  
         else if (message.type == 'pressed' || message.type == 'released')
           remoteObj.moveOpponent(message);
+        else if (message.type == 'moveBall')
+          remoteObj.moveBall(message);
       } catch (error)
       {
         console.log(error)

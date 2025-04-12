@@ -5,6 +5,7 @@ var socket: WebSocket;
 var playerSide:string;
 var gameId: number;
 var opponent: string;
+var truePong: boolean = false;
 
 function IncomingInvitationAlert(data: any)
 {
@@ -19,8 +20,19 @@ function launchPongRemote(data:any)
   gameId = data.gameid;
   playerSide = data.side;
   opponent = data.opponent;
-  console.log()
+  if (data.truePong == 'true')
+    truePong = true;
   fetchPong();
+}
+
+function moveBall(data:any)
+{
+  game.ball.pos.x = Number(data.x);
+  game.ball.pos.y = Number(data.y); 
+  console.log("ball pos x: " + game.ball.pos.x);
+  console.log("ball pos y: " + game.ball.pos.y);
+  // ball.style.top = data.y + 'px';
+
 }
 
 function moveOpponent(data:any)
@@ -75,6 +87,8 @@ function parseIncommingSocketMsg(data: any)
       launchPongRemote(data); 
     else if (data.type == 'pressed' || data.type == 'released')
       moveOpponent(data); 
+    else if (data.type == 'moveBall')
+      moveBall(data);
   }
   catch (error)
   {
