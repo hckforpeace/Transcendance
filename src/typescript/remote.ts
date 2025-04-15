@@ -2,10 +2,8 @@ const currentUrl = window.location.hostname;
 const currentPort = window.location.port;
 const currentRoot = currentUrl + ":" + currentPort;
 var socket: WebSocket;
-var playerSide:string;
 var gameId: number;
 var opponent: string;
-var truePong: boolean = false;
 
 function IncomingInvitationAlert(data: any)
 {
@@ -18,21 +16,9 @@ function IncomingInvitationAlert(data: any)
 function launchPongRemote(data:any)
 {
   gameId = data.gameid;
-  playerSide = data.side;
   opponent = data.opponent;
-  if (data.truePong == 'true')
-    truePong = true;
+  console.log()
   fetchPong();
-}
-
-function moveBall(data:any)
-{
-  game.ball.pos.x = Number(data.x);
-  game.ball.pos.y = Number(data.y); 
-  console.log("ball pos x: " + game.ball.pos.x);
-  console.log("ball pos y: " + game.ball.pos.y);
-  // ball.style.top = data.y + 'px';
-
 }
 
 function moveOpponent(data:any)
@@ -41,33 +27,20 @@ function moveOpponent(data:any)
   var dir = data.direction;
 
   if (type == 'pressed') {
-    if (dir == 'up') {
-      if (playerSide == 'p1')
-        p2_upPressed = true;
-      else
-        p1_upPressed = true;
+    if (dir == 'up')
+  {
+      p2_upPressed = true;
+      console.log('move up');
     }
     else {
-      if (playerSide == 'p1')
-        p2_downPressed = true;
-      else
-        p1_downPressed = true;
+      p2_downPressed = true;
+      console.log('move down');
     } 
   } else {
-    if (dir == 'up') {
-      if (playerSide == 'p1')
-        p2_upPressed = false;
-      else
-        p1_upPressed = false;
-      // p2_upPressed = false;
-    }
-    else {
-      if (playerSide == 'p1')
-        p2_downPressed = false;
-      else
-        p1_downPressed = false;
-      // p2_downPressed = false;
-    }
+    if (dir == 'up')
+      p2_upPressed = false;
+    else 
+      p2_downPressed = false;
   }
   // console.log("p2_upPressed:&&  " + p2_upPressed);
   // console.log("p2_downPressed: " + p2_downPressed);
@@ -87,8 +60,6 @@ function parseIncommingSocketMsg(data: any)
       launchPongRemote(data); 
     else if (data.type == 'pressed' || data.type == 'released')
       moveOpponent(data); 
-    else if (data.type == 'moveBall')
-      moveBall(data);
   }
   catch (error)
   {

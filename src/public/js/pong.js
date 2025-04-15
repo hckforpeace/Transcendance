@@ -148,11 +148,8 @@ function update_ball_state() {
         game.new_round = true;
     }
     /* Update ball position */
-    socket.send(JSON.stringify({ type: 'moveBall', x: ball.pos.x, y: ball.pos.y, gameid: gameId }));
     game.ball.pos = { x: game.ball.pos.x + game.ball.direction.x * game.ball.speed,
         y: game.ball.pos.y + game.ball.direction.y * game.ball.speed };
-    console.log("Sended ball pos x: " + game.ball.pos.x);
-    console.log("Sended ball pos y: " + game.ball.pos.y);
 }
 /**
  * @brief Move player
@@ -224,8 +221,7 @@ function draw() {
     draw_score();
     ctx.closePath();
     update_player_pos();
-    if (truePong)
-        update_ball_state();
+    update_ball_state();
 }
 /**
  * @brief Draw fianal state, when player win
@@ -264,17 +260,11 @@ function draw_finish() {
  */
 function pressedKeyHandler(e) {
     if (e.key === "Up" || e.key === "ArrowUp") {
-        if (playerSide == 'p1')
-            p1_upPressed = true;
-        else
-            p2_upPressed = true;
+        p1_upPressed = true;
         socket.send(JSON.stringify({ type: 'pressed', direction: 'up', opponent: opponent, gameid: gameId }));
     }
     if (e.key === "Down" || e.key === "ArrowDown") {
-        if (playerSide == 'p1')
-            p1_downPressed = true;
-        else
-            p2_downPressed = true;
+        p1_downPressed = true;
         socket.send(JSON.stringify({ type: 'pressed', direction: 'down', opponent: opponent, gameid: gameId }));
     }
 }
@@ -285,17 +275,11 @@ function pressedKeyHandler(e) {
  */
 function releasedKeyHandler(e) {
     if (e.key === "Up" || e.key === "ArrowUp") {
-        if (playerSide == 'p1')
-            p1_upPressed = false;
-        else
-            p2_upPressed = false;
+        p1_upPressed = false;
         socket.send(JSON.stringify({ type: 'released', direction: 'up', opponent: opponent, gameid: gameId }));
     }
     if (e.key === "Down" || e.key === "ArrowDown") {
-        if (playerSide == 'p1')
-            p1_downPressed = false;
-        else
-            p2_downPressed = false;
+        p1_downPressed = false;
         socket.send(JSON.stringify({ type: 'released', direction: 'down', opponent: opponent, gameid: gameId }));
     }
 }
