@@ -14,36 +14,77 @@ const currentRoot = currentUrl + ":" + currentPort;
 var socket;
 var gameId;
 var opponent;
+var playerSide;
 function IncomingInvitationAlert(data) {
-    if (confirm('Player: ' + data.user + ' is inviting you to play !'))
+    if (confirm('Player: ' + data.user + ' is inviting you to play !')) {
         socket.send(JSON.stringify({ type: 'accept', user: data.src, src: local_user }));
+        playerSide = 'left';
+    }
     else
         socket.send(JSON.stringify({ type: 'refuse', user: data.src, src: local_user }));
 }
 function launchPongRemote(data) {
+    console.log('I am player ' + playerSide);
     gameId = data.gameid;
     opponent = data.opponent;
     console.log();
     fetchPong();
 }
+// function moveOpponent(data:any)
+// {
+//   var type = data.type;
+//   var dir = data.direction;
+//   if (type == 'pressed') {
+//     if (dir == 'up'){
+//       if (player_side == 'left')
+//         p1_upPressed = true;
+//       else
+//         p2_upPressed = true;
+//       p2_upPressed = true;
+//     }
+//     else
+//       p2_downPressed = true;
+//   } else {
+//     if (dir == 'up')
+//       p2_upPressed = false;
+//     else 
+//       p2_downPressed = false;
+//   }
+//   // console.log("p2_upPressed:&&  " + p2_upPressed);
+//   // console.log("p2_downPressed: " + p2_downPressed);
+// }
 function moveOpponent(data) {
     var type = data.type;
     var dir = data.direction;
     if (type == 'pressed') {
         if (dir == 'up') {
-            p2_upPressed = true;
-            console.log('move up');
+            if (playerSide == 'left')
+                p2_upPressed = true;
+            else
+                p1_upPressed = true;
         }
         else {
-            p2_downPressed = true;
-            console.log('move down');
+            if (playerSide == 'left')
+                p2_downPressed = true;
+            else
+                p1_downPressed = true;
         }
     }
     else {
-        if (dir == 'up')
-            p2_upPressed = false;
-        else
-            p2_downPressed = false;
+        if (dir == 'up') {
+            if (playerSide == 'left')
+                p2_upPressed = false;
+            else
+                p1_upPressed = false;
+            // p2_upPressed = false;
+        }
+        else {
+            if (playerSide == 'left')
+                p2_downPressed = false;
+            else
+                p1_downPressed = false;
+            // p2_downPressed = false;
+        }
     }
     // console.log("p2_upPressed:&&  " + p2_upPressed);
     // console.log("p2_downPressed: " + p2_downPressed);
@@ -77,6 +118,7 @@ function listclick() {
             if (!user)
                 throw new Error('usli value not defined not found');
             // console.log();
+            playerSide = 'right';
             socket.send(JSON.stringify({ type: 'invite', user: user.innerHTML, src: local_user }));
         }
         catch (error) {

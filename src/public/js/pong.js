@@ -260,11 +260,17 @@ function draw_finish() {
  */
 function pressedKeyHandler(e) {
     if (e.key === "Up" || e.key === "ArrowUp") {
-        p1_upPressed = true;
+        if (playerSide == 'left')
+            p1_upPressed = true;
+        else
+            p2_upPressed = true;
         socket.send(JSON.stringify({ type: 'pressed', direction: 'up', opponent: opponent, gameid: gameId }));
     }
     if (e.key === "Down" || e.key === "ArrowDown") {
-        p1_downPressed = true;
+        if (playerSide == 'left')
+            p1_downPressed = true;
+        else
+            p2_downPressed = true;
         socket.send(JSON.stringify({ type: 'pressed', direction: 'down', opponent: opponent, gameid: gameId }));
     }
 }
@@ -275,11 +281,17 @@ function pressedKeyHandler(e) {
  */
 function releasedKeyHandler(e) {
     if (e.key === "Up" || e.key === "ArrowUp") {
-        p1_upPressed = false;
+        if (playerSide == 'left')
+            p1_upPressed = false;
+        else
+            p2_upPressed = false;
         socket.send(JSON.stringify({ type: 'released', direction: 'up', opponent: opponent, gameid: gameId }));
     }
     if (e.key === "Down" || e.key === "ArrowDown") {
-        p1_downPressed = false;
+        if (playerSide == 'left')
+            p1_downPressed = false;
+        else
+            p2_downPressed = false;
         socket.send(JSON.stringify({ type: 'released', direction: 'down', opponent: opponent, gameid: gameId }));
     }
 }

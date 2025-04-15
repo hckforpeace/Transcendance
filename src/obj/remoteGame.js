@@ -9,6 +9,15 @@ class Player {
     this._PlayerID = PlayerID;
     this._socket = socket;
     this._inGame = false;
+    this._side = null;
+  }
+
+  get side() {
+    return this._side;
+  }
+
+  set side(val) {
+    this._side = val;
   }
 
   get inGame() {
@@ -119,11 +128,13 @@ function startGame(data, gameId)
     console.log('p1: ' + uname1 + ', p2: ' + uname2)
     p1 = findPlayer(uname1);
     p2 = findPlayer(uname2);
-    
+  
     if (!p1 || !p2)
       throw new Error("wrong data format"); 
+  
+    p2.side = 'left';
     p1.inGame = true; 
-    p1.inGame = true; 
+    p2.inGame = true; 
 
     Games.set(gameId, new Game(p1, p2));
 
@@ -159,7 +170,8 @@ function invitePlayer(data, socket){
   try {
     invited_player = findPlayer(data.user);
     src_player = findPlayer(data.src);
-   
+  
+    src_player.side = 'right';
     if (!invited_player || !src_player)
       throw new Error("players not found")
 
