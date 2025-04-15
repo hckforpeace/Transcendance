@@ -1,4 +1,4 @@
-const TRAINING: boolean = false;
+const TRAINING: boolean = true;
 /* ************************************************************************** */
 /*                                GLOBAL VARIABLES                            */
 /* ************************************************************************** */
@@ -28,9 +28,9 @@ const MSG_POS_RATIO: number = 0.7;
 
 /* Ball */
 let ball_color = "#FFFFFF";
-const BALL_INIT_SPEED: number = 5;
+const BALL_INIT_SPEED: number = 10;
 //const BALL_COLOR: string = "#FFFFFF";
-const BALL_MAX_SPEED: number = 6;
+const BALL_MAX_SPEED: number = 11;
 var BALL_RADIUS: number;
 /* Terrain draw */
 const TERRAIN_COLOR: string = "#FFFFFF";
@@ -50,9 +50,9 @@ var p2_downPressed: boolean = false;
 
 /* IA Q_algorythm value */
 let rewards: number = 0;
-var NUM_ACTIONS: number = 7;
-var NUM_STATES: number = 7;
-const ALPHA: number = 0.4;
+var NUM_ACTIONS: number = 13;
+var NUM_STATES: number = 14;
+const ALPHA: number = 0.2;
 const GAMMA: number = 0.7;
 let EPSILON: number = 1;
 let EPSILON_MIN: number = 0.2;
@@ -244,39 +244,48 @@ function getState(): number {
 	let ball = game.ball;
 	let p2 = game.player_2;
 
-	/* If the ball is not going toward the IA */
+	// Vérifie si la balle est dans la première moitié de l'écran
+	const isFirstHalf = ball.pos.x < canvas.width / 2;
+
+	// Si la balle ne va pas vers l'IA
 	if(ball.direction.x < 0)
-		return(0);
-	/* Cases if the ball is above the player */
-	// Ball goes up above the player
-	if(ball.direction.y < 0 && ball.pos.y < p2.pos.y)
-		return(3); // go up fastly
-	// Ball goes down above the player
-	if(ball.direction.y > 0 && ball.pos.y < p2.pos.y)
-		return(5); // go up slowly
+		return 0;
 
-	/* Case if the ball is in front of the player */
-	// Ball up in font of the player
-	if (ball.direction.y < 0 && ball.pos.y >= p2.pos.y && ball.pos.y <= p2.pos.y + PLAYER_HEIGHT) {
-		return(1); // Go up normal
-	}
-	// Ball down in font of the player
-	if (ball.direction.y > 0 && ball.pos.y >= p2.pos.y && ball.pos.y <= p2.pos.y + PLAYER_HEIGHT) {
-		return(2); // go down normal
+	// === PREMIÈRE MOITIÉ : inverser les actions ===
+	if (isFirstHalf) {
+		if (ball.direction.y < 0 && ball.pos.y < p2.pos.y)
+			return 9; // inversé de 3 → go down fastly
+		if (ball.direction.y > 0 && ball.pos.y < p2.pos.y)
+			return 11; // inversé de 5 → go down slowly
+
+		if (ball.direction.y < 0 && ball.pos.y >= p2.pos.y && ball.pos.y <= p2.pos.y + PLAYER_HEIGHT)
+			return 7; // inversé de 1 → go down normal
+		if (ball.direction.y > 0 && ball.pos.y >= p2.pos.y && ball.pos.y <= p2.pos.y + PLAYER_HEIGHT)
+			return 8; // inversé de 2 → go up normal
+
+		if (ball.direction.y < 0 && ball.pos.y > p2.pos.y + PLAYER_HEIGHT)
+			return 12; // inversé de 6 → go up slowly
+		if (ball.direction.y > 0 && ball.pos.y > p2.pos.y + PLAYER_HEIGHT)
+			return 10; // inversé de 4 → go up fastly
 	}
 
-	/* Case where the ball is after the player */
-	// Direction up after the player
-	if(ball.direction.y < 0 && ball.pos.y > p2.pos.y + PLAYER_HEIGHT)
-	{
-		return(6); // go down slowly
-	}
-	// Direction down after the player
-	if(ball.direction.y > 0 && ball.pos.y > p2.pos.y + PLAYER_HEIGHT)
-	{
-		return(4); // go down fastly
-	}
-	return (0);
+	// === DEUXIÈME MOITIÉ : comportement normal ===
+	if (ball.direction.y < 0 && ball.pos.y < p2.pos.y)
+		return 3; // go up fastly
+	if (ball.direction.y > 0 && ball.pos.y < p2.pos.y)
+		return 5; // go up slowly
+
+	if (ball.direction.y < 0 && ball.pos.y >= p2.pos.y && ball.pos.y <= p2.pos.y + PLAYER_HEIGHT)
+		return 1; // go up normal
+	if (ball.direction.y > 0 && ball.pos.y >= p2.pos.y && ball.pos.y <= p2.pos.y + PLAYER_HEIGHT)
+		return 2; // go down normal
+
+	if (ball.direction.y < 0 && ball.pos.y > p2.pos.y + PLAYER_HEIGHT)
+		return 6; // go down slowly
+	if (ball.direction.y > 0 && ball.pos.y > p2.pos.y + PLAYER_HEIGHT)
+		return 4; // go down fastly
+
+	return 0;
 }
 
 /* choose an action according to the epsilon value : this is called the epsilon-greedy */
@@ -320,72 +329,84 @@ function get_reward(): number {
 	return Math.max(min_reward, reward);
 }
 
+let lastTimeIA = Date.now(); // Variable globale pour stocker le temps du dernier rafraîchissement de l'IA
 let lastTime = Date.now(); // Variable globale pour stocker le temps du dernier rafraîchissement de l'IA
+let currTimeIA = 0;
 let currTime = 0;
 
 let up = false;
 let down = false;
 
 function update_ia_pos() {
-	currTime = Date.now();
+	currTimeIA = Date.now();
 	let p2 = game.player_2;
 	let ball = game.ball;
 	let action = 0;
 	let state = 0;
 
-	// if (currTime - lastTime > 1000)
-	// {
-	// 	lastTime = currTime;
-	// }
+	if (currTimeIA - lastTimeIA > 1000)
+	{
 		state = getState();
+		lastTimeIA = currTimeIA;
+	}
 	
 	action = chooseAction(state) // Action choisie par l'IA
-
 	if (action == 0) {
-		up = false;
-		down = false;
+		p2.pos.y += 0;
+
 	}
-	if (action == 1) {
-		p2.pos.y -= PLAYER_SPEED;
-		p2.pos.y -= PLAYER_SPEED;
-		up = true;
-		down = false;
+	else if (action == 1) {
+		p2.pos.y -= PLAYER_SPEED * 2;
+	
 	}
-	if (action == 2) {
+	else if (action == 2) {
 		p2.pos.y += PLAYER_SPEED * 2;
-		up = true;
-		down = false;
+
 	}
 	else if (action == 3) {
 		p2.pos.y -= PLAYER_SPEED * 4;
-		up = true;
-		down = false;
+	
 	}
 	else if (action == 4) {
 		p2.pos.y += PLAYER_SPEED * 4;
-		up = false;
-		down = true;
+	
 	}
 	else if (action == 5) {
 		p2.pos.y -= PLAYER_SPEED;
-		up = true;
-		down = false;
+	
 	}
 	else if (action == 6) {
 		p2.pos.y += PLAYER_SPEED;
-		up = true;
-		down = false;
+	
 	}
+	
+	/* === Nouvelles actions pour états inversés === */
+	
+	else if (action == 7) {
+		p2.pos.y += PLAYER_SPEED * 2; // Inverse de action 1
+	
+	}
+	else if (action == 8) {
+		p2.pos.y -= PLAYER_SPEED * 2; // Inverse de action 2
+	
+	}
+	else if (action == 9) {
+		p2.pos.y += PLAYER_SPEED * 4; // Inverse de action 3
+	
+	}
+	else if (action == 10) {
+		p2.pos.y -= PLAYER_SPEED * 4; // Inverse de action 4
+	
+	}
+	else if (action == 11) {
+		p2.pos.y += PLAYER_SPEED; // Inverse de action 5
+	
+	}
+	else if (action == 12) {
+		p2.pos.y -= PLAYER_SPEED; // Inverse de action 6
 
-
-	// Continue to moove in accordance to the choice the IA made once per seconde
-	// else {
-	// 	if (up)
-	// 		p2.pos.y -= PLAYER_SPEED * 2;
-	// 	if (down)
-	// 		p2.pos.y += PLAYER_SPEED * 2;
-	// }
-
+	}
+	
 
 	// Limit of the screen for the player
 	if (p2.pos.y < 0)
@@ -398,7 +419,7 @@ function update_ia_pos() {
 		let next_state = getState();
 		updateTable(state, action, instant_reward, next_state);
 	}
-	// console.log("Q_table : ", Q_table);
+	 console.log("Q_table : ", Q_table);
 }
 
 
