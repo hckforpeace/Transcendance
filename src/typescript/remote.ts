@@ -89,6 +89,8 @@ function parseIncommingSocketMsg(data: any)
       moveOpponent(data); 
     else if (data.type == 'moveBall')
       moveBall(data);
+    else if (data.type == 'opponentdisconnect')
+      alert("opponent " + data.opponent + " was disconnected");
   }
   catch (error)
   {

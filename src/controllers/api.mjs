@@ -63,8 +63,9 @@ const sock_con =  async (socket, req, fastify) => {
 
     socket.on('close', () => {
       console.log('Connection closed:', id);
-      remoteObj.removePlayer(id);
-      remoteObj.sendCurrentUsers(id);
+      remoteObj.DisconnectPlayer(id);
+      // remoteObj.removePlayer(id);
+      // remoteObj.sendCurrentUsers(id);
     });
   }
   catch (error) {

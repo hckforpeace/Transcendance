@@ -7,10 +7,10 @@ class Player {
     this._Token = Token;
     this._truePlayer = 'false';
     this._username = username;
-    this._PlayerID = PlayerID;
+    this._PlayerId = PlayerID;
     this._socket = socket;
     this._pendingInvite = false;
-    this._inGame = false;
+    this._inGame = null;
   }
 
   get pendingInvite() {
@@ -51,7 +51,7 @@ class Player {
   }
 
   set PlayerId(val) {
-    this._PlayerID = val;
+    this._PlayerId = val;
   }
 
   set socket(val) {
@@ -89,7 +89,7 @@ class Game {
 }
 
 function addPlayer(uid, Token, username, socket){
-  let npalyer = new Player(Token, PlayerId, username, socket);
+  let npalyer = new Player(Token, uid, username, socket);
   Players.set(uid, npalyer);
   PlayerId++;
 }
@@ -162,9 +162,9 @@ function startGame(data, gameId)
 
     if (!p1 || !p2)
       throw new Error("wrong data format"); 
-    p1.inGame = true; 
+    p1.inGame = gameId; 
+    p2.inGame = gameId; 
     p1.truePlayer = 'true';
-    p2.inGame = true; 
 
     Games.set(gameId, new Game(p1, p2));
 
@@ -203,10 +203,39 @@ function invitePlayer(data, socket){
     if (!invited_player || !src_player)
       throw new Error("players not found")
 
-    invited_player.socket.send(JSON.stringify(data));
+    if (!invited_player.pendingInvite)
+      invited_player.socket.send(JSON.stringify(data));
     invited_player.pendingInvite = true;
   } catch (error) {
     console.log(error);
+  }
+}
+
+function DisconnectPlayer(id){
+  let player = Players.get(id);
+  if (player != null)
+  {
+    if (player.inGame != null)
+    {
+      var gameid = player.inGame;
+      let game = Games.get(player.inGame);
+      if (game.p1 == player) {
+        game.p1.inGame = null; 
+        game.p1 = null;
+        if (game.p2 != null){
+          // game.p2
+          game.p2.socket.send(JSON.stringify({type: 'opponentdisconnect', opponent: player.username}));
+        }
+      }
+      else {
+        game.p2.inGame = null; 
+        game.p2 = null;
+        if (game.p1 != null)
+          game.p1.socket.send(JSON.stringify({type: 'opponentdisconnect', opponent: player.username}));
+      }
+      Games.delete(gameid);
+    }
+    Players.delete(id);
   }
 }
 
@@ -241,4 +270,4 @@ function isValidGame(game){
   return true;
 }
 
-export default {addPlayer, getUsers, removePlayer, sendCurrentUsers, invitePlayer, startGame, moveOpponent, moveBall}; 
+export default {addPlayer, getUsers, removePlayer, sendCurrentUsers, invitePlayer, startGame, moveOpponent, moveBall, DisconnectPlayer}; 
