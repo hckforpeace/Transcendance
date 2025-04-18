@@ -9,7 +9,16 @@ class Player {
     this._username = username;
     this._PlayerID = PlayerID;
     this._socket = socket;
+    this._pendingInvite = false;
     this._inGame = false;
+  }
+
+  get pendingInvite() {
+    return this._pendingInvite;
+  }
+
+  set pendingInvite(val) {
+    this._pendingInvite = val;
   }
 
   get truePlayer() {
@@ -148,7 +157,9 @@ function startGame(data, gameId)
     console.log('p1: ' + uname1 + ', p2: ' + uname2)
     p1 = findPlayer(uname1);
     p2 = findPlayer(uname2);
-    
+    p1.pendingInvite = false; 
+    p2.pendingInvite = false; 
+
     if (!p1 || !p2)
       throw new Error("wrong data format"); 
     p1.inGame = true; 
@@ -193,6 +204,7 @@ function invitePlayer(data, socket){
       throw new Error("players not found")
 
     invited_player.socket.send(JSON.stringify(data));
+    invited_player.pendingInvite = true;
   } catch (error) {
     console.log(error);
   }

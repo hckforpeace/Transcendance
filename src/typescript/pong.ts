@@ -156,7 +156,7 @@ function update_ball_state() {
 	let	dir = game.ball.direction;
 	// let	pos = game.ball.pos;
 	// let	speed = game.ball.speed;
-	let	ball_next_pos = { x: ball.pos.x + ball.speed * dir.x, y: ball.pos.y + ball.speed * dir.y};
+  let	ball_next_pos = { x: ball.pos.x + ball.speed * dir.x, y: ball.pos.y + ball.speed * dir.y};
 
 	/* Check for wall collision */
 	if (ball_next_pos.y > canvas.height - BALL_RADIUS || ball_next_pos.y < BALL_RADIUS)
@@ -185,11 +185,13 @@ function update_ball_state() {
 	}
 
 	/* Update ball position */
-  socket.send(JSON.stringify({type: 'moveBall', x: ball.pos.x, y: ball.pos.y, gameid: gameId}));
-	game.ball.pos = { x: game.ball.pos.x + game.ball.direction.x * game.ball.speed,
-						y: game.ball.pos.y + game.ball.direction.y * game.ball.speed };
-  console.log("Sended ball pos x: " + game.ball.pos.x);
-  console.log("Sended ball pos y: " + game.ball.pos.y);
+  if (truePong) {
+    socket.send(JSON.stringify({type: 'moveBall', x: ball.pos.x, y: ball.pos.y, gameid: gameId}));
+    game.ball.pos = { x: game.ball.pos.x + game.ball.direction.x * game.ball.speed,
+              y: game.ball.pos.y + game.ball.direction.y * game.ball.speed };
+  }
+  // console.log("Sended ball pos x: " + game.ball.pos.x);
+  // console.log("Sended ball pos y: " + game.ball.pos.y);
 }
 
 /**
@@ -268,8 +270,7 @@ function draw() {
 	draw_score();
 	ctx.closePath();
 	update_player_pos();
-  if (truePong)
-	  update_ball_state();
+  update_ball_state();
 }
 
 /**

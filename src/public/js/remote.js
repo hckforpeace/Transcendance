@@ -17,7 +17,7 @@ var gameId;
 var opponent;
 var truePong = false;
 function IncomingInvitationAlert(data) {
-    if (confirm('Player: ' + data.user + ' is inviting you to play !'))
+    if (confirm('Player: ' + data.src + ' is inviting you to play !'))
         socket.send(JSON.stringify({ type: 'accept', user: data.src, src: local_user }));
     else
         socket.send(JSON.stringify({ type: 'refuse', user: data.src, src: local_user }));
@@ -141,6 +141,7 @@ function updateLobbyUsers(data) {
     for (let i = 0; i < numberofusers; i++) {
         let element = document.createElement('li');
         element.innerHTML = data.users[i];
+        element.style.cursor = 'pointer';
         users_tag.appendChild(element);
     }
 }
