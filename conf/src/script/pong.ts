@@ -30,7 +30,7 @@ const MSG_POS_RATIO: number = 0.7;
 let ball_color = "#FFFFFF";
 const BALL_INIT_SPEED: number = 10;
 //const BALL_COLOR: string = "#FFFFFF";
-const BALL_MAX_SPEED: number = 11;
+const BALL_MAX_SPEED: number = 14;
 var BALL_RADIUS: number;
 /* Terrain draw */
 const TERRAIN_COLOR: string = "#FFFFFF";
@@ -50,21 +50,14 @@ var p2_downPressed: boolean = false;
 
 /* IA Q_algorythm value */
 let rewards: number = 0;
-var NUM_ACTIONS: number = 13;
-var NUM_STATES: number = 14;
+var NUM_ACTIONS: number = 3;
+var NUM_STATES: number = 3;
 const ALPHA: number = 0.2;
-const GAMMA: number = 0.7;
+const GAMMA: number = 0.8;
 let EPSILON: number = 1;
 let EPSILON_MIN: number = 0.2;
-const epsilon_decay_rate: number = 0.000001;
-let Q_table: number[][] = [[-14.39663335307505,-6.453912451857626,-7.691972628441473,-12.484111827837044,0.7330148367328948,-0.12925306814475634,-10.127569986905057],
-[171.3346416331965,157.50965960792396,177.1537215458851,99.15359713754789,154.46410875217964,176.41920085432986,174.80607115650534],
-[193.9816138144913,170.4409437597591,159.66083018609143,85.64966516370157,171.8052344800032,193.34102658409162,192.40559332938398],
-[-1.0799850968337603,19.043871345382883,-4.278126810231591,7.470946535987421,-0.4468861421082728,-9.625974175195871,6.7915258066377815],
-[-16.336604123921756,-48.0054415611648,-31.106287052625287,-37.2831200162789,-8.076114643672263,-23.72535366517693,-17.593027386046565],
-[15.077345672372967,17.77317147313067,-19.53549422193532,37.82016506264663,15.296795416703205,7.693723219079134,0.2053498303584398],
-[14.491410188325448,-0.7692270369804426,-1.91457988216957,-19.50589599657929,43.42200637276192,4.6214172328295415,-3.0767713909861643]];
-// let Q_table: number[][] = Array.from({ length: NUM_STATES }, () => new Array(NUM_ACTIONS).fill(0));
+const epsilon_decay_rate: number = 0.00001;
+let Q_table: number[][] = [[-145.64301981570978, -144.3148564907343, -143.39265183161336], [-109.33841440115992, -110.98333133685067, -114.02086506017787], [-201.66747219844564, -202.28097240849237, -201.9481931103624]];
 let Q_table_training: number[][] = Array.from({ length: NUM_STATES }, () => new Array(NUM_ACTIONS).fill(0));
 /*                              CLASSES && INTERFACES                         */
 /* ************************************************************************** */
@@ -93,7 +86,7 @@ class Ball {
 
 	constructor(pos: Vec2) {
 		this.pos = pos;
-		this.direction = { x: 0, y: 0 };
+		this.direction = { x: 0.45, y: 0.55 };
 		this.speed = BALL_INIT_SPEED;
 	}
 }
@@ -165,16 +158,7 @@ function draw_terrain() {
 	ctx.fillStyle = "#FFFFFF"; // Blanc
 	ctx.fill();
 }
-// function draw_terrain() {
-// 	if (!canvas)
-// 		throw new Error("Canvas not found");
-// 	if (!ctx)
-// 		throw new Error("Context not found");
-// 	ctx.rect((canvas.width - TERRAIN_LINE_FAT) / 2, 0, TERRAIN_LINE_FAT, canvas.height);
-// 	ctx.rect((canvas.width - TERRAIN_LINE_FAT) / 2, 0, TERRAIN_LINE_FAT, canvas.height);
-// 	ctx.fillStyle = TERRAIN_COLOR;
-// 	ctx.fill();
-// }
+
 const RANDOM_BOUNCE_ANGLE = 0.5;
 /**
  * @brief Update ball direction and speed on collision
@@ -197,18 +181,16 @@ function update_ball_state() {
 		&& (ball.pos.y > p1.pos.y && ball.pos.y < p1.pos.y + PLAYER_HEIGHT) && number == 0) {
 		number = 1;
 		dir.x = -dir.x;
-		//dir.y += 0.45;
-		//dir.y += (Math.random() - 0.5) * RANDOM_BOUNCE_ANGLE;
-		// console.log("DIR Y P1 -> ", dir.y);
+		// dir.y += 0.50;
+		// dir.y += (Math.random() - 0.3) * RANDOM_BOUNCE_ANGLE;
 		game.ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
 	}
 	if ((ball.pos.x > p2.pos.x && ball.pos.x < p2.pos.x + PLAYER_WIDTH)
 		&& (ball.pos.y > p2.pos.y && ball.pos.y < p2.pos.y + PLAYER_HEIGHT) && number == 1) {
 		number = 0;
 		dir.x = -dir.x;
-		//dir.y += -0.55;
-		//dir.y += (Math.random() - 0.5) * RANDOM_BOUNCE_ANGLE;
-		// console.log("DIR Y P2 -> ", dir.y);
+		// dir.y += -0.50;
+		// dir.y += (Math.random() - 0.3) * RANDOM_BOUNCE_ANGLE;
 		ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
 	}
 
@@ -237,54 +219,53 @@ function update_ball_state() {
  */
 
 /* IA Q_LEARNING MOVES */
-const scaleX = screen.width / 1920;  // assuming 1920x1080 as baseline
-const scaleY = screen.height / 1080;
+let future_pos_y = 0;
+function getFutureY(): number {
+	const ball = game.ball;
+	const pos = { x: ball.pos.x, y: ball.pos.y };
+	const dir = { x: ball.direction.x, y: ball.direction.y };
+	const speed = ball.speed;
+	const playerX = game.player_2.pos.x;
+	const height = canvas.height;
+
+	// Si la balle va vers la gauche, on prédit rien
+	if (dir.x <= 0) return 0;
+
+	let x = pos.x;
+	let y = pos.y;
+	let dx = dir.x * speed;
+	let dy = dir.y * speed;
+
+	while (x < playerX) {
+		// temps pour atteindre le prochain bord haut ou bas
+		let timeToWall = dy > 0
+			? (height - BALL_RADIUS - y) / dy
+			: (BALL_RADIUS - y) / dy;
+
+		let timeToPaddle = (playerX - x) / dx;
+
+		// Si la balle touche le paddle avant un mur
+		if (timeToPaddle < timeToWall) {
+			y += dy * timeToPaddle;
+			break;
+		} else {
+			// rebond contre mur
+			x += dx * timeToWall;
+			y += dy * timeToWall;
+			dy = -dy; // inversion de la direction verticale
+		}
+	}
+	return y - PLAYER_HEIGHT / 2;
+}
 
 function getState(): number {
 	let ball = game.ball;
 	let p2 = game.player_2;
 
-	// Vérifie si la balle est dans la première moitié de l'écran
-	const isFirstHalf = ball.pos.x < canvas.width / 2;
-
-	// Si la balle ne va pas vers l'IA
-	if(ball.direction.x < 0)
-		return 0;
-
-	// === PREMIÈRE MOITIÉ : inverser les actions ===
-	if (isFirstHalf) {
-		if (ball.direction.y < 0 && ball.pos.y < p2.pos.y)
-			return 9; // inversé de 3 → go down fastly
-		if (ball.direction.y > 0 && ball.pos.y < p2.pos.y)
-			return 11; // inversé de 5 → go down slowly
-
-		if (ball.direction.y < 0 && ball.pos.y >= p2.pos.y && ball.pos.y <= p2.pos.y + PLAYER_HEIGHT)
-			return 7; // inversé de 1 → go down normal
-		if (ball.direction.y > 0 && ball.pos.y >= p2.pos.y && ball.pos.y <= p2.pos.y + PLAYER_HEIGHT)
-			return 8; // inversé de 2 → go up normal
-
-		if (ball.direction.y < 0 && ball.pos.y > p2.pos.y + PLAYER_HEIGHT)
-			return 12; // inversé de 6 → go up slowly
-		if (ball.direction.y > 0 && ball.pos.y > p2.pos.y + PLAYER_HEIGHT)
-			return 10; // inversé de 4 → go up fastly
-	}
-
-	// === DEUXIÈME MOITIÉ : comportement normal ===
-	if (ball.direction.y < 0 && ball.pos.y < p2.pos.y)
-		return 3; // go up fastly
-	if (ball.direction.y > 0 && ball.pos.y < p2.pos.y)
-		return 5; // go up slowly
-
-	if (ball.direction.y < 0 && ball.pos.y >= p2.pos.y && ball.pos.y <= p2.pos.y + PLAYER_HEIGHT)
-		return 1; // go up normal
-	if (ball.direction.y > 0 && ball.pos.y >= p2.pos.y && ball.pos.y <= p2.pos.y + PLAYER_HEIGHT)
-		return 2; // go down normal
-
-	if (ball.direction.y < 0 && ball.pos.y > p2.pos.y + PLAYER_HEIGHT)
-		return 6; // go down slowly
-	if (ball.direction.y > 0 && ball.pos.y > p2.pos.y + PLAYER_HEIGHT)
-		return 4; // go down fastly
-
+	if (p2.pos.y < future_pos_y)
+		return (1);
+	if (p2.pos.y > future_pos_y + PLAYER_HEIGHT)
+		return (2);
 	return 0;
 }
 
@@ -297,11 +278,10 @@ function chooseAction(state: number): number {
 		if (Math.random() < EPSILON)
 			best_action = Math.floor(Math.random() * NUM_ACTIONS);
 		else if (Q_table_training[state]) {
-			best_action = Q_table[state].indexOf(Math.max(...Q_table_training[state]));
+			best_action = Q_table_training[state].indexOf(Math.max(...Q_table_training[state]));
 		}
 	}
 	else {
-		
 		best_action = Q_table[state].indexOf(Math.max(...Q_table[state]));
 	}
 	//console.log("state => ", state, "best_action => ", best_action);
@@ -320,7 +300,7 @@ function updateTable(state: number, action: number, reward: number, next_state: 
 function get_reward(): number {
 	const max_reward = PLAYER_HEIGHT / 2;
 	const min_reward = -max_reward;
-	const y_distance = Math.abs(game.player_2.pos.y + (PLAYER_HEIGHT / 2) - game.ball.pos.y);
+	const y_distance = Math.abs(game.player_2.pos.y + (PLAYER_HEIGHT / 2) - future_pos_y);
 	let reward = -(y_distance / canvas.height) * max_reward;
 
 	if (y_distance < PLAYER_HEIGHT / 2)
@@ -337,76 +317,32 @@ let currTime = 0;
 let up = false;
 let down = false;
 
+let state = 0;
 function update_ia_pos() {
 	currTimeIA = Date.now();
 	let p2 = game.player_2;
 	let ball = game.ball;
 	let action = 0;
-	let state = 0;
 
-	if (currTimeIA - lastTimeIA > 1000)
-	{
-		state = getState();
+	currTimeIA = Date.now();
+
+	if (currTimeIA - lastTimeIA > 1000) {
+		future_pos_y = getFutureY();
 		lastTimeIA = currTimeIA;
 	}
-	
-	action = chooseAction(state) // Action choisie par l'IA
-	if (action == 0) {
-		p2.pos.y += 0;
 
-	}
-	else if (action == 1) {
-		p2.pos.y -= PLAYER_SPEED * 2;
-	
-	}
-	else if (action == 2) {
-		p2.pos.y += PLAYER_SPEED * 2;
+	// p2.pos.y = getFutureY();
+	console.log("future_pos_y => ", future_pos_y);
 
-	}
-	else if (action == 3) {
-		p2.pos.y -= PLAYER_SPEED * 4;
-	
-	}
-	else if (action == 4) {
-		p2.pos.y += PLAYER_SPEED * 4;
-	
-	}
-	else if (action == 5) {
+	state = getState();
+	action = chooseAction(state); // Action choisie par l'IA
+	console.log("State = ", state, "Action = ", action);
+
+	if (action == 1)
 		p2.pos.y -= PLAYER_SPEED;
-	
-	}
-	else if (action == 6) {
+	if (action == 2)
 		p2.pos.y += PLAYER_SPEED;
-	
-	}
-	
-	/* === Nouvelles actions pour états inversés === */
-	
-	else if (action == 7) {
-		p2.pos.y += PLAYER_SPEED * 2; // Inverse de action 1
-	
-	}
-	else if (action == 8) {
-		p2.pos.y -= PLAYER_SPEED * 2; // Inverse de action 2
-	
-	}
-	else if (action == 9) {
-		p2.pos.y += PLAYER_SPEED * 4; // Inverse de action 3
-	
-	}
-	else if (action == 10) {
-		p2.pos.y -= PLAYER_SPEED * 4; // Inverse de action 4
-	
-	}
-	else if (action == 11) {
-		p2.pos.y += PLAYER_SPEED; // Inverse de action 5
-	
-	}
-	else if (action == 12) {
-		p2.pos.y -= PLAYER_SPEED; // Inverse de action 6
 
-	}
-	
 
 	// Limit of the screen for the player
 	if (p2.pos.y < 0)
@@ -419,9 +355,8 @@ function update_ia_pos() {
 		let next_state = getState();
 		updateTable(state, action, instant_reward, next_state);
 	}
-	 console.log("Q_table : ", Q_table);
+	// console.log("Q_table : ", Q_table);
 }
-
 
 function update_player_pos() {
 	let p1 = game.player_1;
@@ -439,10 +374,10 @@ function update_player_pos() {
 			p1.pos.y += PLAYER_SPEED;
 	}
 
-	if (p2_upPressed && !p2_downPressed)
-		p2.pos.y -= PLAYER_SPEED;
-	if (!p2_upPressed && p2_downPressed)
-		p2.pos.y += PLAYER_SPEED;
+	// if (p2_upPressed && !p2_downPressed)
+	// 	p2.pos.y -= PLAYER_SPEED;
+	// if (!p2_upPressed && p2_downPressed)
+	// 	p2.pos.y += PLAYER_SPEED;
 
 
 	let player_offset = 0.05 * canvas.width;
@@ -470,21 +405,18 @@ function draw_player(player: Player) {
 	ctx.rect(player.pos.x, player.pos.y, PLAYER_WIDTH, PLAYER_HEIGHT);
 	ctx.fillStyle = PLAYER_COLOR;
 	ctx.fill();
-	// ctx.closePath();
 }
 
 /**
  * @brief Draw ball  on screen
 */
-function draw_ball(ball: Ball)
-{
+function draw_ball(ball: Ball) {
 	currTime = Date.now();
 	if (!ctx)
 		throw new Error("Context not found.");
 	ctx.beginPath();
 	ctx.arc(ball.pos.x, ball.pos.y, BALL_RADIUS, 0, 2 * Math.PI);
-	if (currTime - lastTime > 1000)
-	{
+	if (currTime - lastTime > 1000) {
 		ball_color = "#FF0000";
 		lastTime = currTime;
 	}
@@ -492,8 +424,6 @@ function draw_ball(ball: Ball)
 		ball_color = "#FFFFFF";
 	ctx.fillStyle = ball_color;
 	ctx.fill();
-	// ctx.closePath();
-
 }
 
 /**
@@ -591,11 +521,22 @@ function releasedKeyHandler(e: KeyboardEvent) {
  *
  * On new game or new round
  */
+let ball_start_flag = 1;
+
 function reset_ball() {
 	game.ball.pos = { x: canvas.width / 2, y: canvas.height / 2 };
-	game.ball.direction = { x: 0, y: 0 };
+	console.log("YOYOYOOYYO");
+
+	if(ball_start_flag == 1)
+	{
+		console.log("YIIIIIIIIIIIIIIIIII");
+		game.ball.direction = { x: -0.45, y: -0.55 };
+	}
+	else
+		game.ball.direction = { x: 0.45, y: 0.55 };
 	game.ball.speed = 0;
 	number = 1;
+	ball_start_flag *= -1;
 }
 
 /**
