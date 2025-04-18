@@ -1,4 +1,6 @@
-const TRAINING: boolean = true;
+const TRAINING: boolean = false;
+
+// good q_table [[-70.28332858639581,-67.39572839787385,-67.9925017203187],[-169.1303716177985,-170.35391922866512,-168.04508258288976],[-82.30781956258527,-104.16800033585639,-83.28559188861938]]
 /* ************************************************************************** */
 /*                                GLOBAL VARIABLES                            */
 /* ************************************************************************** */
@@ -30,7 +32,7 @@ const MSG_POS_RATIO: number = 0.7;
 let ball_color = "#FFFFFF";
 const BALL_INIT_SPEED: number = 10;
 //const BALL_COLOR: string = "#FFFFFF";
-const BALL_MAX_SPEED: number = 14;
+const BALL_MAX_SPEED: number = 12;
 var BALL_RADIUS: number;
 /* Terrain draw */
 const TERRAIN_COLOR: string = "#FFFFFF";
@@ -53,11 +55,11 @@ let rewards: number = 0;
 var NUM_ACTIONS: number = 3;
 var NUM_STATES: number = 3;
 const ALPHA: number = 0.2;
-const GAMMA: number = 0.8;
+const GAMMA: number = 0.7;
 let EPSILON: number = 1;
 let EPSILON_MIN: number = 0.2;
-const epsilon_decay_rate: number = 0.00001;
-let Q_table: number[][] = [[-145.64301981570978, -144.3148564907343, -143.39265183161336], [-109.33841440115992, -110.98333133685067, -114.02086506017787], [-201.66747219844564, -202.28097240849237, -201.9481931103624]];
+const epsilon_decay_rate: number = 0.000001;
+let Q_table: number[][] = [[-70.28332858639581,-67.39572839787385,-67.9925017203187],[-169.1303716177985,-170.35391922866512,-168.04508258288976],[-82.30781956258527,-104.16800033585639,-83.28559188861938]];
 let Q_table_training: number[][] = Array.from({ length: NUM_STATES }, () => new Array(NUM_ACTIONS).fill(0));
 /*                              CLASSES && INTERFACES                         */
 /* ************************************************************************** */
@@ -181,16 +183,18 @@ function update_ball_state() {
 		&& (ball.pos.y > p1.pos.y && ball.pos.y < p1.pos.y + PLAYER_HEIGHT) && number == 0) {
 		number = 1;
 		dir.x = -dir.x;
-		// dir.y += 0.50;
-		// dir.y += (Math.random() - 0.3) * RANDOM_BOUNCE_ANGLE;
+		dir.y += 0.45;
+		dir.y += (Math.random() - 0.2) * RANDOM_BOUNCE_ANGLE * 0.25;
+		console.log("DIR Y P1 -> ", dir.y);
 		game.ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
 	}
 	if ((ball.pos.x > p2.pos.x && ball.pos.x < p2.pos.x + PLAYER_WIDTH)
 		&& (ball.pos.y > p2.pos.y && ball.pos.y < p2.pos.y + PLAYER_HEIGHT) && number == 1) {
 		number = 0;
 		dir.x = -dir.x;
-		// dir.y += -0.50;
-		// dir.y += (Math.random() - 0.3) * RANDOM_BOUNCE_ANGLE;
+		dir.y += -0.55;
+		dir.y += (Math.random() - 0.2) * RANDOM_BOUNCE_ANGLE * 0.25;
+		console.log("DIR Y P2 -> ", dir.y);
 		ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
 	}
 
@@ -229,7 +233,8 @@ function getFutureY(): number {
 	const height = canvas.height;
 
 	// Si la balle va vers la gauche, on prédit rien
-	if (dir.x <= 0) return 0;
+	if (dir.x <= 0 || ball.speed == 0)
+		return (game.player_2.pos.y);
 
 	let x = pos.x;
 	let y = pos.y;
@@ -238,24 +243,25 @@ function getFutureY(): number {
 
 	while (x < playerX) {
 		// temps pour atteindre le prochain bord haut ou bas
-		let timeToWall = dy > 0
-			? (height - BALL_RADIUS - y) / dy
-			: (BALL_RADIUS - y) / dy;
+		let timeToWall = dy > 0 ? (height - BALL_RADIUS - y) / dy : (BALL_RADIUS - y) / dy;
 
 		let timeToPaddle = (playerX - x) / dx;
 
 		// Si la balle touche le paddle avant un mur
-		if (timeToPaddle < timeToWall) {
+		if (timeToPaddle < timeToWall)
+		{
 			y += dy * timeToPaddle;
 			break;
-		} else {
+		}
+		else
+		{
 			// rebond contre mur
 			x += dx * timeToWall;
 			y += dy * timeToWall;
 			dy = -dy; // inversion de la direction verticale
 		}
 	}
-	return y - PLAYER_HEIGHT / 2;
+	return (y - PLAYER_HEIGHT / 2);
 }
 
 function getState(): number {
@@ -266,7 +272,7 @@ function getState(): number {
 		return (1);
 	if (p2.pos.y > future_pos_y + PLAYER_HEIGHT)
 		return (2);
-	return 0;
+	return (0);
 }
 
 /* choose an action according to the epsilon value : this is called the epsilon-greedy */
@@ -358,6 +364,7 @@ function update_ia_pos() {
 	// console.log("Q_table : ", Q_table);
 }
 
+
 function update_player_pos() {
 	let p1 = game.player_1;
 	let p2 = game.player_2;
@@ -374,10 +381,10 @@ function update_player_pos() {
 			p1.pos.y += PLAYER_SPEED;
 	}
 
-	// if (p2_upPressed && !p2_downPressed)
-	// 	p2.pos.y -= PLAYER_SPEED;
-	// if (!p2_upPressed && p2_downPressed)
-	// 	p2.pos.y += PLAYER_SPEED;
+	if (p2_upPressed && !p2_downPressed)
+		p2.pos.y -= PLAYER_SPEED;
+	if (!p2_upPressed && p2_downPressed)
+		p2.pos.y += PLAYER_SPEED;
 
 
 	let player_offset = 0.05 * canvas.width;
@@ -525,15 +532,7 @@ let ball_start_flag = 1;
 
 function reset_ball() {
 	game.ball.pos = { x: canvas.width / 2, y: canvas.height / 2 };
-	console.log("YOYOYOOYYO");
-
-	if(ball_start_flag == 1)
-	{
-		console.log("YIIIIIIIIIIIIIIIIII");
-		game.ball.direction = { x: -0.45, y: -0.55 };
-	}
-	else
-		game.ball.direction = { x: 0.45, y: 0.55 };
+	game.ball.direction = { x: 0.45, y: 0.55 };
 	game.ball.speed = 0;
 	number = 1;
 	ball_start_flag *= -1;
