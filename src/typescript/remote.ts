@@ -167,15 +167,16 @@ function renderLobby()
     if (!content_div)
       throw new Error('missing content_div ')
     content_div.innerHTML = '';
+    // content_div.classList.add('content-center');
     var list = document.createElement("ul");
     list.id = 'users_list';
     content_div.appendChild(list);
   
-    var request_btn = document.createElement('input');
-    request_btn.type = 'button';
-    request_btn.value = 'send invitation';
-    request_btn.id = 'request';
-    content_div.appendChild(request_btn);    
+    // var request_btn = document.createElement('input');
+    // request_btn.type = 'button';
+    // request_btn.value = 'send invitation';
+    // request_btn.id = 'request';
+    // content_div.appendChild(request_btn);    
   }
   catch (error)
   {

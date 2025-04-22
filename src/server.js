@@ -14,11 +14,19 @@ import { fileURLToPath } from 'url'
 import path from 'path'
 import fastifyStatic from '@fastify/static'
 import websockets from '@fastify/websocket'
+import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // setting up the PORT TODO: use .env ?
 const PORT = 8080;
+
+export default defineConfig({
+  plugins: [
+    tailwindcss(),
+  ],
+})
 
 // enable logger messages
 const fastify = Fastify({
@@ -34,7 +42,6 @@ const fastify = Fastify({
 
 // jwt plugin
 fastify.register(jwtPlugin)
-
 
 // fastify/static
 fastify.register(fastifyStatic, {

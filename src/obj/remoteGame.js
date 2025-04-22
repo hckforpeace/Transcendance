@@ -219,19 +219,21 @@ function DisconnectPlayer(id){
     {
       var gameid = player.inGame;
       let game = Games.get(player.inGame);
+      game.p1.inGame = null; 
+      game.p2.inGame = null; 
       if (game.p1 == player) {
-        game.p1.inGame = null; 
         game.p1 = null;
         if (game.p2 != null){
-          // game.p2
           game.p2.socket.send(JSON.stringify({type: 'opponentdisconnect', opponent: player.username}));
+          game.p2 == null;
         }
       }
       else {
-        game.p2.inGame = null; 
         game.p2 = null;
-        if (game.p1 != null)
+        if (game.p1 != null) {
           game.p1.socket.send(JSON.stringify({type: 'opponentdisconnect', opponent: player.username}));
+          game.p1 == null;
+        }
       }
       Games.delete(gameid);
     }
