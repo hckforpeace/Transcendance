@@ -16,6 +16,9 @@ import fastifyStatic from '@fastify/static'
 import websockets from '@fastify/websocket'
 import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
+import { initDB } from './database/database.js'
+import fastifyCookie from '@fastify/cookie'
+import fastifyFormbody from '@fastify/formbody'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -40,14 +43,42 @@ const fastify = Fastify({
 /*
  * REGISTER */
 
+await initDB();
+
+// cookies
+fastify.register(fastifyCookie);
+
 // jwt plugin
-fastify.register(jwtPlugin)
+fastify.register(jwtPlugin);
+
+// To handle form submissions
+fastify.register(fastifyFormbody);
 
 // fastify/static
 fastify.register(fastifyStatic, {
   root: path.join(__dirname, '/public'),
   prefix: '/',
-})
+});
+
+fastify.addHook('onRequest', async (req, reply) => {
+  const token = req.cookies.token;
+
+  if (token) {
+    try {
+      const user = await req.jwtVerify();
+      req.user = user;
+    } catch (err) {
+      req.user = null;
+    }
+  } else {
+    req.user = null;
+  }
+});
+
+fastify.addHook('preHandler', async (req, reply) => {
+  reply.locals = reply.locals || {};
+  reply.locals.user = req.user;
+});
 
 fastify.register(websockets)
 

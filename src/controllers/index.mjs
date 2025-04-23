@@ -6,11 +6,13 @@
 //     text: 'kess emak',
 //   })
 // }
+
+import fastify from "fastify";
+
 // Handler for index route
-const dispIndex = (req, rep) => {
-  rep.view('login.ejs', {
-    text: 'login'
-    // Add any other variables you might need
-  })
-}
+const dispIndex = async (req, rep) => { 
+	const home = await rep.view('home.ejs', { raw: true });
+
+	return rep.view('index.ejs', { text: 'index', body: home }) };
+
 export default dispIndex;

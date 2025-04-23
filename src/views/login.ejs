@@ -1,10 +1,16 @@
-<form id='form' >
-  <label for="fname">username:</label><br>
-  <input type="text" id="uname" name="uname" ><br>
-  <label for="lname">password:</label><br>
-  <input type="password" id="pw" name="pw" ><br><br>
-  <input id='submit' type="submit" value="Submit">
-  </br>
+<form method="POST" action="/api/login" class="bg-white p-8 rounded-2xl shadow-md w-full max-w-md space-y-4">
+  <h1 class="text-2xl font-bold text-center">Login</h1>
+  
+  <input type="email" name="email" placeholder="Email"
+         class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500" required>
+
+  <input type="password" name="password" placeholder="Password"
+         class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500" required>
+
+  <button type="submit"
+          class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition">
+    Log in
+  </button>
   <input id='start' type="button" value="start">
-</form> 
+</form>
 
