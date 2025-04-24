@@ -14,6 +14,7 @@ import { fileURLToPath } from 'url'
 import path from 'path'
 import fastifyStatic from '@fastify/static'
 import websockets from '@fastify/websocket'
+import WAF from './WAF.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -22,7 +23,8 @@ const PORT = 8080;
 
 // enable logger messages
 const fastify = Fastify({
-  logger: true,
+  // logger: true,
+  level: 'info',
   https: {
       key: fs.readFileSync(path.join(__dirname, 'server.key')),
       cert: fs.readFileSync(path.join(__dirname, 'server.crt')),
@@ -31,6 +33,9 @@ const fastify = Fastify({
 
 /*
  * REGISTER */
+
+// WAF
+fastify.register(WAF);
 
 // jwt plugin
 fastify.register(jwtPlugin)
@@ -67,4 +72,3 @@ fastify.listen({ port: PORT, host: '0.0.0.0'}, (err, address) => {
     process.exit(1);
   }
 }) 
-
