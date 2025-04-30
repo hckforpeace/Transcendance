@@ -16,6 +16,18 @@ import fastifyStatic from '@fastify/static'
 import websockets from '@fastify/websocket'
 import WAF from './WAF.js';
 
+const suspicious_sql_patterns = [
+  /(\%27)|(\')|(\-\-)|(\%23)|(#)/i,
+  /\b(OR|AND)\b\s+\w+\s*=\s*\w+/i,
+  /UNION\s+SELECT/i,
+  /SELECT\s.+\sFROM/i,
+  /INSERT\s+INTO/i,
+  /UPDATE\s+\w+\s+SET/i,
+  /DELETE\s+FROM/i,
+  /DROP\s+TABLE/i,
+  /EXEC(\s|\+)+(s|x)p\w+/i,
+];
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // setting up the PORT TODO: use .env ?
@@ -64,6 +76,41 @@ fastify.register(swaggerUi, swgUI_config)
 fastify.register(routesItems);
 fastify.register(routesPong);
 fastify.register(routesApi);
+
+fastify.addHook('onRequest', async (request, reply) => {
+  const { method, url, body, query } = request;
+
+  // Afficher les infos de la requête
+  console.log('--- Requête Reçue ---');
+  console.log(`Méthode: ${method}`);
+  console.log(`URL: ${url}`);
+
+  // Vérifier le corps pour POST/PUT/PATCH
+  if (['POST', 'PUT', 'PATCH'].includes(method)) {
+    console.log('Corps de la requête:', body);
+    const serialized = typeof body === 'string' ? body : JSON.stringify(body);
+    if (suspicious_sql_patterns.some(r => r.test(serialized))) {
+      fastify.log.warn('🚨 Suspicious request blocked (body) :', serialized);
+      return reply.code(403).send({ error: 'Blocked by WAF' });
+    }
+  }
+
+  // Vérifier les query params pour GET
+  if (method === 'GET') {
+    console.log('Paramètres de la requête:', query);
+    const serializedQuery = JSON.stringify(query);
+    if (suspicious_sql_patterns.some(r => r.test(serializedQuery))) {
+      fastify.log.warn('🚨 Suspicious request blocked (query) :', serializedQuery);
+      return reply.code(403).send({ error: 'Blocked by WAF' });
+    }
+  }
+
+  // Vérifier l’URL pour tous les cas
+  if (suspicious_sql_patterns.some(r => r.test(url))) {
+    fastify.log.warn('🚨 Suspicious request blocked (url) :', url);
+    return reply.code(403).send({ error: 'Blocked by WAF' });
+  }
+});
 
 // server is listening
 fastify.listen({ port: PORT, host: '0.0.0.0'}, (err, address) => {
