@@ -41,7 +41,7 @@ const fastify = Fastify({
       key: fs.readFileSync(path.join(__dirname, 'server.key')),
       cert: fs.readFileSync(path.join(__dirname, 'server.crt')),
 }
-})
+});
 
 /*
  * REGISTER */
@@ -105,11 +105,11 @@ fastify.addHook('onRequest', async (request, reply) => {
     }
   }
 
-  // Vérifier l’URL pour tous les cas
-  if (suspicious_sql_patterns.some(r => r.test(url))) {
-    fastify.log.warn('🚨 Suspicious request blocked (url) :', url);
-    return reply.code(403).send({ error: 'Blocked by WAF' });
-  }
+  // // Vérifier l’URL pour tous les cas
+  // if (suspicious_sql_patterns.some(r => r.test(url))) {
+  //   fastify.log.warn('🚨 Suspicious request blocked (url) :', url);
+  //   return reply.code(403).send({ error: 'Blocked by WAF' });
+  // }
 });
 
 // server is listening
