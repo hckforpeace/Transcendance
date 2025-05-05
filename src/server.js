@@ -16,17 +16,6 @@ import fastifyStatic from '@fastify/static';
 import websockets from '@fastify/websocket';
 import WAF from './WAF.js';
 
-const suspicious_sql_patterns = [
-  /(\%27)|(\')|(\-\-)|(\%23)|(#)/i,
-  /\b(OR|AND)\b\s+\w+\s*=\s*\w+/i,
-  /UNION\s+SELECT/i,
-  /SELECT\s.+\sFROM/i,
-  /INSERT\s+INTO/i,
-  /UPDATE\s+\w+\s+SET/i,
-  /DELETE\s+FROM/i,
-  /DROP\s+TABLE/i,
-  /EXEC(\s|\+)+(s|x)p\w+/i,
-];
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -50,6 +39,23 @@ fastify.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {
   }
   console.log(`Server is listening at ${address}`);
 });
+
+/* ----------------------------------  WAF -------------------------------- */ 
+/* Suspicious SQL patterns (in URL, in form) - Suspicious sensitive patterns - Rate limit to block an IP -  */
+
+const forbiddenPaths = ['../', '/etc/', '/bin/', 'eval', 'base64'];
+
+const suspicious_sql_patterns = [
+  /(\%27)|(\')|(\-\-)|(\%23)|(#)/i,
+  /\b(OR|AND)\b\s+\w+\s*=\s*\w+/i,
+  /UNION\s+SELECT/i,
+  /SELECT\s.+\sFROM/i,
+  /INSERT\s+INTO/i,
+  /UPDATE\s+\w+\s+SET/i,
+  /DELETE\s+FROM/i,
+  /DROP\s+TABLE/i,
+  /EXEC(\s|\+)+(s|x)p\w+/i,
+];
 
 /*
  * REGISTER */
@@ -94,7 +100,7 @@ fastify.addHook('preHandler', async (request, reply) => {
   console.log(`URL: `, url);
   console.log('Corps de la requêteee:', body);
 
-  // Vérification du body uniquement si c’est un objet
+  // Tis not diplay 403 error but not take into account what was written
   if (['POST', 'PUT', 'PATCH'].includes(method) && body && typeof body === 'object') {
     const { username = '', password = '' } = body;
     if (
@@ -108,6 +114,11 @@ fastify.addHook('preHandler', async (request, reply) => {
 
 // WAF hook after registering routes
 fastify.addHook('onRequest', async (request, reply) => {
+
+  // Have to tested this function because I cannot
+  const result = await rateLimiter(100, 60 * 1000)(request, reply);
+  if (result === false) console.log("YOYOYO"); // bloqué, on ne continue pas
+
   const { method, url} = request;
   
   console.log('--- Début de la requête ---');
@@ -117,12 +128,41 @@ fastify.addHook('onRequest', async (request, reply) => {
   // Vérification de l'URL
   try {
     const decodedUrl = decodeURIComponent(url);
-    if (suspicious_sql_patterns.some(r => r.test(decodedUrl))) {
-      return reply.code(403).send({ error: 'Blocked by WAF, suspicious SQL pattern detected.' });
+    if (suspicious_sql_patterns.some(r => r.test(decodedUrl)) || forbiddenPaths.some(r => r.test(decodedUrl))) {
+      return reply.code(403).send({ error: 'Blocked by WAF' });
     }
   } catch (err) {
     console.error('Erreur lors de la vérification de l\'URL :', err);
   }
 });
 
+// rateLimiter.js
+const rateLimitMap = new Map();
 
+export function rateLimiter(maxRequests, timeWindowMs) {
+  return async (request, reply) => {
+    const ip = request.ip;
+    const now = Date.now();
+
+    console.log("COUCOU");
+    const entry = rateLimitMap.get(ip) || { count: 0, startTime: now };
+
+    if (now - entry.startTime > timeWindowMs) {
+      // Fenêtre expirée : on recommence
+      entry.count = 1;
+      entry.startTime = now;
+    } else {
+      // Fenêtre active : on incrémente
+      entry.count++;
+    }
+
+    rateLimitMap.set(ip, entry);
+
+    if (entry.count > maxRequests) {
+      reply.code(429).send({ error: 'Too many requests from this IP. Please try again later.' });
+    }
+  };
+}
+
+
+/* ----------------------------------  END WAF -------------------------------- */ 
