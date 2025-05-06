@@ -1,7 +1,6 @@
 {
 	"watch": ["src"],
-	"ignore": ["src/public/js"],
+	"ignore": ["conf/src/public/js"],
 	"ext": "ts",
-	"ignore": ["src/public/script/*"],
 	"exec": "npm run build && node ./dist/server.js"
 }
