@@ -1,9 +1,9 @@
 <!-- index.ejs --->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <title> <%= text %> </title>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script id='remote-script' src="js/remote.js"> </script>
@@ -12,12 +12,7 @@
     <link rel="stylesheet" href="css/index.css">
   </head>
   <body>
-    <!-- <div id='content-div' class="h-screen flex items-center justify-center border border-inherit px-[50vw] py-[50vw]" > -->
-    <!-- <div id='content-div' class="inline-block border justify-center border-gray-400 mx-auto w-64 p-4 bg-white shadow  "> -->
-    <!-- <div id="content-div" class="flex justify-center align-center min-h-screen"> -->
-    <!--   <%- body %>  -->
-    <!-- </div> -->
-    <div id="content-div" class="flex justify-center items-center min-h-screen px-4 border">
+    <div id="content-div" class="flex justify-center items-center min-h-screen">
       <%- body %> 
     </div>
   </body>
