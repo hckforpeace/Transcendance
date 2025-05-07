@@ -7,7 +7,4 @@ export default async function (fastify, opts) {
     return reply.view('register.ejs', { text: 'Register', user: req.user });
   });
 
-  // fastify.get('/', async (req, reply) => {
-  //   return reply.view('home.ejs', { text: 'Home', user: req.user });
-  // });
 }

@@ -8,17 +8,13 @@
         "type": "tabs",
         "children": [
           {
-            "id": "70d27b7b036bc729",
+            "id": "10ef4f22533a3f09",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "TypeScript.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "TypeScript"
+              "title": "New tab"
             }
           }
         ]
@@ -40,7 +36,8 @@
             "state": {
               "type": "file-explorer",
               "state": {
-                "sortOrder": "alphabetical"
+                "sortOrder": "alphabetical",
+                "autoReveal": false
               },
               "icon": "lucide-folder-closed",
               "title": "Files"
@@ -52,7 +49,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:#pierre",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -93,7 +90,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "TypeScript.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +99,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for TypeScript"
+              "title": "Backlinks"
             }
           },
           {
@@ -167,25 +163,28 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "70d27b7b036bc729",
+  "active": "f3550dc459547853",
   "lastOpenFiles": [
-    "Views.md",
-    "Organisation.md",
-    "Resources NodeJs.md",
-    "NODE.js.md",
-    "Minimal Technical Requirement.md",
-    "Fastify.md",
     "Excalidraw/Services.md",
+    "Excalidraw/Drawing 2025-05-07 16.31.10.excalidraw.md",
+    "Excalidraw/Drawing 2025-04-04 17.33.03.excalidraw.md",
+    "Fastify.md",
+    "Minimal Technical Requirement.md",
+    "NODE.js.md",
     "NPM.md",
+    "Resources NodeJs.md",
+    "Screenshot from 2025-03-27 16-34-42.png",
+    "Screenshot from 2025-03-27 16-37-29.png",
+    "Screenshot from 2025-03-27 16-40-53.png",
+    "Screenshot from 2025-03-27 16-40-53 1.png",
     "TypeScript.md",
+    "Organisation.md",
+    "Single-Page Application.md",
+    "Views.md",
     "Untitled.md",
     "Untitled.canvas",
-    "Screenshot from 2025-03-27 16-40-53.png",
-    "Screenshot from 2025-03-27 16-37-29.png",
-    "Screenshot from 2025-03-27 16-34-42.png",
     "Excalidraw/Drawing 2025-03-28 13.11.56.excalidraw.md",
     "Excalidraw",
-    "Screenshot from 2025-03-27 16-40-53 1.png",
     "Node.js Crash Course.md",
     "link.md"
   ]

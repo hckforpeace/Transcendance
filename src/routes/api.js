@@ -22,12 +22,18 @@ async function routes (fastify, options) {
   
   fastify.get('/ping', async () => { return { message: 'pong' }; });
 
-    fastify.get('/api/register', (req, reply) => {
-    return reply.view('register.ejs', { text: 'Register' });});
+  fastify.get('/api/register', (req, reply) => { return reply.view('register.ejs', { text: 'Register' , layout: null});});
 
   // Define the routes
   fastify.post('/api/login', {schema: loginSchema}, api.auth);
    // {onRequest: [fastify.authenticate]}, 
+
+  fastify.post('/api/register', async (req, reply) => {
+  const { name, email, password } = req.body;
+  // Validate & store in DB
+  // Return JSON
+  return reply.send({ message: 'User registered successfully' });
+});
 
   fastify.get('/api/pong', { preHandler: [fastify.authenticate] } , api.pong_view);
   // connect to the websocket server
