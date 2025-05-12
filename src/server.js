@@ -14,13 +14,13 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import fastifyStatic from '@fastify/static';
 import websockets from '@fastify/websocket';
-import nodeVault from 'node-vault';
+import vaultFactory from 'node-vault';
 
 // Configuration de Vault
-const vault = nodeVault({
+const vault = vaultFactory({
   apiVersion: 'v1', // Version de l'API Vault
   endpoint: 'http://127.0.0.1:8200', // L'endpoint de Vault (modifie selon ta configuration)
-  token: 'your-vault-token', // Token d'accès (tu peux utiliser un token de développement ou un token d'accès configuré)
+  token: process.env.VAULT_TOKEN, // Token d'accès (tu peux utiliser un token de développement ou un token d'accès configuré)
 });
 
 // import WAF from './WAF.js';
@@ -123,6 +123,7 @@ fastify.addHook('preHandler', async (request, reply) => {
     console.log('Corps APRÈS nettoyage:', sanitizedBody);
   }
   }
+
 });
 
 // WAF hook after registering routes
@@ -163,7 +164,6 @@ fastify.addHook('onRequest', async (request, reply) => {
 
 // rateLimiter.js
 const rateLimitMap = new Map();
-
 export function rateLimiter(maxRequests, timeWindowMs) {
   return async (request, reply) => {
     const ip = request.ip;
@@ -196,12 +196,15 @@ fastify.register(routesApi);
 // Fonction pour récupérer un secret de Vault
 async function getSecret() {
   try {
-    const secret = await vault.read('secret/data/myapp/config'); // Emplacement du secret
+    const secret = await vault.read('secret/data/myapp/config');
+    console.log('Secret:', secret);
     return secret.data;
   } catch (err) {
+    console.error('Error fetching secret:', err);
     throw new Error('Impossible de récupérer le secret');
   }
 }
+
 
 // Route de test
 fastify.get('/get-secret', async (request, reply) => {
@@ -212,5 +215,7 @@ fastify.get('/get-secret', async (request, reply) => {
     reply.code(500).send({ error: 'Erreur lors de la récupération des secrets' });
   }
 });
+
+console.log(process.env.JWT_SECRET); 
 
 /* ----------------------------------  END WAF -------------------------------- */ 

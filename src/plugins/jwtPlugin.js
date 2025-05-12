@@ -2,7 +2,7 @@ import fp from "fastify-plugin";
 import jwt from "@fastify/jwt";
 
 export default fp(async function (fastify, opts) {
-  fastify.register(jwt, { secret: "supersecret" });
+  fastify.register(jwt, { secret: kuku });
 
   fastify.decorate("authenticate", async function (request, reply) {
     try {

@@ -1,6 +1,8 @@
 #!/bin/bash
 
-URL="https://localhost:8080/api/ping"  # Mets ici une route valide qui ne nécessite pas de token
+#only for testing that the number of the quest in one minutes aren't too much
+
+URL="https://localhost:8080/"  # Mets ici une route valide qui ne nécessite pas de token
 TOTAL_REQUESTS=110
 SUCCESS=0
 TOO_MANY=0
