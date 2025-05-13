@@ -48,7 +48,7 @@ const sock_con =  async (socket, req, fastify) => {
         // console.log('Received message:', message);
         if (message != null && message.type == 'invite')
           remoteObj.invitePlayer(message, socket);
-        else if (message.type == 'accept')
+        else if (message.type == 'accept' || message.type == 'refuse')
           remoteObj.startGame(message, uuidv4());  
         else if (message.type == 'pressed' || message.type == 'released')
           remoteObj.moveOpponent(message);

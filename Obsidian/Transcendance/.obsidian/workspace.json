@@ -4,21 +4,31 @@
     "type": "split",
     "children": [
       {
-        "id": "1f64ca20a9550c75",
+        "id": "1701676980d5e020",
         "type": "tabs",
         "children": [
           {
-            "id": "70d27b7b036bc729",
+            "id": "e4a19045dcb45367",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "excalidraw",
               "state": {
-                "file": "TypeScript.md",
-                "mode": "source",
-                "source": false
+                "file": "Excalidraw/UI design.md"
               },
-              "icon": "lucide-file",
-              "title": "TypeScript"
+              "icon": "excalidraw-icon",
+              "title": "UI design"
+            }
+          },
+          {
+            "id": "de4c719d5b5d6c2d",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.8.10"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.8.10"
             }
           }
         ]
@@ -78,7 +88,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 255.5
+    "width": 255.5,
+    "collapsed": true
   },
   "right": {
     "id": "add6360e0a00d883",
@@ -94,7 +105,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "TypeScript.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +114,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for TypeScript"
+              "title": "Backlinks"
             }
           },
           {
@@ -168,17 +178,18 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "70d27b7b036bc729",
+  "active": "64a54b09f408de1b",
   "lastOpenFiles": [
+    "Excalidraw/UI design.md",
+    "Excalidraw/Services.md",
+    "TypeScript.md",
     "Views.md",
     "Organisation.md",
     "Resources NodeJs.md",
     "NODE.js.md",
     "Minimal Technical Requirement.md",
     "Fastify.md",
-    "Excalidraw/Services.md",
     "NPM.md",
-    "TypeScript.md",
     "Untitled.md",
     "Untitled.canvas",
     "Screenshot from 2025-03-27 16-40-53.png",

@@ -154,11 +154,18 @@ function startGame(data, gameId)
     uname2 = data.src; 
     if (!uname1 || !uname2)
       throw new Error("wrong data format"); 
+       
     console.log('p1: ' + uname1 + ', p2: ' + uname2)
     p1 = findPlayer(uname1);
     p2 = findPlayer(uname2);
     p1.pendingInvite = false; 
     p2.pendingInvite = false; 
+
+    if (data.type == 'refuse')
+    {
+      p1.pendingInvite = false;
+      return;
+    }
 
     if (!p1 || !p2)
       throw new Error("wrong data format"); 
