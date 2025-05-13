@@ -15,6 +15,7 @@ import path from 'path';
 import fastifyStatic from '@fastify/static';
 import websockets from '@fastify/websocket';
 import vaultFactory from 'node-vault';
+import dotenv from 'dotenv';
 
 // Configuration de Vault
 const vault = vaultFactory({
@@ -122,16 +123,14 @@ fastify.addHook('preHandler', async (request, reply) => {
       request.body = sanitizedBody;
     console.log('Corps APRÈS nettoyage:', sanitizedBody);
   }
-  }
+}
 
 });
 
 // WAF hook after registering routes
 fastify.addHook('onRequest', async (request, reply) => {
-
-  // Have to tested this function because I cannot
+  
   const result = await rateLimiter(100, 60 * 1000)(request, reply);
-  if (result === false) console.log("YOYOYO"); // bloqué, on ne continue pas
 
   const { method, url} = request;
   
@@ -191,7 +190,8 @@ fastify.register(routesItems);
 fastify.register(routesPong);
 fastify.register(routesApi);
 
-/* ---------------------------------- VAULT SECRET -------------------------------- */ 
+
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 // Fonction pour récupérer un secret de Vault
 async function getSecret() {
@@ -215,7 +215,3 @@ fastify.get('/get-secret', async (request, reply) => {
     reply.code(500).send({ error: 'Erreur lors de la récupération des secrets' });
   }
 });
-
-console.log(process.env.JWT_SECRET); 
-
-/* ----------------------------------  END WAF -------------------------------- */ 
