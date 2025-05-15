@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node ./src/server",
-    "dev": "tsc && ./setup-vault.sh && nodemon ./src/server",
-    "ndm": "nodemon"
+    "dev": "tsc && nodemon ./src/server",
+    "ndm": "nodemon ./src/server"
   },
   "keywords": [],
   "author": "",
