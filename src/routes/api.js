@@ -1,5 +1,5 @@
 // Import the required modules
-import api_controllers from '../controllers/api.mjs';
+import api from '../controllers/api.mjs';
 
 // Define schema for login
 const loginSchema = {
@@ -16,14 +16,30 @@ const loginSchema = {
 // routes/api.js
 async function routes (fastify, options) {
 
+  // fastify.get('/api/register', async (req, reply) => { return reply.view('register.ejs', { text: 'Register' }); });
+  fastify.get('/api/users', api.users);
+  //fastify.post('/api/register', api.register); WRONG
+  
+  fastify.get('/ping', async () => { return { message: 'pong' }; });
+
+  fastify.get('/api/register', (req, reply) => { return reply.view('register.ejs', { text: 'Register' , layout: null});});
+
   // Define the routes
-  fastify.post('/api/login', {schema: loginSchema}, api_controllers.auth);
+  fastify.post('/api/login', {schema: loginSchema}, api.auth);
    // {onRequest: [fastify.authenticate]}, 
-  fastify.get('/api/pong', { preHandler: [fastify.authenticate] } , api_controllers.pong_view);
+
+  fastify.post('/api/register', async (req, reply) => {
+  const { name, email, password } = req.body;
+  // Validate & store in DB
+  // Return JSON
+  return reply.send({ message: 'User registered successfully' });
+});
+
+  fastify.get('/api/pong', { preHandler: [fastify.authenticate] } , api.pong_view);
   // connect to the websocket server
   fastify.get('/api/remote', {preHandler: [fastify.authenticate], websocket: true}, (socket, req) => {
-    api_controllers.sock_con(socket, req, fastify);})
+    api.sock_con(socket, req, fastify);})
 
 }
 
-export default routes; 
+export default routes;

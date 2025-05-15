@@ -4,6 +4,7 @@
     "type": "split",
     "children": [
       {
+<<<<<<< HEAD
         "id": "fb807a60b2bda409",
         "type": "tabs",
         "children": [
@@ -17,6 +18,19 @@
               },
               "icon": "excalidraw-icon",
               "title": "UI design"
+=======
+        "id": "1f64ca20a9550c75",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "10ef4f22533a3f09",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
+>>>>>>> pablo
             }
           }
         ]
@@ -92,17 +106,24 @@
             "state": {
               "type": "backlink",
               "state": {
+<<<<<<< HEAD
                 "file": "Excalidraw/UI design.md",
+=======
+>>>>>>> pablo
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
                 "showSearch": false,
-                "searchQuery": "",
+                "searchQuery": "",https://localhost:8080/
                 "backlinkCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
+<<<<<<< HEAD
               "title": "Backlinks for UI design"
+=======
+              "title": "Backlinks"https://localhost:8080/
+>>>>>>> pablo
             }
           },
           {
@@ -167,14 +188,19 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
+<<<<<<< HEAD
 <<<<<<< Updated upstream
   "active": "10ca17d23b1909d9",
   "lastOpenFiles": []
 =======
   "active": "5f5c0b29ac129458",
+=======
+  "active": "f3550dc459547853",
+>>>>>>> pablo
   "lastOpenFiles": [
     "Excalidraw/UI design.md",
     "Excalidraw/Services.md",
+<<<<<<< HEAD
     "TypeScript.md",
     "Views.md",
     "Organisation.md",
@@ -191,6 +217,27 @@
     "Excalidraw/Drawing 2025-03-28 13.11.56.excalidraw.md",
     "Excalidraw",
     "Screenshot from 2025-03-27 16-40-53 1.png",
+=======
+    "Excalidraw/Drawing 2025-05-07 16.31.10.excalidraw.md",
+    "Excalidraw/Drawing 2025-04-04 17.33.03.excalidraw.md",
+    "Fastify.md",
+    "Minimal Technical Requirement.md",
+    "NODE.js.md",
+    "NPM.md",
+    "Resources NodeJs.md",
+    "Screenshot from 2025-03-27 16-34-42.png",
+    "Screenshot from 2025-03-27 16-37-29.png",
+    "Screenshot from 2025-03-27 16-40-53.png",
+    "Screenshot from 2025-03-27 16-40-53 1.png",
+    "TypeScript.md",
+    "Organisation.md",
+    "Single-Page Application.md",
+    "Views.md",
+    "Untitled.md",
+    "Untitled.canvas",
+    "Excalidraw/Drawing 2025-03-28 13.11.56.excalidraw.md",
+    "Excalidraw",
+>>>>>>> pablo
     "Node.js Crash Course.md",
     "link.md"
   ]

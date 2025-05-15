@@ -7,6 +7,7 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
+<<<<<<< HEAD
     --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-blue-600: oklch(54.6% 0.245 262.881);
     --color-blue-700: oklch(48.8% 0.243 264.376);
@@ -27,6 +28,13 @@
     --font-weight-bold: 700;
     --radius-lg: 0.5rem;
     --radius-xl: 0.75rem;
+=======
+    --color-gray-50: oklch(98.5% 0.002 247.839);
+    --color-gray-100: oklch(96.7% 0.003 264.542);
+    --color-gray-400: oklch(70.7% 0.022 261.325);
+    --color-white: #fff;
+    --spacing: 0.25rem;
+>>>>>>> pablo
     --default-transition-duration: 150ms;
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     --default-font-family: var(--font-sans);
@@ -200,6 +208,7 @@
   .sticky {
     position: sticky;
   }
+<<<<<<< HEAD
   .start-2\.5 {
     inset-inline-start: calc(var(--spacing) * 2.5);
   }
@@ -209,6 +218,8 @@
   .z-10 {
     z-index: 10;
   }
+=======
+>>>>>>> pablo
   .container {
     width: 100%;
     @media (width >= 40rem) {
@@ -227,6 +238,12 @@
       max-width: 96rem;
     }
   }
+<<<<<<< HEAD
+=======
+  .mx-auto {
+    margin-inline: auto;
+  }
+>>>>>>> pablo
   .block {
     display: block;
   }
@@ -242,6 +259,7 @@
   .hidden {
     display: none;
   }
+<<<<<<< HEAD
   .table {
     display: table;
   }
@@ -250,10 +268,21 @@
   }
   .h-auto {
     height: auto;
+=======
+  .inline-block {
+    display: inline-block;
+  }
+  .table {
+    display: table;
+  }
+  .h-screen {
+    height: 100vh;
+>>>>>>> pablo
   }
   .min-h-screen {
     min-height: 100vh;
   }
+<<<<<<< HEAD
   .w-100 {
     width: calc(var(--spacing) * 100);
   }
@@ -272,6 +301,10 @@
     --tw-scale-y: 75%;
     --tw-scale-z: 75%;
     scale: var(--tw-scale-x) var(--tw-scale-y);
+=======
+  .w-64 {
+    width: calc(var(--spacing) * 64);
+>>>>>>> pablo
   }
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
@@ -279,12 +312,15 @@
   .resize {
     resize: both;
   }
+<<<<<<< HEAD
   .appearance-none {
     appearance: none;
   }
   .flex-col {
     flex-direction: column;
   }
+=======
+>>>>>>> pablo
   .content-center {
     align-content: center;
   }
@@ -294,6 +330,7 @@
   .justify-center {
     justify-content: center;
   }
+<<<<<<< HEAD
   .gap-5 {
     gap: calc(var(--spacing) * 5);
   }
@@ -304,10 +341,13 @@
     border-top-left-radius: var(--radius-lg);
     border-top-right-radius: var(--radius-lg);
   }
+=======
+>>>>>>> pablo
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
+<<<<<<< HEAD
   .border-0 {
     border-style: var(--tw-border-style);
     border-width: 0px;
@@ -357,6 +397,25 @@
   }
   .text-gray-900 {
     color: var(--color-gray-900);
+=======
+  .border-gray-400 {
+    border-color: var(--color-gray-400);
+  }
+  .border-inherit {
+    border-color: inherit;
+  }
+  .bg-white {
+    background-color: var(--color-white);
+  }
+  .p-4 {
+    padding: calc(var(--spacing) * 4);
+  }
+  .px-\[50vw\] {
+    padding-inline: 50vw;
+  }
+  .py-\[50vw\] {
+    padding-block: 50vw;
+>>>>>>> pablo
   }
   .lowercase {
     text-transform: lowercase;
@@ -367,6 +426,13 @@
   .italic {
     font-style: italic;
   }
+<<<<<<< HEAD
+=======
+  .shadow {
+    --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+>>>>>>> pablo
   .ring {
     --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -391,6 +457,7 @@
     transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
+<<<<<<< HEAD
   .duration-300 {
     --tw-duration: 300ms;
     transition-duration: 300ms;
@@ -534,6 +601,8 @@
   syntax: "*";
   inherits: false;
   initial-value: 1;
+=======
+>>>>>>> pablo
 }
 @property --tw-rotate-x {
   syntax: "*";
@@ -683,6 +752,7 @@
   syntax: "*";
   inherits: false;
 }
+<<<<<<< HEAD
 @property --tw-duration {
   syntax: "*";
   inherits: false;
@@ -700,6 +770,11 @@
       --tw-scale-x: 1;
       --tw-scale-y: 1;
       --tw-scale-z: 1;
+=======
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *, ::before, ::after, ::backdrop {
+>>>>>>> pablo
       --tw-rotate-x: initial;
       --tw-rotate-y: initial;
       --tw-rotate-z: initial;
@@ -734,8 +809,11 @@
       --tw-drop-shadow-color: initial;
       --tw-drop-shadow-alpha: 100%;
       --tw-drop-shadow-size: initial;
+<<<<<<< HEAD
       --tw-duration: initial;
       --tw-font-weight: initial;
+=======
+>>>>>>> pablo
     }
   }
 }

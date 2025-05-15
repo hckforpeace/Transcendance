@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+<<<<<<< HEAD
 // const currentUrl = window.location.hostname;
 // const currentPort = window.location.port;
 // const currentRoot = currentUrl + ":" + currentPort;
@@ -32,6 +33,10 @@ var local_user;
 //     }
 //     footer.appendChild(newTag);
 // }
+=======
+const loginURL = "https://" + currentUrl + ':' + currentPort + '/api/login';
+var local_user;
+>>>>>>> pablo
 // json object for login request
 const headerLoginRequest = (uname, pw) => ({
     method: 'POST',
@@ -66,6 +71,7 @@ function submitEvent(event) {
         return;
     login(loginURL, headerLoginRequest(uname.value, pw.value));
 }
+<<<<<<< HEAD
 // TODO: do something with event parameter
 // function wsEvent(event: any) {
 //   console.log(currentRoot);
@@ -90,10 +96,13 @@ function submitEvent(event) {
 //   };
 //   fetchPong();
 // }
+=======
+>>>>>>> pablo
 document.addEventListener("DOMContentLoaded", function () {
     // socket_connect();
     send_login();
 });
+<<<<<<< HEAD
 // async function fetchPong() {
 //   await fetch("https://localhost:8080/api/pong", {
 //     headers: {
@@ -112,12 +121,15 @@ document.addEventListener("DOMContentLoaded", function () {
 //       console.error("Error:", error);
 //     }); 
 // }
+=======
+>>>>>>> pablo
 function send_login() {
     const form = document.getElementById("form");
     if (!form)
         return;
     form.addEventListener("submit", submitEvent);
 }
+<<<<<<< HEAD
 // function socket_connect() {
 //   const remote = document.getElementById("start") ;
 //   if (!remote)
@@ -126,3 +138,5 @@ function send_login() {
 // }
 // establish a connection to the server
 // const socket = new WebSocket("ws://localhost:8080");
+=======
+>>>>>>> pablo

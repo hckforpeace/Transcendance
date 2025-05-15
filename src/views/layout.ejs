@@ -1,22 +1,26 @@
-<!-- index.ejs --->
-<!doctype html>
+<!-- layout.ejs --->
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <title> <%= text %> </title>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <script src="https://cdn.tailwindcss.com"></script>
     <script id='remote-script' src="js/remote.js"> </script>
     <script id='dynamic-script' src="js/login.js"> </script>
+    <script id='home-script' src="js/home.js"> </script>
+    <script id='register-script' src="js/register.js"> </script>
     <link rel="stylesheet" href="css/pong.css">
     <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/button.css">
   </head>
   <body>
-    <div id="content-div" class="flex justify-center items-center min-h-screen">
-      <%- body %> 
+    <div id="content-div" class="flex items-center justify-center min-h-screen">  
+      <%- body %>
     </div>
-    <footer id="footer">
-
-    </footer>
   </body>
+  <footer id="footer">
+
+  </footer>
 </html>

@@ -7,3 +7,7 @@ What #Pierre  would like to do
 	1. **Major Module:** Implement **[[2FA]]** Two Factor Authentification and **[[JWT]]** (JSON WEB TOKEN'S).
 3. **User Management**
 	1. **Major Module:** Implement remote authentification using ***[[Google Sign-in]]***.
+
+What #Pablo wants to do:
+	1.DATABASE
+		Creating a conection with the sqlite3 db and the backend

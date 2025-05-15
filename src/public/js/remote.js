@@ -8,8 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+<<<<<<< HEAD
 const currentUrl = window.location.hostname;
 const currentPort = window.location.port;
+=======
+>>>>>>> pablo
 const currentRoot = currentUrl + ":" + currentPort;
 var socket;
 var playerSide;
@@ -102,7 +105,11 @@ function listclick() {
             const listItem = event.target;
             if (!listItem)
                 throw new Error('li not found');
+<<<<<<< HEAD
             const user = listItem.closest('p');
+=======
+            const user = listItem.closest('li');
+>>>>>>> pablo
             if (!user)
                 throw new Error('usli value not defined not found');
             // console.log();
@@ -123,6 +130,7 @@ function changeRegion() {
     newTag.id = "dynamic-script";
     newTag.type = "text/javascript";
     newTag.src = 'js/pong.js';
+<<<<<<< HEAD
     var footer = document.head;
     console.log("change region");
     if (!footer) {
@@ -131,6 +139,13 @@ function changeRegion() {
     }
     footer.appendChild(newTag);
     console.log("script loaded");
+=======
+    var footer = document.getElementById("footer");
+    if (!footer) {
+        return;
+    }
+    footer.appendChild(newTag);
+>>>>>>> pablo
 }
 function updateLobbyUsers(data) {
     var content_div = document.getElementById('content-div');
@@ -144,8 +159,12 @@ function updateLobbyUsers(data) {
         throw new Error('li not found');
     users_tag.innerHTML = '';
     for (let i = 0; i < numberofusers; i++) {
+<<<<<<< HEAD
         let element = document.createElement('p');
         element.classList.add('text-center');
+=======
+        let element = document.createElement('li');
+>>>>>>> pablo
         element.innerHTML = data.users[i];
         element.style.cursor = 'pointer';
         users_tag.appendChild(element);
@@ -158,6 +177,7 @@ function renderLobby() {
             throw new Error('missing content_div ');
         content_div.innerHTML = '';
         // content_div.classList.add('content-center');
+<<<<<<< HEAD
         var list = document.createElement("div");
         list.id = 'users_list';
         list.classList.add('border-3', 'p-9', 'rounded-xl', 'border-blue-500');
@@ -167,6 +187,10 @@ function renderLobby() {
         // list.style.width = '300px';
         // list.style.height = '100 px';
         // list.style.border = '1px solid black';
+=======
+        var list = document.createElement("ul");
+        list.id = 'users_list';
+>>>>>>> pablo
         content_div.appendChild(list);
         // var request_btn = document.createElement('input');
         // request_btn.type = 'button';
@@ -193,7 +217,10 @@ function fetchPong() {
             var content = document.getElementById("content-div");
             if (!content)
                 throw new Error("Content div not found");
+<<<<<<< HEAD
             content.className = "";
+=======
+>>>>>>> pablo
             content.innerHTML = html;
             changeRegion();
         })
