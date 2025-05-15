@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url'
 import bcrypt from 'bcryptjs';
 import { getDB } from "../database/database.js"
 
+import formData from "form-data"
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const auth = async (req, reply) => {
@@ -58,7 +60,13 @@ const login = async (req, reply) => {
 
 const register = async (req, reply) => {
 
-	const { name, email, password } = req.body;
+  const formData = await req.formData();
+	const email = formData.get("email");
+	const name = formData.get("name");
+	const password = formData.get("password");
+  console.log(name + " " + password)
+	// const { name, email, password } = req.body;
+  console.log(name);
 	const db = getDB();
 
   if (!name || !email || !password) {
@@ -70,12 +78,61 @@ const register = async (req, reply) => {
   try {
     const result = await db.run(`INSERT INTO users (name, email, hashed_password) VALUES (?, ?, ?)`, [name, email, hashed_password]);
 	//reply.send({ message: 'User registered successfully', result });
-    return reply.redirect('/');
+    // return reply.redirect('/');
   } catch (error) {
  console.error('Error registering user:', error); // Affiche l'erreur dans la console
     return reply.status(500).send({ error: 'Error registering user' });
   }
 };
+
+// const express = import('express');
+// const multer = import('multer');
+// //const path = require('path');
+
+// const app = express();
+// app.use(express.json());
+
+// // Set up multer storage
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'uploads/');  // Save files to 'uploads' directory
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, Date.now() + path.extname(file.originalname));  // Unique filename based on timestamp
+//   }
+// });
+
+// const upload = multer({ storage: storage });
+
+// // Serve static files from the 'uploads' directory
+// app.use('/uploads', express.static('uploads'));
+
+// // Register route with file upload
+// app.post('/api/register', upload.single('avatar'), async (req, res) => {
+//   const { name, email, password } = req.body;
+//   const db = getDB();
+
+//   if (!name || !email || !password) {
+//     return res.status(400).send({ error: 'Name, email, and password are required' });
+//   }
+
+//   const hashed_password = await bcrypt.hash(password, 10);
+//   const avatarPath = req.file ? `/uploads/${req.file.filename}` : null;  // File path
+
+//   try {
+//     const result = await db.run(
+//       `INSERT INTO users (name, email, hashed_password, avatar) VALUES (?, ?, ?, ?)`,
+//       [name, email, hashed_password, avatarPath]
+//     );
+//     return res.status(201).send({ message: 'User registered successfully' });
+//   } catch (error) {
+//     console.error('Error registering user:', error);
+//     return res.status(500).send({ error: 'Error registering user' });
+//   }
+// });
+
+
+
 
 const sock_con =  async (socket, req, fastify) => {
   try
@@ -136,4 +193,15 @@ const pong_view = async (req, rep) => {
   rep.send(data);
 }
 
-export default {auth, sock_con, pong_view};
+const users = async (req, reply) => {
+  try {
+    const db = getDB();
+	const users = await db.all('SELECT * FROM users');
+    return reply.send({ users });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return reply.status(500).send({ error: 'Error fetching users' });
+  }
+};
+
+export default {auth, sock_con, pong_view, login, register, users};

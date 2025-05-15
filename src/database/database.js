@@ -10,16 +10,16 @@ export const initDB = async () => {
 
     await db.exec(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE NOT NULL,
+        name TEXT UNIQUE NOT NULL,
         hashed_password TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL, 
-        avatar TEXT NOT NULL,
+        avatar TEXT
     )`);
 
     await db.exec(`CREATE TABLE IF NOT EXISTS stats (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE NOT NULL,
-        avatar TEXT NOT NULL,
+        name TEXT UNIQUE NOT NULL,
+        avatar TEXT
     )`);
 
   } catch (error) {

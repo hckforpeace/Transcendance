@@ -19,6 +19,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { initDB } from './database/database.js'
 import fastifyCookie from '@fastify/cookie'
 import fastifyFormbody from '@fastify/formbody'
+import fastifyMultipart from "@fastify/multipart"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -95,6 +96,8 @@ fastify.register(view, {
 // swagger 
 fastify.register(swagger, swg_config)
 fastify.register(swaggerUi, swgUI_config)
+
+fastify.register(fastifyMultipart, { attachFieldsToBody: true });
 
 
 // regiter routes

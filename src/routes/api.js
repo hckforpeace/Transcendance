@@ -27,13 +27,8 @@ async function routes (fastify, options) {
   // Define the routes
   fastify.post('/api/login', {schema: loginSchema}, api.auth);
    // {onRequest: [fastify.authenticate]}, 
-
-  fastify.post('/api/register', async (req, reply) => {
-  const { name, email, password } = req.body;
-  // Validate & store in DB
-  // Return JSON
-  return reply.send({ message: 'User registered successfully' });
-});
+// api.register
+  fastify.post('/api/register', api.register);
 
   fastify.get('/api/pong', { preHandler: [fastify.authenticate] } , api.pong_view);
   // connect to the websocket server

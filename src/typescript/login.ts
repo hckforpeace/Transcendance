@@ -1,33 +1,7 @@
 // login.ts
 
-<<<<<<< HEAD
-// const currentUrl = window.location.hostname;
-// const currentPort = window.location.port;
-// const currentRoot = currentUrl + ":" + currentPort;
 const loginURL:string = "https://" + currentUrl + ':' + currentPort + '/api/login';
 var local_user:string;
-// function changeRegion()
-// {
-//     var tag = document.getElementById("dynamic-script") as HTMLScriptElement;
-//     if (!tag) {
-//       return
-//     }
-//     tag.remove(); // remove the old script tag
-//   
-//     var newTag = document.createElement("script");
-//     newTag.id = "dynamic-script";
-//     newTag.type = "text/javascript";
-//     newTag.src = 'js/pong.js';
-//     var footer = document.getElementById("footer");
-//     if (!footer) {
-//       return ;
-//     }
-//     footer.appendChild(newTag);
-// }
-=======
-const loginURL:string = "https://" + currentUrl + ':' + currentPort + '/api/login';
-var local_user:string;
->>>>>>> pablo
 
 // json object for login request
 const headerLoginRequest = (uname: string, pw: string ) => ({
@@ -66,7 +40,6 @@ function submitEvent(event: any)
   login(loginURL, headerLoginRequest(uname.value, pw.value));
 }
 
-<<<<<<< HEAD
 // TODO: do something with event parameter
 // function wsEvent(event: any) {
 //   console.log(currentRoot);
@@ -94,15 +67,12 @@ function submitEvent(event: any)
 //   fetchPong();
 
 // }
-=======
->>>>>>> pablo
 
 document.addEventListener("DOMContentLoaded", function () {
   // socket_connect();
   send_login();
 });
 
-<<<<<<< HEAD
 // async function fetchPong() {
 //   await fetch("https://localhost:8080/api/pong", {
 //     headers: {
@@ -122,8 +92,6 @@ document.addEventListener("DOMContentLoaded", function () {
 //     }); 
 // }
 
-=======
->>>>>>> pablo
 function send_login() {
   const form = document.getElementById("form");
   if (!form) 
@@ -131,7 +99,6 @@ function send_login() {
   form.addEventListener("submit", submitEvent);
 }
 
-<<<<<<< HEAD
 // function socket_connect() {
 //   const remote = document.getElementById("start") ;
 //   if (!remote)
@@ -142,5 +109,3 @@ function send_login() {
 
 // establish a connection to the server
 // const socket = new WebSocket("ws://localhost:8080");
-=======
->>>>>>> pablo
