@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import fs from 'fs';
 import jwtPlugin from './plugins/jwtPlugin.js';
 import Fastify from 'fastify';
@@ -15,11 +18,9 @@ import path from 'path';
 import fastifyStatic from '@fastify/static';
 import websockets from '@fastify/websocket';
 import vaultFactory from 'node-vault';
-import dotenv from 'dotenv';
 import xss from 'xss';
 import { getCertsFromVault, putCertsToVault } from './vault.js';
 
-dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = 8080;
@@ -60,18 +61,28 @@ function rateLimiter(maxRequests, timeWindowMs) {
   };
 }
 
-async function startServer() {
-  const certs = await getCertsFromVault();
+// Ne pas appeler à chaque démarrage, uniquement manuellement si besoin
+// putCertsToVault();
 
-  if (!certs?.server_key || !certs?.server_crt) {
-    console.error('❌ Certificats non trouvés dans Vault');
-    process.exit(1);
-  }
+async function startServer() {
+  // let certs;
+  // try {
+  //   certs = await getCertsFromVault();
+  //   if (!certs?.server_key || !certs?.server_crt) {
+  //     console.error('❌ Certificats non trouvés dans Vault');
+  //     process.exit(1);
+  //   }
+  // } catch (err) {
+  //   console.error('❌ Erreur lors de la récupération des certificats depuis Vault:', err.message);
+  //   process.exit(1);
+  // }
 
   const fastify = Fastify({
     https: {
-      key: certs.server_key,
-      cert: certs.server_crt,
+        key: fs.readFileSync('./src/secret/certs/server.key'),
+        cert: fs.readFileSync('./src/secret/certs/server.crt')
+      // key: certs.server_key,
+      // cert: certs.server_crt,
     },
     logger: true,
   });
@@ -93,27 +104,24 @@ async function startServer() {
 
   // WAF Hooks
   fastify.addHook('onRequest', async (request, reply) => {
-    const result = await rateLimiter(100, 60 * 1000)(request, reply);
+    await rateLimiter(100, 60 * 1000)(request, reply);
 
     const { method, url } = request;
-    console.log('--- Début de la requête ---');
-    console.log(`Méthode: ${method}`);
-    console.log(`URL: `, url);
 
     try {
       const decodedUrl = decodeURIComponent(url);
       if (suspicious_sql_patterns.some(r => r.test(decodedUrl))) {
+        fastify.log.warn(`❌ Requête bloquée par WAF (pattern SQL) : ${decodedUrl}`);
         return reply.code(403).send({ error: 'Blocked by WAF' });
       }
     } catch (err) {
-      console.error('Erreur lors de la vérification de l\'URL :', err);
+      fastify.log.error('Erreur lors de la décodification de l’URL:', err.message);
     }
 
-    const body = request.body || {};
-    const rawBody = JSON.stringify(body);
-
+    const rawBody = JSON.stringify(request.body || {});
     for (const path of forbiddenPaths) {
       if (url.includes(path) || rawBody.includes(path)) {
+        fastify.log.warn(`❌ Requête bloquée (chemin interdit) : ${path}`);
         return reply.code(403).send({ error: `Forbidden pattern detected: ${path}` });
       }
     }
@@ -123,7 +131,12 @@ async function startServer() {
     const { method, url, body } = request;
     console.log('Corps de la requête:', body);
 
-    if (['POST', 'PUT', 'PATCH'].includes(method) && body && typeof body === 'object') {
+    if (
+      ['POST', 'PUT', 'PATCH'].includes(method) &&
+      body &&
+      typeof body === 'object' &&
+      !Array.isArray(body)
+    ) {
       const { username = '', password = '' } = body;
       if (
         suspicious_sql_patterns.some(r => r.test(username)) ||
@@ -146,6 +159,7 @@ async function startServer() {
   fastify.register(routesPong);
   fastify.register(routesApi);
 
+  
   // Start server
   fastify.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {
     if (err) {
@@ -156,5 +170,5 @@ async function startServer() {
   });
 }
 
-putCertsToVault();
+
 startServer();

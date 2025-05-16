@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./src/server",
     "dev": "tsc && nodemon ./src/server",
-    "ndm": "nodemon ./src/server"
+    "ndm": "./src/setup-vault.sh && ./src/vault.sh nodemon ./src/server "
   },
   "keywords": [],
   "author": "",
