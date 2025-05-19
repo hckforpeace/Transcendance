@@ -11,12 +11,12 @@
             "id": "dd2e2f59c9cde2d1",
             "type": "leaf",
             "state": {
-              "type": "release-notes",
+              "type": "excalidraw",
               "state": {
-                "currentVersion": "1.8.10"
+                "file": "Excalidraw/UI design.md"
               },
-              "icon": "lucide-book-up",
-              "title": "Release Notes 1.8.10"
+              "icon": "excalidraw-icon",
+              "title": "UI design"
             }
           }
         ]
@@ -76,8 +76,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "3985b73406d8978d",
