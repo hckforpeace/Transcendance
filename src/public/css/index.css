@@ -234,20 +234,8 @@
       max-width: 96rem;
     }
   }
-  .m-3 {
-    margin: calc(var(--spacing) * 3);
-  }
-  .m-30 {
-    margin: calc(var(--spacing) * 30);
-  }
-  .m-50 {
-    margin: calc(var(--spacing) * 50);
-  }
   .mx-8 {
     margin-inline: calc(var(--spacing) * 8);
-  }
-  .mx-10 {
-    margin-inline: calc(var(--spacing) * 10);
   }
   .my-2 {
     margin-block: calc(var(--spacing) * 2);
@@ -257,9 +245,6 @@
   }
   .mt-20 {
     margin-top: calc(var(--spacing) * 20);
-  }
-  .mt-50 {
-    margin-top: calc(var(--spacing) * 50);
   }
   .mr-4 {
     margin-right: calc(var(--spacing) * 4);
@@ -297,18 +282,6 @@
   .table {
     display: table;
   }
-  .table-cell {
-    display: table-cell;
-  }
-  .table-header-group {
-    display: table-header-group;
-  }
-  .table-row {
-    display: table-row;
-  }
-  .table-row-group {
-    display: table-row-group;
-  }
   .h-10 {
     height: calc(var(--spacing) * 10);
   }
@@ -321,29 +294,8 @@
   .h-100 {
     height: calc(var(--spacing) * 100);
   }
-  .h-200 {
-    height: calc(var(--spacing) * 200);
-  }
-  .h-270 {
-    height: calc(var(--spacing) * 270);
-  }
   .h-300 {
     height: calc(var(--spacing) * 300);
-  }
-  .h-320 {
-    height: calc(var(--spacing) * 320);
-  }
-  .h-400 {
-    height: calc(var(--spacing) * 400);
-  }
-  .h-800 {
-    height: calc(var(--spacing) * 800);
-  }
-  .h-\[500px\] {
-    height: 500px;
-  }
-  .h-\[700\] {
-    height: 700;
   }
   .h-auto {
     height: auto;
@@ -351,41 +303,11 @@
   .h-full {
     height: 100%;
   }
-  .h-screen {
-    height: 100vh;
-  }
-  .max-h-8 {
-    max-height: calc(var(--spacing) * 8);
-  }
-  .max-h-10 {
-    max-height: calc(var(--spacing) * 10);
-  }
-  .max-h-20 {
-    max-height: calc(var(--spacing) * 20);
-  }
   .max-h-30 {
     max-height: calc(var(--spacing) * 30);
   }
-  .max-h-40 {
-    max-height: calc(var(--spacing) * 40);
-  }
-  .max-h-80 {
-    max-height: calc(var(--spacing) * 80);
-  }
   .max-h-100 {
     max-height: calc(var(--spacing) * 100);
-  }
-  .max-h-300 {
-    max-height: calc(var(--spacing) * 300);
-  }
-  .max-h-700 {
-    max-height: calc(var(--spacing) * 700);
-  }
-  .max-h-full {
-    max-height: 100%;
-  }
-  .min-h-full {
-    min-height: 100%;
   }
   .min-h-screen {
     min-height: 100vh;
@@ -396,9 +318,6 @@
   .w-100 {
     width: calc(var(--spacing) * 100);
   }
-  .w-\[500px\] {
-    width: 500px;
-  }
   .w-auto {
     width: auto;
   }
@@ -408,9 +327,6 @@
   .max-w-100 {
     max-width: calc(var(--spacing) * 100);
   }
-  .max-w-700 {
-    max-width: calc(var(--spacing) * 700);
-  }
   .max-w-md {
     max-width: var(--container-md);
   }
@@ -419,12 +335,6 @@
   }
   .flex-1 {
     flex: 1;
-  }
-  .flex-grow {
-    flex-grow: 1;
-  }
-  .grow {
-    flex-grow: 1;
   }
   .table-fixed {
     table-layout: fixed;
@@ -468,9 +378,6 @@
   .justify-center {
     justify-content: center;
   }
-  .justify-end {
-    justify-content: flex-end;
-  }
   .gap-4 {
     gap: calc(var(--spacing) * 4);
   }
@@ -486,12 +393,6 @@
   }
   .overflow-auto {
     overflow: auto;
-  }
-  .overflow-hidden {
-    overflow: hidden;
-  }
-  .overflow-y-auto {
-    overflow-y: auto;
   }
   .rounded {
     border-radius: 0.25rem;
@@ -555,9 +456,6 @@
   .bg-white {
     background-color: var(--color-white);
   }
-  .p-1 {
-    padding: calc(var(--spacing) * 1);
-  }
   .p-2 {
     padding: calc(var(--spacing) * 2);
   }
@@ -573,32 +471,14 @@
   .p-9 {
     padding: calc(var(--spacing) * 9);
   }
-  .p-50 {
-    padding: calc(var(--spacing) * 50);
-  }
-  .p-100 {
-    padding: calc(var(--spacing) * 100);
-  }
   .px-4 {
     padding-inline: calc(var(--spacing) * 4);
   }
   .px-6 {
     padding-inline: calc(var(--spacing) * 6);
   }
-  .px-10 {
-    padding-inline: calc(var(--spacing) * 10);
-  }
   .py-2 {
     padding-block: calc(var(--spacing) * 2);
-  }
-  .py-4 {
-    padding-block: calc(var(--spacing) * 4);
-  }
-  .py-10 {
-    padding-block: calc(var(--spacing) * 10);
-  }
-  .py-200 {
-    padding-block: calc(var(--spacing) * 200);
   }
   .pb-3 {
     padding-bottom: calc(var(--spacing) * 3);
