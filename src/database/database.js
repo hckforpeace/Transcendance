@@ -13,14 +13,19 @@ export const initDB = async () => {
         name TEXT UNIQUE NOT NULL,
         hashed_password TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL, 
-        avatar TEXT
+        avatarPath TEXT
     )`);
 
     await db.exec(`CREATE TABLE IF NOT EXISTS stats (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT UNIQUE NOT NULL,
-        avatar TEXT
-    )`);
+        match_wins INTEGER DEFAULT 0,
+        tournament_wins INTEGER DEFAULT 0,
+        tournaments_played INTEGER DEFAULT 0,
+        matches_played INTEGER DEFAULT 0,
+        player_id INTEGER NOT NULL,
+        FOREIGN KEY (player_id) REFERENCES users(id) ON DELETE CASCADE
+)`);
+
 
   } catch (error) {
     console.error('Error initializing the database:', error);

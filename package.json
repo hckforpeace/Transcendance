@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./src/server",
     "dev": "tsc && nodemon ./src/server",
-    "ndm": "nodemon"
+    "ndm": "rm mydatabase.db && nodemon"
   },
   "keywords": [],
   "author": "",
