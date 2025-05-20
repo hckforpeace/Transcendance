@@ -4,19 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "01b9e195addd60a4",
+        "id": "0aded83f50035b96",
         "type": "tabs",
         "children": [
           {
-            "id": "dd2e2f59c9cde2d1",
+            "id": "305d275627ea7cbb",
             "type": "leaf",
             "state": {
-              "type": "excalidraw",
-              "state": {
-                "file": "Excalidraw/UI design.md"
-              },
-              "icon": "excalidraw-icon",
-              "title": "UI design"
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
             }
           }
         ]
@@ -165,6 +163,8 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "dd2e2f59c9cde2d1",
-  "lastOpenFiles": []
+  "active": "305d275627ea7cbb",
+  "lastOpenFiles": [
+    "Excalidraw/UI design.md"
+  ]
 }

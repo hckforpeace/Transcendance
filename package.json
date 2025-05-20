@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node ./src/server",
     "dev": "tsc && nodemon ./src/server",
-    "ndm": "nodemon"
+    "tailwindcss": "npx tailwindcss -i ./src/public/css/input.css -o ./src/public/css/index.css --watch",
+    "ndm": "concurrently \"npm run tailwindcss\" \"nodemon\""
   },
   "keywords": [],
   "author": "",
@@ -43,6 +44,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.3",
     "@types/ws": "^8.18.1",
+    "concurrently": "^9.1.2",
     "postcss-cli": "^11.0.1",
     "tailwindcss": "^4.1.4",
     "ts-node": "^10.9.2"
