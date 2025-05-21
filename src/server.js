@@ -65,24 +65,11 @@ function rateLimiter(maxRequests, timeWindowMs) {
 // putCertsToVault();
 
 async function startServer() {
-  // let certs;
-  // try {
-  //   certs = await getCertsFromVault();
-  //   if (!certs?.server_key || !certs?.server_crt) {
-  //     console.error('❌ Certificats non trouvés dans Vault');
-  //     process.exit(1);
-  //   }
-  // } catch (err) {
-  //   console.error('❌ Erreur lors de la récupération des certificats depuis Vault:', err.message);
-  //   process.exit(1);
-  // }
 
   const fastify = Fastify({
     https: {
         key: fs.readFileSync('./src/secret/certs/server.key'),
         cert: fs.readFileSync('./src/secret/certs/server.crt')
-      // key: certs.server_key,
-      // cert: certs.server_crt,
     },
     logger: true,
   });
