@@ -7,17 +7,17 @@
     "start": "node ./src/server",
     "dev": "tsc && nodemon ./src/server",
     "tailwindcss": "npx tailwindcss -i ./src/public/css/input.css -o ./src/public/css/index.css --watch",
-    "ndm": "rm mydatabase.db && concurrently \"npm run tailwindcss\" \"nodemon\""
+    "ndm": "rm mydatabase.db && ./src/setup-vault.sh && ./src/vault.sh && concurrently \"npm run tailwindcss\" \"nodemon\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
     "@fastify/formbody": "^8.0.2",
     "@fastify/jwt": "^9.1.0",
     "@fastify/multipart": "^9.0.3",
+    "@fastify/rate-limit": "^7.6.0",
     "@fastify/static": "^8.1.1",
     "@fastify/swagger": "^9.4.2",
     "@fastify/swagger-ui": "^5.2.2",
@@ -27,19 +27,24 @@
     "@tailwindcss/vite": "^4.1.4",
     "autoprefixer": "^10.4.21",
     "bcryptjs": "^3.0.2",
+    "dotenv": "^16.5.0",
     "ejs": "^3.1.10",
     "fastify": "^5.2.1",
+    "fastify-formbody": "^5.2.0",
+    "fastify-helmet": "^7.0.1",
     "fastify-plugin": "^5.0.1",
     "fastify-swagger": "^5.1.1",
     "form-data": "^4.0.2",
     "jsonwebtoken": "^9.0.2",
+    "node-vault": "^0.10.2",
     "nodemon": "^3.1.9",
     "postcss": "^8.5.3",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
     "typescript": "^5.8.2",
     "uuid": "^11.1.0",
-    "vite": "^6.2.3"
+    "vite": "^6.2.3",
+    "xss": "^1.0.15"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.3",
@@ -48,5 +53,14 @@
     "postcss-cli": "^11.0.1",
     "tailwindcss": "^4.1.4",
     "ts-node": "^10.9.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hckforpeace/Transcendance.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hckforpeace/Transcendance/issues"
+  },
+  "homepage": "https://github.com/hckforpeace/Transcendance#readme",
+  "description": ""
 }
