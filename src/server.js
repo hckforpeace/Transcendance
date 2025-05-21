@@ -20,10 +20,10 @@ import fastifyCookie from '@fastify/cookie'
 import fastifyFormbody from '@fastify/formbody'
 import fastifyMultipart from "@fastify/multipart"
 import dotenv from 'dotenv';
-import routesPong from './routes/pong.js';
-import vaultFactory from 'node-vault';
+//import routesPong from './routes/pong.js';
+//import vaultFactory from 'node-vault';
+//import { getCertsFromVault, putCertsToVault } from './vault.js';
 import xss from 'xss';
-import { getCertsFromVault, putCertsToVault } from './vault.js';
 
 const { swg_config, swgUI_config } = swaggerConfig;
 dotenv.config();
@@ -36,6 +36,7 @@ export default defineConfig({
   ],
 })
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const forbiddenPaths = ['../', '/etc', '/bin/', 'eval', 'base64'];
 const suspicious_sql_patterns = [
@@ -76,8 +77,6 @@ function rateLimiter(maxRequests, timeWindowMs) {
 // Ne pas appeler à chaque démarrage, uniquement manuellement si besoin
 // putCertsToVault();
 
-// cookies
-fastify.register(fastifyCookie);
 
 const fastify = Fastify({
   https: {
@@ -87,20 +86,6 @@ const fastify = Fastify({
   logger: true,
 });
 
-// Plugins
-fastify.register(jwtPlugin);
-fastify.register(fastifyStatic, {
-  root: path.join(__dirname, '/public'),
-  prefix: '/',
-});
-fastify.register(websockets);
-fastify.register(view, {
-  engine: { ejs },
-  layout: 'layout.ejs',
-  root: __dirname + '/views/',
-});
-fastify.register(swagger, swg_config);
-fastify.register(swaggerUi, swgUI_config);
 
 // WAF Hooks
 fastify.addHook('onRequest', async (request, reply) => {
@@ -154,6 +139,14 @@ fastify.addHook('preHandler', async (request, reply) => {
   }
 });
 
+// Plugins
+fastify.register(fastifyCookie);
+
+fastify.register(websockets);
+
+fastify.register(swagger, swg_config);
+
+fastify.register(swaggerUi, swgUI_config);
 
 // jwt plugin
 fastify.register(jwtPlugin);
@@ -189,9 +182,6 @@ fastify.addHook('preHandler', async (req, reply) => {
 	reply.locals.user = req.user;
 });
 
-
-fastify.register(websockets)
-
 await initDB();
 
 // view
@@ -200,10 +190,6 @@ fastify.register(view, {
 	layout: "layout.ejs",
 	root: __dirname + '/views/'
 });
-
-// swagger 
-fastify.register(swagger, swg_config)
-fastify.register(swaggerUi, swgUI_config)
 
 fastify.register(fastifyMultipart, { attachFieldsToBody: true });
 
