@@ -1,5 +1,4 @@
 node_modules/
 ./src/public/**/*.js
 src/.env
-*.key
-*.crt
+src/secret/
