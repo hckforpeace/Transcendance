@@ -7,7 +7,7 @@
     "start": "node ./src/server",
     "dev": "tsc && nodemon ./src/server",
     "tailwindcss": "npx tailwindcss -i ./src/public/css/input.css -o ./src/public/css/index.css --watch",
-    "ndm": "concurrently \"npm run tailwindcss\" \"nodemon\""
+    "ndm": "rm mydatabase.db && concurrently \"npm run tailwindcss\" \"nodemon\""
   },
   "keywords": [],
   "author": "",

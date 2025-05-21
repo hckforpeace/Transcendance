@@ -1,22 +1,20 @@
 {
   "main": {
-    "id": "9b29ab04ca638baa",
+    "id": "586dafeceb2edf3a",
     "type": "split",
     "children": [
       {
-        "id": "b816bce74605a13c",
+        "id": "a2a5ef8d3cd62dfa",
         "type": "tabs",
         "children": [
           {
-            "id": "c6cf55fc2674b504",
+            "id": "d11effe2653c9287",
             "type": "leaf",
             "state": {
-              "type": "excalidraw",
-              "state": {
-                "file": "Transcendance/Excalidraw/UI design.md"
-              },
-              "icon": "excalidraw-icon",
-              "title": "UI design"
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "New tab"
             }
           }
         ]
@@ -25,15 +23,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "192f60d44bf521e7",
+    "id": "9e36a2eceddb5ab6",
     "type": "split",
     "children": [
       {
-        "id": "4209e1695f298511",
+        "id": "539b43dea5563a2e",
         "type": "tabs",
         "children": [
           {
-            "id": "da1e010a4b8cb2c6",
+            "id": "11c53b9262add7e7",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -46,7 +44,7 @@
             }
           },
           {
-            "id": "21b4aa4530c1eb60",
+            "id": "4e9c4274deb43f0d",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -63,7 +61,7 @@
             }
           },
           {
-            "id": "a78b260e5dbba78f",
+            "id": "729c4c7d2bdc7321",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -79,20 +77,19 @@
     "width": 300
   },
   "right": {
-    "id": "f1214239ea4b9822",
+    "id": "c4f3af363e2e0799",
     "type": "split",
     "children": [
       {
-        "id": "dc85d3452ada9ee7",
+        "id": "439fa3338d00e15e",
         "type": "tabs",
         "children": [
           {
-            "id": "eaf4bcd7f7cfaded",
+            "id": "c7d4933e92f9a648",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Transcendance/Excalidraw/UI design.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,25 +99,24 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for UI design"
+              "title": "Backlinks"
             }
           },
           {
-            "id": "f5dfbd1f53a44b90",
+            "id": "bb9db07f7269a28e",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Transcendance/Excalidraw/UI design.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from UI design"
+              "title": "Outgoing links"
             }
           },
           {
-            "id": "bc54b9e7a1eddd82",
+            "id": "9d12812d9db65426",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -135,18 +131,17 @@
             }
           },
           {
-            "id": "05b9d834c53291b4",
+            "id": "b0da781f34a4804c",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "Transcendance/Excalidraw/UI design.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of UI design"
+              "title": "Outline"
             }
           }
         ]
@@ -163,13 +158,9 @@
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
-      "command-palette:Open command palette": false,
-      "obsidian-excalidraw-plugin:New drawing": false
+      "command-palette:Open command palette": false
     }
   },
-  "active": "c6cf55fc2674b504",
-  "lastOpenFiles": [
-    "Transcendance/Excalidraw/UI design.md",
-    "Transcendance/Excalidraw/Services.md"
-  ]
+  "active": "d11effe2653c9287",
+  "lastOpenFiles": []
 }
