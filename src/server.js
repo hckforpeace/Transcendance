@@ -19,7 +19,7 @@ import { initDB } from './database/database.js'
 import fastifyCookie from '@fastify/cookie'
 import fastifyFormbody from '@fastify/formbody'
 import fastifyMultipart from "@fastify/multipart"
-import dotenv from 'dotenv';
+import dotenv from 'dotenv'; 
 //import routesPong from './routes/pong.js';
 //import vaultFactory from 'node-vault';
 //import { getCertsFromVault, putCertsToVault } from './vault.js';
@@ -74,9 +74,6 @@ function rateLimiter(maxRequests, timeWindowMs) {
   };
 }
 
-// Ne pas appeler à chaque démarrage, uniquement manuellement si besoin
-// putCertsToVault();
-
 
 const fastify = Fastify({
   https: {
@@ -114,7 +111,6 @@ fastify.addHook('onRequest', async (request, reply) => {
 
 fastify.addHook('preHandler', async (request, reply) => {
   const { method, url, body } = request;
-  console.log('Corps de la requête:', body);
 
   if (
     ['POST', 'PUT', 'PATCH'].includes(method) &&
@@ -129,15 +125,38 @@ fastify.addHook('preHandler', async (request, reply) => {
     ) {
       return reply.code(403).send({ error: 'Blocked by WAF' });
     }
-
     const sanitizedBody = {};
-    for (const key of Object.keys(body)) {
-      sanitizedBody[key] = xss(body[key]);
+
+    for (const key in request.body) {
+    const field = request.body[key];
+
+    if (field.type === 'field' && typeof field.value === 'string') {
+      sanitizedBody[key] = { ...field, value: xss(field.value) };
+    } else {
+      sanitizedBody[key] = field;
     }
+  }
     request.body = sanitizedBody;
-    console.log('Corps après nettoyage:', sanitizedBody);
   }
 });
+
+// XSS test with a route
+fastify.get('/test-xss', async (req, reply) => {
+  reply.type('text/html').send(`
+    <form method="POST" action="/test-xss">
+      <input type="text" name="name" />
+      <button type="submit">Envoyer</button>
+    </form>
+  `);
+});
+
+fastify.post('/test-xss', async (req, reply) => {
+  const name = req.body.name;
+  reply
+    .header('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'")
+    .type('text/html')
+});
+
 
 // Plugins
 fastify.register(fastifyCookie);
