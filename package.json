@@ -7,7 +7,7 @@
     "start": "node ./src/server",
     "dev": "tsc && nodemon ./src/server",
     "tailwindcss": "npx tailwindcss -i ./src/public/css/input.css -o ./src/public/css/index.css --watch",
-    "ndm": "[ -f mydatabase.db ] && rm mydatabase.db; ./src/setup-vault.sh && ./src/vault.sh && concurrently \"npm run tailwindcss\" \"nodemon\""
+    "ndm": "[ -f mydatabase.db ] && rm mydatabase.db; ./src/setup-vault.sh && concurrently \"npm run tailwindcss\" \"nodemon\""
   },
   "keywords": [],
   "author": "",

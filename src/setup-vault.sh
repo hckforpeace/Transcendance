@@ -1,50 +1,44 @@
 #!/bin/bash
 
+# === CONFIGURATION ===
 CERT_DIR="./src/secret/certs"
 CRT_FILE="$CERT_DIR/server.crt"
 KEY_FILE="$CERT_DIR/server.key"
+VAULT_ADDR="http://127.0.0.1:8200"
+
+export VAULT_ADDR
 
 mkdir -p "$CERT_DIR"
 
-# Fonction pour générer et stocker les certificats dans Vault
-generate_and_store() {
-  echo "[vault.sh] Génération du certificat auto-signé..."
-  openssl req -x509 -newkey rsa:4096 -sha256 -days 365 \
-    -nodes \
-    -keyout "$KEY_FILE" \
-    -out "$CRT_FILE" \
-    -subj "/C=FR/ST=Paris/L=Paris/O=42/CN=localhost"
+# === 1. Lancer Vault dans un nouveau terminal ===
+echo "[vault.sh] Lancement de Vault (mode dev)..."
+gnome-terminal -- bash -c "export VAULT_ADDR=$VAULT_ADDR; vault server -dev; exec bash"
 
-  echo "[vault.sh] Stockage des certificats dans Vault..."
-  vault kv put secret/certs server.crt="$(base64 -w 0 < "$CRT_FILE")" server.key="$(base64 -w 0 < "$KEY_FILE")"
-}
+# === 2. Attendre que Vault soit prêt ===
+echo "[vault.sh] Attente de la disponibilité de Vault..."
+until curl -s "$VAULT_ADDR/v1/sys/health" > /dev/null; do
+  sleep 1
+done
+echo "[vault.sh] ✅ Vault est prêt."
 
-# Démarrage du script
+# === 3. Générer un certificat auto-signé ===
+echo "[vault.sh] Génération du certificat..."
+openssl req -x509 -newkey rsa:2048 -sha256 -days 365 \
+  -nodes \
+  -keyout "$KEY_FILE" \
+  -out "$CRT_FILE" \
+  -subj "/C=FR/ST=Paris/L=Paris/O=42/CN=localhost"
 
-echo "[vault.sh] Recherche des certificats dans Vault..."
-VAULT_SECRET_JSON=$(vault kv get -format=json secret/certs 2>/dev/null)
+# === 4. Stocker dans Vault (plaintext, pas de base64) ===
+echo "[vault.sh] Stockage dans Vault..."
+vault kv put secret/certs \
+  server.crt=@"$CRT_FILE" \
+  server.key=@"$KEY_FILE"
 
-if [ $? -eq 0 ]; then
-  VAULT_CRT=$(echo "$VAULT_SECRET_JSON" | jq -r '.data.data["server.crt"]')
-  VAULT_KEY=$(echo "$VAULT_SECRET_JSON" | jq -r '.data.data["server.key"]')
+echo "[vault.sh] ✅ Certificats stockés avec succès."
 
-  if [[ -n "$VAULT_CRT" && -n "$VAULT_KEY" && "$VAULT_CRT" != "null" && "$VAULT_KEY" != "null" ]]; then
-    echo "[vault.sh] Certificats trouvés dans Vault."
-    echo "$VAULT_CRT" | base64 --decode > "$CRT_FILE"
-    echo "$VAULT_KEY" | base64 --decode > "$KEY_FILE"
-  else
-    echo "[vault.sh] Certificats non trouvés ou vides dans Vault, génération locale..."
-    generate_and_store
-  fi
-else
-  echo "[vault.sh] Aucun secret trouvé dans Vault, génération locale..."
-  generate_and_store
-fi
+# === 5. Ouvrir un autre terminal pour faire vault kv get ===
+echo "[vault.sh] Ouverture d’un second terminal pour vérification..."
+gnome-terminal -- bash -c "export VAULT_ADDR=$VAULT_ADDR; vault kv get secret/certs; exec bash"
 
-if [[ ! -f "$CRT_FILE" || ! -f "$KEY_FILE" ]]; then
-  echo "[vault.sh] Erreur : Les certificats ne sont pas disponibles localement."
-  exit 1
-fi
-
-echo "[vault.sh] Certificats prêts, lancement de la commande : $@"
-exec "$@"
+echo "[vault.sh] 🚀 Tout est prêt."
