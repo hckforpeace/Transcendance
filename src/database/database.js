@@ -26,7 +26,7 @@ export const initDB = async () => {
         FOREIGN KEY (player_id) REFERENCES users(id) ON DELETE CASCADE
     )`);
 
-    await db.exec(`CREATE TABLE IF NOT EXISTS 2fa_code (
+    await db.exec(`CREATE TABLE IF NOT EXISTS "2fa_code" (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
         code TEXT NOT NULL,
