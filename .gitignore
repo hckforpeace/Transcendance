@@ -3,4 +3,4 @@ node_modules/
 src/.env
 src/secret/certs
 bin/vault 
-vault_1.19.3_linux_amd64.zip
+vault_1.19.3_linux_amd64.zip 
