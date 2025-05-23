@@ -1,0 +1,22 @@
+name: On Merge to Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: node:22  # Uses official Node.js 22 Docker image
+    steps:
+      - uses: actions/checkout@v3
+
+      # Optional: If you want to use Node 20 instead of 22 from the container
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install
+      - run: npm run build

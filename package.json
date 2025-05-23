@@ -4,10 +4,11 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node ./src/server",
-    "dev": "tsc && nodemon ./src/server",
-    "tailwindcss": "npx tailwindcss -i ./src/public/css/input.css -o ./src/public/css/index.css --watch",
-    "ndm": "[ -f mydatabase.db ] && rm mydatabase.db; ./src/setup-vault.sh && concurrently \"npm run tailwindcss\" \"nodemon\""
+    "tailwind_dev": "npx tailwindcss -i ./src/public/css/input.css -o ./src/public/css/index.css --watch",
+    "tailwind_prod": "npx tailwindcss -i ./src/public/css/input.css -o ./src/public/css/index.css --minify",
+    "build": "./src/setup-vault.sh &&  tsc && npm run tailwind_prod",
+    "dev": "./src/setup-vault.sh && concurrently \"npm run tailwind_dev\" \"nodemon\"",
+    "start": "node ./src/server.js "
   },
   "keywords": [],
   "author": "",
