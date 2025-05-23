@@ -1,4 +1,6 @@
 node_modules/
 ./src/public/**/*.js
 src/.env
-src/secret/certs 
+src/secret/certs
+vault
+vault_1.19.3_linux_amd64.zip
