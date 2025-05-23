@@ -1,2 +1,5 @@
 node_modules/
 ./src/public/**/*.js
+src/.env
+src/secret/certs 
+vault

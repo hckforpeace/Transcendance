@@ -16,8 +16,10 @@
     <link rel="stylesheet" href="css/button.css">
   </head>
   <body>
-  <div id="menu">
-  </div>
+    <div id="menu" class="grid grid-cols-3 items-center h-16 px-4  border-4  border-blue-500 " >
+      <%- include('./menu.ejs') %>
+    </div>
+
     <div id="content-div" class="flex items-center justify-center min-h-screen">  
       <%- body %>
     </div>

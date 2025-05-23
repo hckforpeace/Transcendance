@@ -80,6 +80,7 @@ const register = async (req, reply) => {
   }
 
   // Email format check
+  console.log("Name = " + name + "\nMail = " + email);
   if (!email.includes("@")) {
     return reply.status(400).send({ error: "Invalid email address" });
   }
