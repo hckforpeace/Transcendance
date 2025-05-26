@@ -33,11 +33,11 @@ echo "[vault.sh] Lancement de Vault (mode dev)..."
 gnome-terminal -- bash -c "export VAULT_ADDR=$VAULT_ADDR; ${VAULT_BIN} server -dev; exec bash"
 
 # === 2. Attendre que Vault soit prêt ===
-echo "[vault.sh] Attente de la disponibilité de Vault..."
-until curl -s "$VAULT_ADDR/v1/sys/health" > /dev/null; do
-  sleep 1
-done
-echo "[vault.sh] ✅ Vault est prêt."
+# echo "[vault.sh] Attente de la disponibilité de Vault..."
+# until curl -s "$VAULT_ADDR/v1/sys/health" > /dev/null; do
+#   sleep 1
+# done
+# echo "[vault.sh] ✅ Vault est prêt."
 
 # === 3. Générer un certificat auto-signé ===
 echo "[vault.sh] Génération du certificat..."
@@ -53,10 +53,10 @@ $VAULT_BIN kv put secret/certs \
   server.crt=@"$CRT_FILE" \
   server.key=@"$KEY_FILE"
 
-echo "[vault.sh] ✅ Certificats stockés avec succès."
+# echo "[vault.sh] ✅ Certificats stockés avec succès."
 
 # === 5. Ouvrir un autre terminal pour faire vault kv get ===
 echo "[vault.sh] Ouverture d’un second terminal pour vérification..."
 gnome-terminal -- bash -c "export VAULT_ADDR=$VAULT_ADDR; ${VAULT_BIN} kv get secret/certs; exec bash"
 
-echo "[vault.sh] 🚀 Tout est prêt."
+# echo "[vault.sh] 🚀 Tout est prêt."

@@ -3,3 +3,4 @@ node_modules/
 src/.env
 src/secret/certs
 bin/
+vault

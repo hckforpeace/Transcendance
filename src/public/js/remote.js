@@ -8,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-// const currentUrl = window.location.hostname;
-// const currentPort = window.location.port;
+const currentUrl = window.location.hostname;
+const currentPort = window.location.port;
 const currentRoot = currentUrl + ":" + currentPort;
 var socket;
 var playerSide;

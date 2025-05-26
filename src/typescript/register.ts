@@ -1,6 +1,6 @@
 // // // Construct the register URL dynamically
-const currentUrl = window.location.hostname;
-const currentPort = window.location.port;
+// const currentUrl = window.location.hostname;
+// const currentPort = window.location.port;
 
 /**
  * @brief Register a new user if not exist
@@ -36,7 +36,7 @@ function register() {
 			}
 			catch (e)
 			{
-				errorMsg.textContent = "Unexpected errro";
+				errorMsg.textContent = "Unexpected error";
 			}
 		}
 	};
@@ -69,3 +69,4 @@ function previewAvatar(event: Event): void {
 
   reader.readAsDataURL(file);
 }
+

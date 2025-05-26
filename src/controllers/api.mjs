@@ -33,20 +33,29 @@ const auth = async (req, reply) => {
 };
 
 const login = async (req, reply) => {
+
   try {
-    const { email, password } = req.body;
+    const formData = await req.formData();
+    const name = formData.get("name");
+    const password = formData.get("password");
+
     const db = getDB();
-    if (!email || !password) {
-      return reply.status(400).send({ error: "Email and password are required" });
+
+    if (!name || !password) {
+      return reply.status(400).send({ error: 'All fields are required' });
     }
 
-    const user = await db.get("SELECT * FROM users WHERE email = ?", [email]);
-
-    if (!user || !(await bcrypt.compare(password, user.hashed_password))) {
-      return reply.status(401).send({ error: "Invalid email or password" });
+    // Username doesn't exist
+    const user = await db.get("SELECT * FROM users WHERE name = ?", name);
+    if (!user) {
+      return reply.status(400).send({ error: "User is not registered" });
     }
 
-    // Use the JWT functionality from the fastify instance
+    // Bad password
+    if (!(await bcrypt.compare(password, user.hashed_password))) {
+      return reply.status(400).send({ error: "Wrong password, try again" });
+    }
+
     const token = await reply.jwtSign({ userId: user.id, email: user.email }, { expiresIn: "1m" });
 
     reply.setCookie("token", token, {
@@ -56,13 +65,45 @@ const login = async (req, reply) => {
       path: "/"
     });
 
-    //return reply.redirect("/");
-    //return reply.status(200).send({ message: 'Login successful', token: token });
-  } catch (error) {
-    req.log.error(error);
-    return reply.status(500).send({ message: 'Internal server error' });
   }
+  catch (error) {
+     req.log.error(error);
+     return reply.status(500).send({ message: 'Internal server error' });
+  }
+
 };
+
+// const login = async (req, reply) => {
+//   try {
+//     const { email, password } = req.body;
+//     const db = getDB();
+//     if (!email || !password) {
+//       return reply.status(400).send({ error: "Email and password are required" });
+//     }
+
+//     const user = await db.get("SELECT * FROM users WHERE email = ?", [email]);
+
+//     if (!user || !(await bcrypt.compare(password, user.hashed_password))) {
+//       return reply.status(401).send({ error: "Invalid email or password" });
+//     }
+
+//     // Use the JWT functionality from the fastify instance
+//     const token = await reply.jwtSign({ userId: user.id, email: user.email }, { expiresIn: "1m" });
+
+//     reply.setCookie("token", token, {
+//       httpOnly: true,
+//       secure: true,
+//       sameSite: "lax",
+//       path: "/"
+//     });
+
+//     //return reply.redirect("/");
+//     //return reply.status(200).send({ message: 'Login successful', token: token });
+//   } catch (error) {
+//     req.log.error(error);
+//     return reply.status(500).send({ message: 'Internal server error' });
+//   }
+// };
 
 const register = async (req, reply) => {
 
@@ -102,34 +143,24 @@ const register = async (req, reply) => {
     return reply.status(400).send({ error: "Email is already in use" });
   }
 
-let avatarPath = "";  // <- déclaration ici
+  let avatarPath = "";  // <- déclaration ici
 
-if (avatar && typeof avatar.stream === 'function' && avatar.name) {
-  const ext = path.extname(avatar.name);
-  const filename = `avatar_${Date.now()}${ext}`;
-  avatarPath = `public/images/${filename}`;
-  const filePath = path.join(uploadDir, filename);
-  console.log(`Saving avatar file to: ${filePath}`);
+  if (avatar && typeof avatar.stream === 'function' && avatar.name) {
+    const ext = path.extname(avatar.name);
+    const filename = `avatar_${Date.now()}${ext}`;
+    avatarPath = `public/images/${filename}`;
+    const filePath = path.join(uploadDir, filename);
+    console.log(`Saving avatar file to: ${filePath}`);
 
-  try {
-    await pipeline(avatar.stream(), fs.createWriteStream(filePath));
-    console.log("Avatar saved successfully!");
-  } catch (err) {
-    console.error("Error saving avatar:", err);
+    try {
+      await pipeline(avatar.stream(), fs.createWriteStream(filePath));
+      console.log("Avatar saved successfully!");
+    } catch (err) {
+      console.error("Error saving avatar:", err);
+    }
+  } else {
+    console.log("No valid avatar file to save.");
   }
-} else {
-  console.log("No valid avatar file to save.");
-}
-
-//   // Save the image
-// let avatarPath = "";
-// if (avatar && typeof avatar.stream === 'function' && avatar.name) {
-//   const ext = path.extname(avatar.name);
-//   const filename = `avatar_${Date.now()}${ext}`;
-//   avatarPath = `public/images/${filename}`;
-//   const filePath = path.join(uploadDir, filename);
-//   await pipeline(avatar.stream(), fs.createWriteStream(filePath));
-// }
 
   try {
     const hashed_password = await bcrypt.hash(password, 10);
@@ -141,52 +172,6 @@ if (avatar && typeof avatar.stream === 'function' && avatar.name) {
     return reply.status(500).send({ error: 'Error registering user' });
   }
 };
-
-// const express = import('express');
-// const multer = import('multer');
-// //const path = require('path');
-
-// const app = express();
-// app.use(express.json());
-
-// // Set up multer storage
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, 'uploads/');  // Save files to 'uploads' directory
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, Date.now() + path.extname(file.originalname));  // Unique filename based on timestamp
-//   }
-// });
-
-// const upload = multer({ storage: storage });
-
-// // Serve static files from the 'uploads' directory
-// app.use('/uploads', express.static('uploads'));
-
-// // Register route with file upload
-// app.post('/api/register', upload.single('avatar'), async (req, res) => {
-//   const { name, email, password } = req.body;
-//   const db = getDB();
-
-//   if (!name || !email || !password) {
-//     return res.status(400).send({ error: 'Name, email, and password are required' });
-//   }
-
-//   const hashed_password = await bcrypt.hash(password, 10);
-//   const avatarPath = req.file ? `/uploads/${req.file.filename}` : null;  // File path
-
-//   try {
-//     const result = await db.run(
-//       `INSERT INTO users (name, email, hashed_password, avatar) VALUES (?, ?, ?, ?)`,
-//       [name, email, hashed_password, avatarPath]
-//     );
-//     return res.status(201).send({ message: 'User registered successfully' });
-//   } catch (error) {
-//     console.error('Error registering user:', error);
-//     return res.status(500).send({ error: 'Error registering user' });
-//   }
-// });
 
 const sock_con = async (socket, req, fastify) => {
   try {
