@@ -6,7 +6,8 @@
   <div id="tournament-display" class="flex">
     <!-- Player colone element -->
     <div id="player-zone" class="flex flex-1 max-w-[33.33%] min-w-[11.11%]">
-    <!-- Player html -->
+
+      <!-- Player html -->
       <div id="player-element" class="flex flex-col min-w-1/10 max-w-1/4 p-4 border border-gray-300 rounded-lg shadow-md bg-gray-50 space-y-4 justify-center">
         
         <!-- Player avatar display -->
@@ -14,30 +15,24 @@
           <img src="/images/test.jpg" alt="Player" class="justify-center w-1/2 h-auto mx-auto mb-4" />
         </div>
 
-      <!-- Alias selector -->
-      <input type="text" id="alias" placeholder="Alias" class="w-full p-2 border border-gray-300 rounded-lg mb-4" />
+        <!-- Alias selector -->
+        <input type="text" id="alias" placeholder="Alias" class="w-full p-2 border border-gray-300 rounded-lg mb-4" />
 
         <!-- Player type selector -->
         <div class="flex flex-row justify-center items-center">
-          <button class="px-4 py-2 rounded hover:bg-gray-100"><</i></button>
+          <button class="px-4 py-2 rounded hover:bg-gray-100" onclick="get_prev_player_type(event)"><</i></button>
           <p class="mx-2">Test</p>
-          <button class="px-4 py-2 rounded hover:bg-gray-100">></i></button>
+          <button class="px-4 py-2 rounded hover:bg-gray-100" onclick="get_next_player_type">></i></button>
         </div>
 
       </div>
 
-      <!-- Selector html -->
-      <div class="flex flex-col absolute bottom-4 left-1/2 -translate-x-1/2" />
-        <p id="player_nbr" class="flex justify-center">2</p>
-        <!-- <input id="player_nbr_slider" class="absolute bottom-4 left-1/2 -translate-x-1/2" type="range" id="player-nbr-select" min="1" max="4" step="1" value="1"/> -->
-        <input id="player_nbr_slider" class="" type="range" id="player-nbr-select" min="0" max="3" step="1" value="0" onchange="set_player_nbr()" oninput="set_player_nbr()" onload="set_player_nbr()"/>
-      </div>
 
     </div>
 
     <!-- TESTING -->
     <!-- ADDING ZONES MANUALLY -->
-	<div id="future-play-zone" class="flex flex-1 max-w-[33.33%] min-w-[11.11%]">
+	<div id="future-play-zone" class="flex flex-1 max-w-[33.33%] min-w-[11.11%] bg-gray-500">
     </div>
 
 
@@ -62,16 +57,18 @@
 
       </div>
 
-      <!-- Selector html -->
-      <div class="flex flex-col absolute bottom-4 left-1/2 -translate-x-1/2" />
-        <p id="player_nbr" class="flex justify-center">2</p>
-        <!-- <input id="player_nbr_slider" class="absolute bottom-4 left-1/2 -translate-x-1/2" type="range" id="player-nbr-select" min="1" max="4" step="1" value="1"/> -->
-        <input id="player_nbr_slider" class="" type="range" id="player-nbr-select" min="0" max="3" step="1" value="0" onchange="set_player_nbr()" oninput="set_player_nbr()" onload="set_player_nbr()"/>
-      </div>
-
     </div>
 
 
   </div>
+
+      <!-- Selector html -->
+      <div class="flex flex-col absolute bottom-4 left-1/2 -translate-x-1/2" />
+        <p id="player_nbr" class="flex justify-center">2</p>
+        <!-- <input id="player_nbr_slider" class="" type="range" id="player-nbr-select" min="0" max="3" step="1" value="0"/> -->
+        <input id="player_nbr_slider" class="" type="range" id="player-nbr-select" min="0" max="3" step="1" value="0" onchange="set_player_nbr()" oninput="set_player_nbr()" onload="set_player_nbr()"/>
+      </div>
+
+	  <script> set_player_nbr(); </script>
 
 </div>

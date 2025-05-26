@@ -19,10 +19,41 @@ function set_player_nbr() {
 	text_field.textContent = player_nbr_val[slider.value];
 };
 
-// document.addEventListener("DOMContentLoaded", function() {
-// 	set_player_nbr();
-// });
+/**
+ * Get previous player selector object
+ *
+ * When user click on left arrow to change player type
+ *
+ * @paran event -- event object
+ */
+function get_next_player_type(event) {
+	const	clickedButton = event.target;
+	const	buttonDiv = clickedButton.parentNode;
+	const	childP = buttonDiv.querySelector("p");
 
-// slider.addEventListener("input", function() {
-// 	set_player_nbr();
-// });
+	if (childP.innerText === "Bot")
+		childP.innerText = "Guest";
+	else if (childP.innerText === "Guest")
+		childP.innerText = "User";
+	else
+		childP.innerText = "Bot";
+}
+/**
+ * Get next player selector object
+ *
+ * When user click on right arrow to change player type
+ *
+ * @paran event -- event object
+ */
+function get_prev_player_type(event) {
+	const	clickedButton = event.target;
+	const	buttonDiv = clickedButton.parentNode;
+	const	childP = buttonDiv.querySelector("p");
+
+	if (childP.innerText === "Guest")
+		childP.innerText = "Bot";
+	else if (childP.innerText === "User")
+		childP.innerText = "Guest";
+	else
+		childP.innerText = "User";
+}
