@@ -24,6 +24,10 @@ async function routes (fastify, options) {
   
   fastify.get('/ping', async () => { return { message: 'pong' }; });
 
+  fastify.get('/rgpd', (req, reply) => { 
+  const data = fs.readFileSync(path.join(__dirname, '../views/rgpd.ejs'), 'utf-8');
+  reply.send(data);});
+
   fastify.get('/api/register', (req, reply) => { 
   const data = fs.readFileSync(path.join(__dirname, '../views/register.ejs'), 'utf-8');
   reply.send(data);});
