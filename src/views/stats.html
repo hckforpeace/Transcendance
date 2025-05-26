@@ -3,13 +3,15 @@
   <div class="border-4 rounded-xl border-blue-500 ">
     <h2 class="text-center text-blue-500 text-4xl mb-5 font-bold" id="lobby"> Profile </h2>
 
-    <form class="flex justify-center content-center " >
-      <div>
+    <form class="flex justify-center content-center" id="updateForm" >
+      <div class="flex flex-col items-center mr-4">
         
-        <img id="avatar" class="flex h-auto w-auto max-w-100 max-h-100" src="images/avatar.jpg" alt="">  
-        <input class=" border rounde border-blue-500 cursor-pointer" type="file">
+        <img id="avatar-preview" class="flex h-30 w-70 " src="images/avatar.jpg" alt="">  
+        <input class=" block w-[70%]  p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500 " 
+          onchange="previewAvatar(event)"
+          id="file_input" type="file">
+        
       </div>
-
       <div class="flex flex-col justify-center content-center mr-4">
         <h2 class="text-blue-700 font-bold text-xl my-4"> Change Credentials </h2>
         <p  class="text-blue-500 my-2"> username </p>
@@ -241,7 +243,7 @@
 
   <!-- Button at the bottom -->
   <div class="p-4 border-t">
-    <input type="button" value="Add Friends" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <input type="button" onclick="getProfileData()" value="Add Friends" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
   </div>
 </div>
   <!-- <div class="row-span-2  border-4 rounded-xl border-blue-500"> -->

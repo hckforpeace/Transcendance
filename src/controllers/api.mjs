@@ -102,34 +102,24 @@ const register = async (req, reply) => {
     return reply.status(400).send({ error: "Email is already in use" });
   }
 
-let avatarPath = "";  // <- déclaration ici
+  let avatarPath = "";  // <- déclaration ici
 
-if (avatar && typeof avatar.stream === 'function' && avatar.name) {
-  const ext = path.extname(avatar.name);
-  const filename = `avatar_${Date.now()}${ext}`;
-  avatarPath = `public/images/${filename}`;
-  const filePath = path.join(uploadDir, filename);
-  console.log(`Saving avatar file to: ${filePath}`);
+  if (avatar && typeof avatar.stream === 'function' && avatar.name) {
+    const ext = path.extname(avatar.name);
+    const filename = `avatar_${Date.now()}${ext}`;
+    avatarPath = `public/images/${filename}`;
+    const filePath = path.join(uploadDir, filename);
+    console.log(`Saving avatar file to: ${filePath}`);
 
-  try {
-    await pipeline(avatar.stream(), fs.createWriteStream(filePath));
-    console.log("Avatar saved successfully!");
-  } catch (err) {
-    console.error("Error saving avatar:", err);
+    try {
+      await pipeline(avatar.stream(), fs.createWriteStream(filePath));
+      console.log("Avatar saved successfully!");
+    } catch (err) {
+      console.error("Error saving avatar:", err);
+    }
+  } else {
+    console.log("No valid avatar file to save.");
   }
-} else {
-  console.log("No valid avatar file to save.");
-}
-
-//   // Save the image
-// let avatarPath = "";
-// if (avatar && typeof avatar.stream === 'function' && avatar.name) {
-//   const ext = path.extname(avatar.name);
-//   const filename = `avatar_${Date.now()}${ext}`;
-//   avatarPath = `public/images/${filename}`;
-//   const filePath = path.join(uploadDir, filename);
-//   await pipeline(avatar.stream(), fs.createWriteStream(filePath));
-// }
 
   try {
     const hashed_password = await bcrypt.hash(password, 10);
@@ -142,51 +132,6 @@ if (avatar && typeof avatar.stream === 'function' && avatar.name) {
   }
 };
 
-// const express = import('express');
-// const multer = import('multer');
-// //const path = require('path');
-
-// const app = express();
-// app.use(express.json());
-
-// // Set up multer storage
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, 'uploads/');  // Save files to 'uploads' directory
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, Date.now() + path.extname(file.originalname));  // Unique filename based on timestamp
-//   }
-// });
-
-// const upload = multer({ storage: storage });
-
-// // Serve static files from the 'uploads' directory
-// app.use('/uploads', express.static('uploads'));
-
-// // Register route with file upload
-// app.post('/api/register', upload.single('avatar'), async (req, res) => {
-//   const { name, email, password } = req.body;
-//   const db = getDB();
-
-//   if (!name || !email || !password) {
-//     return res.status(400).send({ error: 'Name, email, and password are required' });
-//   }
-
-//   const hashed_password = await bcrypt.hash(password, 10);
-//   const avatarPath = req.file ? `/uploads/${req.file.filename}` : null;  // File path
-
-//   try {
-//     const result = await db.run(
-//       `INSERT INTO users (name, email, hashed_password, avatar) VALUES (?, ?, ?, ?)`,
-//       [name, email, hashed_password, avatarPath]
-//     );
-//     return res.status(201).send({ message: 'User registered successfully' });
-//   } catch (error) {
-//     console.error('Error registering user:', error);
-//     return res.status(500).send({ error: 'Error registering user' });
-//   }
-// });
 
 const sock_con = async (socket, req, fastify) => {
   try {
