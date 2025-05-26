@@ -89,12 +89,13 @@ fastify.addHook('onRequest', async (request, reply) => {
   await rateLimiter(100, 60 * 1000)(request, reply);
 
   const { method, url } = request;
-
-  try {
-    const decodedUrl = decodeURIComponent(url);
-    if (suspicious_sql_patterns.some(r => r.test(decodedUrl))) {
-      fastify.log.warn(`❌ Requête bloquée par WAF (pattern SQL) : ${decodedUrl}`);
-      return reply.code(403).send({ error: 'Blocked by WAF' });
+try {
+  const decodedUrl = decodeURIComponent(url);
+  if (suspicious_sql_patterns.some(r => r.test(decodedUrl))) {
+    fastify.log.warn(`❌ Requête bloquée par WAF (pattern SQL) : ${decodedUrl}`);
+    return reply.code(403).type('text/html').view('WAF.ejs', {
+      text: 'Access Blocked by WAF',
+    });
     }
   } catch (err) {
     fastify.log.error('Erreur lors de la décodification de l’URL:', err.message);
@@ -104,7 +105,9 @@ fastify.addHook('onRequest', async (request, reply) => {
   for (const path of forbiddenPaths) {
     if (url.includes(path) || rawBody.includes(path)) {
       fastify.log.warn(`❌ Requête bloquée (chemin interdit) : ${path}`);
-      return reply.code(403).send({ error: `Forbidden pattern detected: ${path}` });
+      return reply.code(403).type('text/html').view('WAF.ejs', {
+      text: 'Access Blocked by WAF',
+    });
     }
   }
 });
@@ -123,7 +126,7 @@ fastify.addHook('preHandler', async (request, reply) => {
       suspicious_sql_patterns.some(r => r.test(username)) ||
       suspicious_sql_patterns.some(r => r.test(password))
     ) {
-      return reply.code(403).send({ error: 'Blocked by WAF' });
+      return reply.code(403).type('text/html').view('WAF.ejs');
     }
     const sanitizedBody = {};
 
