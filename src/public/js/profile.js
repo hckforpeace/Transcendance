@@ -31,36 +31,54 @@ const updateFields = (data) => {
         img_avatar.src = "images/" + avatar_file_name;
     }
 };
-function updateUser() {
-    const formElement = document.getElementById("updateForm");
-    // if (!formElement)
-    // 	return;
-    // const errorMsg = document.getElementById("form-error-msg");
-    // if (!errorMsg)
-    // 	return;
-    // errorMsg.textContent = ""; // Reset previous error
-    // errorMsg.style.color = "red";
-    const formData = new FormData(formElement);
-    const xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            try {
-                if (this.status === 400 || this.status === 500) {
-                    const response = JSON.parse(this.responseText);
-                    // errorMsg.textContent = response.error || "An error occurred.";
-                }
-                if (this.status === 200) {
-                    alert("User updated successfully!");
-                    // errorMsg.style.color = "green";
-                    // errorMsg.textContent = "User registered successfully!";
-                }
-            }
-            catch (e) {
-                errorMsg.textContent = "Unexpected errro";
-            }
-        }
-    };
-    xhttp.open("POST", "/api/profile", true);
-    // console.log(formData);
-    xhttp.send(formData);
+function getFriends() {
+    // Select all checked checkboxes inside the document
+    const checkedBoxes = document.querySelectorAll('input[type="checkbox"]:checked');
+    // Extract values (friend names)
+    const selectedFriends = Array.from(checkedBoxes).map(cb => cb.value);
+    if (selectedFriends.length === 0) {
+        alert("No friends selected");
+    }
+    else {
+        alert("Selected friends: " + selectedFriends.join(", "));
+    }
 }
+// function updateUser() {
+// 	const formElement = document.getElementById("updateForm") as HTMLFormElement;
+// 	// if (!formElement)
+// 	// 	return;
+// 	// const errorMsg = document.getElementById("form-error-msg");
+// 	// if (!errorMsg)
+// 	// 	return;
+// 	// errorMsg.textContent = ""; // Reset previous error
+// 	// errorMsg.style.color = "red";
+// 	const formData = new FormData(formElement);
+// 	const xhttp = new XMLHttpRequest();
+// 	xhttp.onreadystatechange = function ()
+// 	{
+// 		if (this.readyState === 4)
+// 		{
+// 			try
+// 			{
+// 				if (this.status === 400 || this.status === 500)
+// 				{
+// 					const response = JSON.parse(this.responseText);
+// 				 	// errorMsg.textContent = response.error || "An error occurred.";
+// 				}
+// 				if (this.status === 200)
+// 				{
+//           alert("User updated successfully!");
+// 					// errorMsg.style.color = "green";
+// 					// errorMsg.textContent = "User registered successfully!";
+// 				}
+// 			}
+// 			catch (e)
+// 			{
+// 				// errorMsg.textContent = "Unexpected errro";
+// 			}
+// 		}
+// 	};
+// 	xhttp.open("POST", "/api/profile", true);
+// 	// console.log(formData);
+// 	xhttp.send(formData);
+// }

@@ -14,7 +14,8 @@ export const initDB = async () => {
         hashed_password TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL, 
         connected BOOLEAN DEFAULT 0, 
-        avatarPath TEXT
+        avatarPath TEXT,
+        friends TEXT DEFAULT '[]'
     )`);
 
     await db.exec(`CREATE TABLE IF NOT EXISTS stats (

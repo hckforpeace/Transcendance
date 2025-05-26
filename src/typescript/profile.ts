@@ -39,45 +39,58 @@ const updateFields = (data: UserData) => {
   }
 }
 
+function getFriends(): void {
+  // Select all checked checkboxes inside the document
+  const checkedBoxes: NodeListOf<HTMLInputElement> = document.querySelectorAll('input[type="checkbox"]:checked');
 
-function updateUser() {
-	const formElement = document.getElementById("updateForm") as HTMLFormElement;
-	// if (!formElement)
-	// 	return;
-	// const errorMsg = document.getElementById("form-error-msg");
-	// if (!errorMsg)
-	// 	return;
-	// errorMsg.textContent = ""; // Reset previous error
-	// errorMsg.style.color = "red";
-	const formData = new FormData(formElement);
-	const xhttp = new XMLHttpRequest();
+  // Extract values (friend names)
+  const selectedFriends: string[] = Array.from(checkedBoxes).map(cb => cb.value);
 
-	xhttp.onreadystatechange = function ()
-	{
-		if (this.readyState === 4)
-		{
-			try
-			{
-				if (this.status === 400 || this.status === 500)
-				{
-					const response = JSON.parse(this.responseText);
-				 	// errorMsg.textContent = response.error || "An error occurred.";
-				}
-				if (this.status === 200)
-				{
-          alert("User updated successfully!");
-					// errorMsg.style.color = "green";
-					// errorMsg.textContent = "User registered successfully!";
-				}
-			}
-			catch (e)
-			{
-				errorMsg.textContent = "Unexpected errro";
-			}
-		}
-	};
-
-	xhttp.open("POST", "/api/profile", true);
-	// console.log(formData);
-	xhttp.send(formData);
+  if (selectedFriends.length === 0) {
+    alert("No friends selected");
+  } else {
+    alert("Selected friends: " + selectedFriends.join(", "));
+  }
 }
+
+// function updateUser() {
+// 	const formElement = document.getElementById("updateForm") as HTMLFormElement;
+// 	// if (!formElement)
+// 	// 	return;
+// 	// const errorMsg = document.getElementById("form-error-msg");
+// 	// if (!errorMsg)
+// 	// 	return;
+// 	// errorMsg.textContent = ""; // Reset previous error
+// 	// errorMsg.style.color = "red";
+// 	const formData = new FormData(formElement);
+// 	const xhttp = new XMLHttpRequest();
+
+// 	xhttp.onreadystatechange = function ()
+// 	{
+// 		if (this.readyState === 4)
+// 		{
+// 			try
+// 			{
+// 				if (this.status === 400 || this.status === 500)
+// 				{
+// 					const response = JSON.parse(this.responseText);
+// 				 	// errorMsg.textContent = response.error || "An error occurred.";
+// 				}
+// 				if (this.status === 200)
+// 				{
+//           alert("User updated successfully!");
+// 					// errorMsg.style.color = "green";
+// 					// errorMsg.textContent = "User registered successfully!";
+// 				}
+// 			}
+// 			catch (e)
+// 			{
+// 				// errorMsg.textContent = "Unexpected errro";
+// 			}
+// 		}
+// 	};
+
+// 	xhttp.open("POST", "/api/profile", true);
+// 	// console.log(formData);
+// 	xhttp.send(formData);
+// }
