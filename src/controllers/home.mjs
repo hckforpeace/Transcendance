@@ -1,3 +1,3 @@
-const dispHome = (req, rep) => { return rep.view('register.ejs', {text: 'Welcome'}) }
+const dispHome = (req, rep) => { return rep.view('home.ejs', {text: 'Welcome'}) }
 
 export default dispHome;
