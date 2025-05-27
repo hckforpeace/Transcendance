@@ -43,6 +43,19 @@ function getFriends() {
         alert("Selected friends: " + selectedFriends.join(", "));
     }
 }
+function displayProfileFriends() {
+    fetch('/api/profile/friends')
+        .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch');
+        }
+        return response.json(); // ✅ return the parsed JSON
+    })
+        .then(data => {
+        console.log(data);
+        updateFields(data);
+    });
+}
 // function updateUser() {
 // 	const formElement = document.getElementById("updateForm") as HTMLFormElement;
 // 	// if (!formElement)

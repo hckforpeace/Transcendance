@@ -13,7 +13,7 @@ const populateDB = async (db) =>
       console.log("user added");
     }
   })
-  await db.run(sql_add_user, ['georges', "pomme", "ajhskdjasgd@gmail.com", 1, "avatar.jpg", '[1]'], function(err) {
+  await db.run(sql_add_user, ['georges', "pomme", "ajhskdjasgd@gmail.com", 1, "avatar.jpg", '[1, 2]'], function(err) {
     if (err) {
       console.error('Error inserting admin user:', err);
     } else {

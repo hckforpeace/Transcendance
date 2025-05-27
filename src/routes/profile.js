@@ -1,12 +1,15 @@
 import api from '../controllers/profile.mjs'
 import users from '../database/requests.js'  
 
+//TODO add prehandler to all the routes to check if the user is authenticated with JWT
 async function routes (fastify, options) {
-  //TODO add prehandler to check if the user is authenticated with JWT
-  fastify.get('/api/profile', api.get_profile_data)
-  fastify.post('/api/profile', api.update_profile_data)
+  fastify.get('/api/profile/info', api.profileInfo) // TODO
+  fastify.post('/api/profile/info', api.updateProfileData)
+  fastify.get('/api/profile/friends', api.profileFriends)
 
-  fastify.get('/api/connected', users.getConnectedUsers)
+  
+  fastify.get('/api/profiles/connected', api.connectedUsers)
+
 }
 
 export default routes;
