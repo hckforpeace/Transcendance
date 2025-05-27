@@ -66,3 +66,21 @@ document.addEventListener('DOMContentLoaded', () => {
 //     profileImg.src = '/images/avatar.jpg';
 //   };
 // }
+function updateUserAvatar() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const profileImg = document.getElementById('profile');
+        ;
+        if (!profileImg)
+            return;
+        try {
+            const res = yield fetch('/api/avatar');
+            const { avatarUrl } = yield res.json();
+            profileImg.src = avatarUrl;
+        }
+        catch (err) {
+            console.error('Erreur de chargement de l\'avatar:', err);
+            profileImg.src = '/images/avatar.jpg';
+        }
+    });
+}
+document.addEventListener('DOMContentLoaded', updateUserAvatar);

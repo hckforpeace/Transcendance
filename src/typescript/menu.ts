@@ -62,3 +62,19 @@ document.addEventListener('DOMContentLoaded', () => {
 //     profileImg.src = '/images/avatar.jpg';
 //   };
 // }
+
+async function updateUserAvatar() {
+  const profileImg = document.getElementById('profile') as HTMLImageElement | null;;
+  if (!profileImg) return;
+
+  try {
+    const res = await fetch('/api/avatar');
+    const { avatarUrl } = await res.json();
+    profileImg.src = avatarUrl;
+  } catch (err) {
+    console.error('Erreur de chargement de l\'avatar:', err);
+    profileImg.src = '/images/avatar.jpg';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', updateUserAvatar);

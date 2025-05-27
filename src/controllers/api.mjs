@@ -81,6 +81,25 @@ const login = async (req, reply) => {
 
 };
 
+const avatar = async (req, reply) => {
+  const userId = req.cookies.userId;
+
+  let avatarUrl = '/images/avatar.jpg'; // default avatar
+
+  if (!userId)
+    return reply.status(401).send({ error: 'Non authentifié' });
+
+  const user = await db.get('SELECT avatarPath FROM users WHERE id = ?', [userId]);
+
+  if (user && user.avatarPath) {
+    const fullPath = path.join(__dirname, 'public', user.avatarPath);
+    if (fs.existsSync(fullPath)) {
+      avatarUrl = `/${user.avatarPath}`;
+    }
+  }
+  return { avatarUrl };
+};
+
 const register = async (req, reply) => {
 
   const formData = await req.formData();
@@ -123,7 +142,7 @@ const register = async (req, reply) => {
 
   if (avatar && typeof avatar.stream === 'function' && avatar.name) {
     const ext = path.extname(avatar.name);
-    const filename = name + ext;
+    const filename = avatar.name;
     avatarPath = `public/images/${filename}`;
     const filePath = path.join(uploadDir, filename);
     console.log(`Saving avatar file to: ${filePath}`);
@@ -217,4 +236,4 @@ const users = async (req, reply) => {
   }
 };
 
-export default { auth, sock_con, pong_view, login, register, users };
+export default { auth, sock_con, pong_view, login, register, users, avatar };
