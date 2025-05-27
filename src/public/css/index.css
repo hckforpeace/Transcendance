@@ -448,9 +448,6 @@
   .bg-\[url\(\'\/images\/mondrian\.jpg\'\)\] {
     background-image: url('/images/mondrian.jpg');
   }
-  .bg-\[url\(\'\/images\/pong\.gif\'\)\] {
-    background-image: url('/images/pong.gif');
-  }
   .bg-cover {
     background-size: cover;
   }
@@ -549,9 +546,6 @@
   }
   .text-white {
     color: var(--color-white);
-  }
-  .underline {
-    text-decoration-line: underline;
   }
   .shadow-md {
     --tw-shadow: 0 4px 6px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 2px 4px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));

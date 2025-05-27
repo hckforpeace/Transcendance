@@ -5,6 +5,7 @@ import path from 'path'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 import { fileURLToPath } from 'url'
 
+
 // Define schema for login
 const loginSchema = {
   body: {
@@ -24,13 +25,17 @@ async function routes (fastify, options) {
   
   fastify.get('/ping', async () => { return { message: 'pong' }; });
 
+  fastify.get('/home', (req, reply) => { 
+    const data = fs.readFileSync(path.join(__dirname, '../views/home.ejs'), 'utf-8');
+    reply.send(data);});
+
   fastify.get('/api/register', (req, reply) => { 
-  const data = fs.readFileSync(path.join(__dirname, '../views/register.ejs'), 'utf-8');
-  reply.send(data);});
+    const data = fs.readFileSync(path.join(__dirname, '../views/register.ejs'), 'utf-8');
+    reply.send(data);});
 
   fastify.get('/api/login', (req, reply) => { 
-  const data = fs.readFileSync(path.join(__dirname, '../views/login.ejs'), 'utf-8');
-  reply.send(data);});
+    const data = fs.readFileSync(path.join(__dirname, '../views/login.ejs'), 'utf-8');
+    reply.send(data);});
 
   fastify.post('/api/login', api.login);
 
@@ -40,6 +45,8 @@ async function routes (fastify, options) {
   // connect to the websocket server
   fastify.get('/api/remote', {preHandler: [fastify.authenticate], websocket: true}, (socket, req) => {
     api.sock_con(socket, req, fastify);})
+
+
 
 }
 

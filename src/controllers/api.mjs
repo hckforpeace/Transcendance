@@ -65,6 +65,14 @@ const login = async (req, reply) => {
       path: "/"
     });
 
+    reply.setCookie("userId", String(user.id), {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/"
+    });
+
+
   }
   catch (error) {
      req.log.error(error);
@@ -72,38 +80,6 @@ const login = async (req, reply) => {
   }
 
 };
-
-// const login = async (req, reply) => {
-//   try {
-//     const { email, password } = req.body;
-//     const db = getDB();
-//     if (!email || !password) {
-//       return reply.status(400).send({ error: "Email and password are required" });
-//     }
-
-//     const user = await db.get("SELECT * FROM users WHERE email = ?", [email]);
-
-//     if (!user || !(await bcrypt.compare(password, user.hashed_password))) {
-//       return reply.status(401).send({ error: "Invalid email or password" });
-//     }
-
-//     // Use the JWT functionality from the fastify instance
-//     const token = await reply.jwtSign({ userId: user.id, email: user.email }, { expiresIn: "1m" });
-
-//     reply.setCookie("token", token, {
-//       httpOnly: true,
-//       secure: true,
-//       sameSite: "lax",
-//       path: "/"
-//     });
-
-//     //return reply.redirect("/");
-//     //return reply.status(200).send({ message: 'Login successful', token: token });
-//   } catch (error) {
-//     req.log.error(error);
-//     return reply.status(500).send({ message: 'Internal server error' });
-//   }
-// };
 
 const register = async (req, reply) => {
 
@@ -147,7 +123,7 @@ const register = async (req, reply) => {
 
   if (avatar && typeof avatar.stream === 'function' && avatar.name) {
     const ext = path.extname(avatar.name);
-    const filename = `avatar_${Date.now()}${ext}`;
+    const filename = name + ext;
     avatarPath = `public/images/${filename}`;
     const filePath = path.join(uploadDir, filename);
     console.log(`Saving avatar file to: ${filePath}`);
