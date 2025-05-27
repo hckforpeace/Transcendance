@@ -38,8 +38,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const fastify = Fastify({
   https: {
-      key: fs.readFileSync('/home/melmarti/42_projects/transcendance/src/src/secret/certs/server.key'),
-      cert: fs.readFileSync('/home/melmarti/42_projects/transcendance/src/src/secret/certs/server.crt')
+      key: fs.readFileSync(__dirname + '/src/secret/certs/server.key'),
+      cert: fs.readFileSync(__dirname + '/src/secret/certs/server.crt')
   },
   logger: true,
 });
@@ -47,7 +47,7 @@ const fastify = Fastify({
 // WAF Hooks
 fastify.addHook('preHandler', sqlInjectionCheck);
 fastify.addHook('preHandler', xssSanitizeBody);
-fastify.addHook('preHandler', rateLimiter(10, 60000));
+fastify.addHook('preHandler', rateLimiter(50, 60000));
 
 // Plugins
 fastify.register(fastifyCookie);

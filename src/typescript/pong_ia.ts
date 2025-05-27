@@ -1,4 +1,3 @@
-
 /* ************************************************************************** */
 /*                                GLOBAL VARIABLES                            */
 /* ************************************************************************** */
@@ -463,10 +462,13 @@ function resizeCanvas() {
 
 /**
  * @brief Load the different event for the pong game
- *
- * This function should be called when the rigth html page is loaded
- */
-function load_script() {
+*
+* This function should be called when the rigth html page is loaded
+*/
+
+function ft_pong() {
+	const local_user = { name: "Player1", id: 1 };  // exemple d'objet utilisateur
+	const opponent = { name: "AI", id: 0 };         // exemple d’adversaire
 	try {
 		canvas = document.getElementById("pong_canvas") as HTMLCanvasElement;
 		if (!canvas)
@@ -476,18 +478,16 @@ function load_script() {
 			throw new Error("Context not found");
       canvas.style.display = 'block';
 			resizeCanvas();
-			launch_game(local_user, opponent);
+			launch_game(local_user.name, opponent.name);
 		document.addEventListener("keydown", pressedKeyHandler, false);
 		document.addEventListener("keyup", releasedKeyHandler, false);
 		window.addEventListener("resize", resizeCanvas); /* Resize
 														  * "Responsivness" attempt
 														  */
-
 	}
 	catch(err: any) {
 		console.log(err);
 	}
 }
 
-load_script(); /* Should be called when the right html is loaded */
-
+ft_pong(); /* Should be called when the right html is loaded */
