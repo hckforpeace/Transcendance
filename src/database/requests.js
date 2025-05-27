@@ -38,5 +38,18 @@ const getFriends = async (id) => {
   return (friendsDataJson)
 }
 
-export default { getConnectedUsers, getProfileData , getFriends};
+const insertSocket = async (userId, socketId) => {
+  const db = getDB()
+  const res = await db.run("UPDATE users SET socketId = ? WHERE id = ?", [socketId, userId])
+  console.log(res)
+}
+
+
+const removeSocket = async (userId) => {
+  const db = getDB()
+  const res = await db.run("UPDATE users SET socketId = ? WHERE id = ?", [-1, userId])
+  console.log(res)
+}
+
+export default { getConnectedUsers, getProfileData , getFriends, insertSocket, removeSocket};
 

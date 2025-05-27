@@ -1,3 +1,5 @@
+var socket: WebSocket
+
 interface UserData {
   name: string;
   email: string;
@@ -65,7 +67,22 @@ function displayProfileFriends(){
     updateFields(data);})
 }
 
+function fun() {
+  const socket = new WebSocket('wss://localhost:3000/api/profile/socket');
 
+  socket.onopen = () => {
+    console.log('WebSocket connected');
+  };
+
+  socket.onclose = () => {
+    console.log('WebSocket disconnected');
+  };
+
+  socket.onmessage = (event) => {
+    console.log('Message:', event.data);
+  };
+
+}
 
 // function updateUser() {
 // 	const formElement = document.getElementById("updateForm") as HTMLFormElement;

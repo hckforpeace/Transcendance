@@ -85,6 +85,7 @@ const fastify = Fastify({
 fastify.addHook('onRequest', async (request, reply) => {
   await rateLimiter(100, 60 * 1000)(request, reply);
 
+  if (request.headers.upgrade === 'websocket') return;
   const { method, url } = request;
 
   try {

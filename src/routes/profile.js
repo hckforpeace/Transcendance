@@ -10,6 +10,8 @@ async function routes (fastify, options) {
   
   fastify.get('/api/profiles/connected', api.connectedUsers)
 
+  // preHandler: [fastify.authenticate],
+  fastify.get('/api/profile/socket', { websocket: true}, (socket, req) => {api.soc(socket, req)})
 }
 
 export default routes;

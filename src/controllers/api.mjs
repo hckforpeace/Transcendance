@@ -135,7 +135,6 @@ const register = async (req, reply) => {
 
 const sock_con = async (socket, req, fastify) => {
   try {
-    // var id = uuidvw();
     var token = req.headers['sec-websocket-protocol'];
     if (!token)
       throw new Error('No token provided');
@@ -155,7 +154,6 @@ const sock_con = async (socket, req, fastify) => {
     socket.on('message', message => {
       try {
         message = JSON.parse(message);
-        // console.log('Received message:', message);
         if (message != null && message.type == 'invite')
           remoteObj.invitePlayer(message, socket);
         else if (message.type == 'accept' || message.type == 'refuse')
@@ -181,8 +179,6 @@ const sock_con = async (socket, req, fastify) => {
     console.log(error);
     socket.close(4001, 'Unauthorized');
   }
-
-
 }
 
 const pong_view = async (req, rep) => {
