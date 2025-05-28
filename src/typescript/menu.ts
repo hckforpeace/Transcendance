@@ -24,6 +24,32 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+	const registerBtn = document.getElementById('tournament');
+
+	if (registerBtn) {
+		registerBtn.addEventListener('click', async () => {
+			try {
+				// const res = await fetch('/api/register', {});
+				// .then
+				// const html = await res.text();
+				await fetch("/api/tournament")
+					.then(response => response.text())
+					.then(html => {
+						var content = document.getElementById("content-div");
+						if (!content)
+							throw new Error("Content div not found");
+						content.innerHTML = html;
+					})
+				// Optionally load related JS (like form handling)
+				//import('./public/js/register.js');
+			} catch (err) {
+				console.error('Error loading tournament view:', err);
+			}
+		});
+	}
+});
+
 // document.addEventListener('DOMContentLoaded', () => {
 //   const loginBtn = document.getElementById('profile');
 

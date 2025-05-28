@@ -110,6 +110,17 @@ var local_user:string;
 // // establish a connection to the server
 // // const socket = new WebSocket("ws://localhost:8080");
 
+function load2faView(): void {
+	const	template2fa = document.getElementById("2fa_template") as HTMLTemplateElement | null;
+	const	form = document.getElementById("login-form") as HTMLElement | null;
+
+	if (!template2fa || !form)
+		return ;
+	const	elem2fa = template2fa.content.cloneNode(true) as DocumentFragment;
+	form.innerHTML = '';
+	form.appendChild(elem2fa);
+}
+
 function login() {
 	const formElement = document.getElementById("login-form") as HTMLFormElement;
 	if (!formElement)
@@ -135,8 +146,9 @@ function login() {
 				}
 				if (this.status === 200)
 				{
-					errorMsg.style.color = "green";
-					errorMsg.textContent = "Welcome!";
+                    // errorMsg.style.color = "green";
+                    // errorMsg.textContent = "Welcome!";
+					load2faView();
 				}
 			}
 			catch (e)
