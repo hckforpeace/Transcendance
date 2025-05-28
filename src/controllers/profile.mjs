@@ -37,39 +37,38 @@ const profileFriends = async (req, reply) => {
 }
 
 // TODO retreive data from cookie as userId
-// const profileSocket = async (socket, req, fastify) => {
-//   try {
-//     var userId = 2;
-//     var socketId = uuidv4();
-//     connections.set(socketId, socket)
-//     requests.insertSocket(userId, socketId)
-//     console.log("ICI")
-//     // when a message is sent
-//     socket.on('close', message => { 
-//       requests.removeSocket(userId)
-//       connections.delete(socketId)
-//     })
-//     
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
-// WebSocket route
-const soc = async (connection, req) => {
-  console.log('🔌 WebSocket connected');
+const profileSocket = async (socket, req, fastify) => {
+  try {
+    var userId = 2; // This should be replaced with the actual user ID from the JWT or session
 
-  // Listen for messages
-  connection.on('message', (message) => {
-    console.log('📩 Received:', message.toString());
+    if (connections.has(userId)) {
+      console.log(`🔌 WebSocket already connected for user ${userId} `);
+      connections.get(userId).close(); // Close the existing connection 
+      connections.delete(userId); // Remove the existing connection from the map
+      requests.updateDisconnected(userId); // Remove the socket from the database
+    }
 
-    // Echo it back
-    connection.socket.send(`You said: ${message}`);
-  });
+    connections.set(userId, socket)
+    requests.updateConnected(userId)
 
-  // On disconnect
-  connection.on('close', () => {
-    console.log('❌ WebSocket disconnected');
-  });
+    console.log(`🔌 WebSocket connected for user ${userId} with socket ID `);
+    // when a message is sent
+    socket.on('close', message => { 
+      console.log(`❌ WebSocket disconnected for user ${userId} `);
+      requests.updateDisconnected(userId) // Remove the socket from the database
+      connections.delete(userId) // Remove the connection from the map
+    })
+  } catch (error) {
+    console.log(error)
+  }
 }
 
-export default { profileInfo, updateProfileData, connectedUsers, profileFriends, soc};
+const addFriends = async (req, reply)  => {
+  const friendsId = req.params.id;
+  const userId = 2; // TODO change to jwt coockie id
+  var res =  await requests.addFriend(userId, friendsId)
+  if (res != 1)
+    reply.code(500).send(res)
+}
+
+export default { profileInfo, updateProfileData, connectedUsers, profileFriends, profileSocket, addFriends};

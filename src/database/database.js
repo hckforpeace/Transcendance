@@ -8,6 +8,7 @@ export const initDB = async () => {
     db = await open({ filename: 'mydatabase.db', driver: sqlite3.Database });
     console.log('Database opened successfully.');
 
+    // TODO Change id to make it unique wihtout auto increment
     await db.exec(`CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT UNIQUE NOT NULL,
@@ -16,7 +17,7 @@ export const initDB = async () => {
         connected BOOLEAN DEFAULT 0, 
         avatarPath TEXT,
         friends TEXT DEFAULT '[]',
-        socketId INT DEFAULT -1,
+        socketConnectionProfile BOOL DEFAULT 0,
         friendedMe TEXT DEFAULT '[]'
     )`);
 

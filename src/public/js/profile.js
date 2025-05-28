@@ -2,7 +2,7 @@
 var socket;
 // Function to fetch and update profile data 
 const getProfileData = () => {
-    fetch('/api/profile')
+    fetch('/api/profile/info')
         .then(response => {
         if (!response.ok) {
             throw new Error('Failed to fetch');
@@ -32,18 +32,78 @@ const updateFields = (data) => {
         img_avatar.src = "images/" + avatar_file_name;
     }
 };
+// Add Friends Section
+const getFriendsList = () => {
+    fetch('/api/profile/friends')
+        .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch');
+        }
+        return response.json(); // ✅ return the parsed JSON
+    })
+        .then(data => {
+        data.forEach((item) => {
+            filladdFriendsDiv(item.id, item.name);
+        });
+    });
+};
+function filladdFriendsDiv(id, name) {
+    var friendDiv, inputTag, labelTag;
+    const div = document.getElementById('notFriends');
+    if (!div)
+        return;
+    friendDiv = document.createElement('div');
+    inputTag = document.createElement('input');
+    inputTag.type = 'checkbox';
+    inputTag.id = id.toString();
+    inputTag.classList.add('peer', 'hidden');
+    inputTag.value = name;
+    inputTag.name = "addFriends";
+    labelTag = document.createElement('label');
+    labelTag.setAttribute("for", id.toString());
+    labelTag.classList.add("flex", "justify-center", "py-2", "border-b", "cursor-pointer", "peer-checked:bg-blue-100", "transition-colors", "rounded", "text-lg", "font-medium");
+    labelTag.innerHTML = name;
+    friendDiv.appendChild(inputTag);
+    friendDiv.appendChild(labelTag);
+    div.appendChild(friendDiv);
+}
 function getFriends() {
     // Select all checked checkboxes inside the document
     const checkedBoxes = document.querySelectorAll('input[type="checkbox"]:checked');
-    // Extract values (friend names)
-    const selectedFriends = Array.from(checkedBoxes).map(cb => cb.value);
+    // Extract values (friend name and ID)
+    const selectedFriends = Array.from(checkedBoxes).map(cb => ({
+        id: cb.id,
+        name: cb.value
+    }));
     if (selectedFriends.length === 0) {
-        alert("No friends selected");
+        return;
     }
     else {
-        alert("Selected friends: " + selectedFriends.join(", "));
-    }
+        selectedFriends.forEach(element => {
+            fetch("/api/profile/friends/" + element.id, { method: "PATCH" })
+                .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch');
+                }
+                return response.json(); // ✅ return the parsed JSON
+            });
+        });
+    } // Remove each friend's container div
+    checkedBoxes.forEach(cb => {
+        const friendDiv = cb.closest('div');
+        if (friendDiv) {
+            friendDiv.remove();
+        }
+    });
 }
+// TODO
+function UpdateActualFriends() {
+    const div = document.createElement('div');
+    const div1 = document.createElement('div');
+    const p = document.createElement('p');
+    const p1 = document.createElement('p');
+}
+// function 
 function displayProfileFriends() {
     fetch('/api/profile/friends')
         .then(response => {
@@ -57,8 +117,8 @@ function displayProfileFriends() {
         updateFields(data);
     });
 }
-function fun() {
-    const socket = new WebSocket('wss://localhost:3000/api/profile/socket');
+function socketConnection() {
+    const socket = new WebSocket('wss://' + currentRoot + '/api/profile/socket');
     socket.onopen = () => {
         console.log('WebSocket connected');
     };
@@ -108,3 +168,4 @@ function fun() {
 // 	// console.log(formData);
 // 	xhttp.send(formData);
 // }
+getProfileData();
