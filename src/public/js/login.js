@@ -95,6 +95,16 @@ var local_user;
 // // }
 // // establish a connection to the server
 // // const socket = new WebSocket("ws://localhost:8080");
+function load2faView() {
+	const	2faTemplate = document.getElementById("2fa_template");
+	const	2faElement = 2faTemplate.content.clone(true);
+	const	form = document.getElementById("login-form");
+
+	if (!form)
+		return ;
+	form.innerHTML = 2faElement.innerHTML;
+}
+
 function login() {
     const formElement = document.getElementById("login-form");
     if (!formElement)
@@ -114,8 +124,9 @@ function login() {
                     errorMsg.textContent = response.error || "An error occurred.";
                 }
                 if (this.status === 200) {
-                    errorMsg.style.color = "green";
-                    errorMsg.textContent = "Welcome!";
+                    // errorMsg.style.color = "green";
+                    // errorMsg.textContent = "Welcome!";
+					load2faView();
                 }
             }
             catch (e) {
@@ -127,3 +138,4 @@ function login() {
     console.log(formData);
     xhttp.send(formData);
 }
+
