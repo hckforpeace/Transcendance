@@ -247,9 +247,6 @@
   .mb-50 {
     margin-bottom: calc(var(--spacing) * 50);
   }
-  .block {
-    display: block;
-  }
   .flex {
     display: flex;
   }

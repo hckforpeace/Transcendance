@@ -30,7 +30,8 @@ async function routes (fastify, options) {
 
   fastify.get('/pong_ia', (req, reply) => { 
   const data = fs.readFileSync(path.join(__dirname, '../views/pong_ia.ejs'), 'utf-8');
-  reply.send(data);});
+  reply.send(data);
+  });
 
   fastify.get('/game_menu', (req, reply) => { 
   const data = fs.readFileSync(path.join(__dirname, '../views/game_menu.ejs'), 'utf-8');
@@ -53,7 +54,10 @@ async function routes (fastify, options) {
   fastify.get('/api/remote', {preHandler: [fastify.authenticate], websocket: true}, (socket, req) => {
     api.sock_con(socket, req, fastify);})
 
-    // XSS test with a route
+    
+  }
+  
+  // XSS test with a route
 // fastify.get('/test-xss', async (req, reply) => {
 //   reply.type('text/html').send(`
 //     <form method="POST" action="/test-xss">
@@ -69,7 +73,4 @@ async function routes (fastify, options) {
 //     .header('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'")
 //     .type('text/html')
 // });
-
-}
-
 export default routes;

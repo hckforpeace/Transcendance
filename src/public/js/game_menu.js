@@ -28,20 +28,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     }
 });
-function pongRedir() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const response = yield fetch("/pong_ia");
-            const html = yield response.text();
-            const content = document.getElementById("content-div");
-            if (!content)
-                throw new Error("Content div not found");
-            content.innerHTML = html;
-            // Now the canvas from pong_ia is in the DOM — call the game initializer
-            ft_pong();
-        }
-        catch (err) {
-            console.error('Error loading pong_ia view:', err);
-        }
-    });
-}

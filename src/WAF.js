@@ -66,7 +66,6 @@ function rateLimiter(maxRequests, timeWindowMs) {
 /* -----------------------------------------------------------------------SQL injections -------------------------------------------------------------------------- */
 
 
-// 1. Middleware WAF pour bloquer injections SQL dans URL et body
 async function sqlInjectionCheck(request, reply) {
   const { method, url, body } = request;
 
@@ -74,33 +73,40 @@ async function sqlInjectionCheck(request, reply) {
     const decodedUrl = decodeURIComponent(url);
     if (suspicious_sql_patterns.some(r => r.test(decodedUrl))) {
       request.log.warn(`❌ Request blocked (pattern SQL URL) : ${decodedUrl}`);
+
       return reply.code(403).type('text/html').view('WAF.ejs', {
         text: 'Access Blocked by WAF',
-        layout: false,
       });
     }
   } catch (err) {
     request.log.error('Erreur décodage URL:', err.message);
   }
 
-  // Vérification des chemins interdits dans URL et body JSON stringifié
   const rawBody = JSON.stringify(body || {});
   for (const path of forbiddenPaths) {
     if (url.includes(path) || rawBody.includes(path)) {
-      request.log.warn(`❌ Request blocked (Forbidden Path) : ${path}`);
+      request.log.warn(`❌❌❌❌ Request blocked (Forbidden Path) : ${path}`);
+      console.log("La\n\n\n\n\n\n\n\n\n\n\n\n\n");
       return reply.code(403).type('text/html').view('WAF.ejs', {
         text: 'Access Blocked by WAF',
-        layout: false,
       });
     }
   }
-
-  if (
-    ['POST', 'PUT', 'PATCH'].includes(method) &&
-    body &&
-    typeof body === 'object' &&
-    !Array.isArray(body)
-  ) {
+if (
+  ['POST', 'PUT', 'PATCH'].includes(method) &&
+  body &&
+  typeof body === 'object' &&
+  !Array.isArray(body)
+) {
+  for (const key in body) {
+    const value = String(body[key] || '');
+    if (suspicious_sql_patterns.some(r => r.test(value))) {
+      request.log.warn(`❌ Request blocked (pattern SQL BODY: ${key})`);
+      return reply.code(403).type('text/html').view('WAF.ejs', {
+        text: 'Access Blocked by WAF',
+      });
+    }
+  }
     const { username = '', password = '' } = body;
     if (
       suspicious_sql_patterns.some(r => r.test(username)) ||
@@ -108,7 +114,6 @@ async function sqlInjectionCheck(request, reply) {
     ) {
       return reply.code(403).type('text/html').view('WAF.ejs', {
         text: 'Access Blocked by WAF',
-        layout: false,
       });
     }
   }

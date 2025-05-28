@@ -1,6 +1,40 @@
-<canvas id="pong_canvas" width="800" height="600"></canvas>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    ft_pong();
-  });
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pong Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #222;
+      color: white;
+    }
+
+    header {
+      width: 100%;
+      background-color: #333;
+      padding: 10px 0;
+      text-align: center;
+      font-size: 24px;
+      position: sticky;
+      top: 0;
+    }
+
+    canvas {
+      border: 1px solid white;
+      background-color: black;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="pong_canvas" width="600" height="800"></canvas>
+</body>
+</html>

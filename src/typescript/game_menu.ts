@@ -19,19 +19,4 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-async function pongRedir() {
-  try {
-    const response = await fetch("/pong_ia");
-    const html = await response.text();
-    const content = document.getElementById("content-div");
-    if (!content) throw new Error("Content div not found");
-    content.innerHTML = html;
-
-    // Now the canvas from pong_ia is in the DOM — call the game initializer
-    ft_pong();
-
-  } catch (err) {
-    console.error('Error loading pong_ia view:', err);
-  }
-}
 
