@@ -33,6 +33,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const tournamentBtn = document.getElementById('tournament');
+    if (tournamentBtn) {
+        tournamentBtn.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                // const res = await fetch('/api/register', {});
+                // .then
+                // const html = await res.text();
+                yield fetch("/api/tournament")
+                    .then(response => response.text())
+                    .then(html => {
+                    var content = document.getElementById("content-div");
+                    if (!content)
+                        throw new Error("Content div not found");
+                    content.innerHTML = html;
+                });
+                // Optionally load related JS (like form handling)
+                //import('./public/js/register.js');
+            }
+            catch (err) {
+                console.error('Error loading register view:', err);
+            }
+        }));
+    }
+});
 // document.addEventListener('DOMContentLoaded', () => {
 //   const loginBtn = document.getElementById('profile');
 //   if (loginBtn) {
