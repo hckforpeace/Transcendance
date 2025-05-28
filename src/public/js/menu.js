@@ -33,54 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     }
 });
-// document.addEventListener('DOMContentLoaded', () => {
-//   const loginBtn = document.getElementById('profile');
-//   if (loginBtn) {
-//     loginBtn.addEventListener('click', async () => {
-//       try {
-//         // const res = await fetch('/api/register', {});
-//         // .then
-//         // const html = await res.text();
-//         await fetch("/api/stats")
-//           .then(response => response.text())
-//           .then(html => {
-//       var content = document.getElementById("content-div");
-//       if (!content)
-//         throw new Error("Content div not found");
-//       content.innerHTML = html;
-//       })
-//         // Optionally load related JS (like form handling)
-//         //import('./public/js/register.js');
-//       } catch (err) {
-//         console.error('Error loading login view:', err);
-//       }
-//     });
-//   }
-// });
-// export function updateUserAvatar(userName: string) {
-//   const profileImg = document.getElementById('profile') as HTMLImageElement | null;
-//   if (!profileImg) return;
-//   const avatarUrl = `/images/${userName}.jpg`;
-//   profileImg.src = avatarUrl;
-//   profileImg.onerror = () => {
-//     profileImg.src = '/images/avatar.jpg';
-//   };
-// }
-function updateUserAvatar() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const profileImg = document.getElementById('profile');
-        ;
-        if (!profileImg)
-            return;
-        try {
-            const res = yield fetch('/api/avatar');
-            const { avatarUrl } = yield res.json();
-            profileImg.src = avatarUrl;
-        }
-        catch (err) {
-            console.error('Erreur de chargement de l\'avatar:', err);
-            profileImg.src = '/images/avatar.jpg';
-        }
-    });
+function updateUserAvatar(avatarUrl) {
+    const profileImg = document.getElementById('profile');
+    if (!profileImg)
+        return;
+    profileImg.src = avatarUrl || '/images/avatar.jpg';
 }
-document.addEventListener('DOMContentLoaded', updateUserAvatar);

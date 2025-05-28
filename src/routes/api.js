@@ -25,7 +25,7 @@ async function routes (fastify, options) {
   
   fastify.get('/ping', async () => { return { message: 'pong' }; });
 
-  fastify.get('/api/avatar', api.avatar)
+  fastify.get('/api/avatar', { preHandler: [fastify.authenticate] }, api.avatar)
 
   fastify.get('/home', (req, reply) => { 
     const data = fs.readFileSync(path.join(__dirname, '../views/home.ejs'), 'utf-8');

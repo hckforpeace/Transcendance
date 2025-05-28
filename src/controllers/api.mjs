@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import bcrypt from 'bcryptjs';
 import { getDB } from "../database/database.js"
 import { pipeline } from 'stream/promises';
+import { request } from 'http';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -65,12 +66,14 @@ const login = async (req, reply) => {
       path: "/"
     });
 
-    reply.setCookie("userId", String(user.id), {
-      httpOnly: true,
-      secure: true,
-      sameSite: "lax",
-      path: "/"
-    });
+
+
+    // reply.setCookie("userId", String(user.id), {
+    //   httpOnly: true,
+    //   secure: true,
+    //   sameSite: "lax",
+    //   path: "/"
+    // });
 
 
   }
@@ -82,23 +85,26 @@ const login = async (req, reply) => {
 };
 
 const avatar = async (req, reply) => {
-  const userId = req.cookies.userId;
+  try {
 
-  let avatarUrl = '/images/avatar.jpg'; // default avatar
+    const decoded = await req.jwtVerify()
 
-  if (!userId)
-    return reply.status(401).send({ error: 'Non authentifié' });
+    const userId = decoded.userId;
 
-  const user = await db.get('SELECT avatarPath FROM users WHERE id = ?', [userId]);
+    const avatarPath = await db.get('SELECT avatarPath FROM users WHERE id = ?', [userId]);
+    console.log("************************************************************" + avatarPath)
 
-  if (user && user.avatarPath) {
-    const fullPath = path.join(__dirname, 'public', user.avatarPath);
-    if (fs.existsSync(fullPath)) {
-      avatarUrl = `/${user.avatarPath}`;
+    let avatarUrl = '/images/avatar.jpg'; // default avatar
+    if (avatarPath) {
+      avatarUrl = avatarPath;
     }
+
+    reply.send({avatarUrl});
+  } catch (err) {
+    return reply.status(401).send({ error: 'Non authentifié: token invalide' });
   }
-  return { avatarUrl };
 };
+
 
 const register = async (req, reply) => {
 

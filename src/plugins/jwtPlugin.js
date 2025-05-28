@@ -17,7 +17,7 @@ export default fp(async function (fastify, opts) {
     //       throw new Error('Invalid token');
     //   }
     //   else
-        console.log(request)
+        console.log("here" + request)
         await request.jwtVerify();
     } catch (err) {
       reply.code(401).send({ message: 'Invalid token' });

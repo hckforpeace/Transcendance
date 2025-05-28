@@ -116,6 +116,17 @@ function login() {
                 if (this.status === 200) {
                     errorMsg.style.color = "green";
                     errorMsg.textContent = "Welcome!";
+                    // Corrected: fetch avatar and update it
+                    fetch("/api/avatar")
+                        .then(response => response.json())
+                        .then(data => {
+                        if (data.avatarUrl) {
+                            updateUserAvatar(data.avatarUrl);
+                        }
+                    })
+                        .catch(err => {
+                        console.error("Error fetching avatar:", err);
+                    });
                 }
             }
             catch (e) {
