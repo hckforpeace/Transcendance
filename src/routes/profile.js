@@ -7,10 +7,9 @@ async function routes (fastify, options) {
    fastify.post('/api/profile/info', api.updateProfileData)
 
   fastify.get('/api/profile/add/friends', api.profileFriends)
-
-  // await fastify.patch('/api/profile/add/friends/:id', api.addFriends) // TODO
-  await fastify.patch('/api/profile/add/friends', api.addFriends) // TODO
-  
+  fastify.patch('/api/profile/add/friends', api.addFriends) // TODO
+ 
+  // fastify.get('/api/profile/friends', api.getFriends) // TODO;
   fastify.get('/api/profiles/connected', api.connectedUsers)
 
   // preHandler: [fastify.authenticate],

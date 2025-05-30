@@ -182,6 +182,17 @@ function displayProfileFriends() {
         updateFields(data);
     });
 }
+// function getCurrentFriends() {
+//   fetch('/api/profile/friends')
+//     .then(response => {
+//       if (!response.ok) {
+//         throw new Error('Failed to fetch');
+//       }
+//       return response.json(); // ✅ return the parsed JSON
+//     })
+//   .then(data => {console.log(data)
+//     updateFields(data);})
+// }
 // function updateUser() {
 // 	const formElement = document.getElementById("updateForm") as HTMLFormElement;
 // 	// if (!formElement)
@@ -221,6 +232,9 @@ function displayProfileFriends() {
 // 	// console.log(formData);
 // 	xhttp.send(formData);
 // }
-getProfileData();
-getFriendsList();
-ProfileSocketConnection();
+document.addEventListener('DOMContentLoaded', () => {
+    getProfileData();
+    getFriendsList();
+    ProfileSocketConnection();
+    // Your code here
+});

@@ -1,5 +1,3 @@
-import fastify from "fastify";
-import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs, install 'uuid' package
 import requests from "../database/requests.js"
 const id = 2;
 
@@ -43,15 +41,15 @@ const profileSocket = async (socket, req, fastify) => {
 
     if (connections.has(userId)) {
       console.log(`🔌 WebSocket already connected for user ${userId} `);
-      connections.get(userId).close(); // Close the existing connection 
+      await connections.get(userId).close(); // Close the existing connection 
       connections.delete(userId); // Remove the existing connection from the map
-      requests.updateDisconnected(userId); // Remove the socket from the database
+      // requests.updateDisconnected(userId); // Remove the socket from the database
     }
 
     connections.set(userId, socket)
+    requests.sendFriends(userId);
     requests.updateConnected(userId)
 
-    console.log(`🔌 WebSocket connected for user ${userId} with socket ID `);
     // when a message is sent
     socket.on('close', message => { 
       console.log(`❌ WebSocket disconnected for user ${userId} `);
@@ -65,11 +63,14 @@ const profileSocket = async (socket, req, fastify) => {
 
 const addFriends = async (req, reply)  => {
   const stringFriends =  JSON.parse(req.body); // Assuming the body is a JSON string
-  const friendsId = stringFriends.map(str => +str);
+  const friendsId = stringFriends.map(str => +str); // makes sure to convert strings to numbers
   const userId = 2; // TODO change to jwt coockie id
   var res =  await requests.addFriend(userId, friendsId)
-  // if (res != 1)
-  //   reply.code(500).send(res)
+  if (res != 1)
+    reply.code(500).send(res)
+  else
+    reply.send({ message: "Friends added successfully" });
 }
+
 
 export default { profileInfo, updateProfileData, connectedUsers, profileFriends, profileSocket, addFriends, connections};
