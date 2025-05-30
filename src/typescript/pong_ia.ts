@@ -1,5 +1,6 @@
-const TRAINING: boolean = false;
+const TRAINING: boolean = true;
 
+// good q_table [[-70.28332858639581,-67.39572839787385,-67.9925017203187],[-169.1303716177985,-170.35391922866512,-168.04508258288976],[-82.30781956258527,-104.16800033585639,-83.28559188861938]]
 /* ************************************************************************** */
 /*                                GLOBAL VARIABLES                            */
 /* ************************************************************************** */
@@ -28,10 +29,9 @@ const MSG_POS_RATIO: number = 0.7;
 
 /* Ball */
 let ball_color = "#FFFFFF";
-let BALL_INIT_SPEED: number = 6;
+const BALL_INIT_SPEED: number = 10;
 //const BALL_COLOR: string = "#FFFFFF";
-let BALL_MAX_SPEED: number = 8;
-const BASE_SPEED_RATIO = 0.01;
+const BALL_MAX_SPEED: number = 12;
 var BALL_RADIUS: number;
 /* Terrain draw */
 const TERRAIN_COLOR: string = "#FFFFFF";
@@ -107,7 +107,7 @@ class Pong {
 		this.player_2 = new Player(player_2_name, { x: canvas.width - player_offset, y: (canvas.height - PLAYER_HEIGHT) / 2 });
 		this.ball = new Ball(center);
 		if (TRAINING)
-			this.score_max = 600;
+			this.score_max = 3;
 		else
 			this.score_max = 10;
 		this.new_round = true;
@@ -160,6 +160,7 @@ function draw_terrain() {
 	ctx.fill();
 }
 
+const RANDOM_BOUNCE_ANGLE = 0.5;
 /**
  * @brief Update ball direction and speed on collision
  */
@@ -171,23 +172,29 @@ function update_ball_state() {
 	let dir = game.ball.direction;
 	let ball_next_pos = { x: ball.pos.x + ball.speed * dir.x, y: ball.pos.y + ball.speed * dir.y };
 
+	// console.log("BALL SPEED -> ", ball.speed, "FLAG -> ", number);
+
 	/* Check for wall collision */
 	if (ball_next_pos.y > canvas.height - BALL_RADIUS || ball_next_pos.y < BALL_RADIUS)
 		dir.y = -dir.y;
 
 	if ((ball.pos.x > p1.pos.x && ball.pos.x < p1.pos.x + PLAYER_WIDTH)
-    && (ball.pos.y > p1.pos.y && ball.pos.y < p1.pos.y + PLAYER_HEIGHT) && number == 0) {
-    number = 1;
-    dir.x = -dir.x;
-    game.ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
-}
+		&& (ball.pos.y > p1.pos.y && ball.pos.y < p1.pos.y + PLAYER_HEIGHT) && number == 0) {
+		number = 1;
+		dir.x = -dir.x;
+		dir.y += 0.45;
+		console.log("DIR Y P1 -> ", dir.y);
+		game.ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
+	}
 	if ((ball.pos.x > p2.pos.x && ball.pos.x < p2.pos.x + PLAYER_WIDTH)
-    && (ball.pos.y > p2.pos.y && ball.pos.y < p2.pos.y + PLAYER_HEIGHT) && number == 1) {
-    number = 0;
-    dir.x = -dir.x;
-    // Optionnel : dir.y = dir.y; // aucun changement ou un simple `dir.y = -dir.y` si tu veux le faire rebondir
-    ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
-}
+		&& (ball.pos.y > p2.pos.y && ball.pos.y < p2.pos.y + PLAYER_HEIGHT) && number == 1) {
+		number = 0;
+		dir.x = -dir.x;
+		dir.y += -0.55;
+		console.log("DIR Y P2 -> ", dir.y);
+		ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
+	}
+
 	/* Check if player1 win a point */
 	if (ball_next_pos.x > canvas.width - BALL_RADIUS) {
 		p1.score += 1;
@@ -270,7 +277,7 @@ function chooseAction(state: number): number {
 	let best_action = 0;
 	if (TRAINING) {
 		EPSILON = Math.max(EPSILON_MIN, EPSILON * (1 - epsilon_decay_rate));
-		// console.log("EPSILON -> ", EPSILON);
+		console.log("EPSILON -> ", EPSILON);
 		if (Math.random() < EPSILON)
 			best_action = Math.floor(Math.random() * NUM_ACTIONS);
 		else if (Q_table_training[state]) {
@@ -328,11 +335,11 @@ function update_ia_pos() {
 	}
 
 	// p2.pos.y = getFutureY();
-	// console.log("future_pos_y => ", future_pos_y);
+	console.log("future_pos_y => ", future_pos_y);
 
 	state = getState();
 	action = chooseAction(state); // Action choisie par l'IA
-	// console.log("State = ", state, "Action = ", action);
+	console.log("State = ", state, "Action = ", action);
 
 	if (action == 1)
 		p2.pos.y -= PLAYER_SPEED;
@@ -588,6 +595,7 @@ function game_loop() {
 		end_game = true;
 		clearInterval(game_interval);
 		finish_game();
+		saveQTableToFile();
 		return;
 	}
 	if (game.new_round) {
@@ -625,36 +633,18 @@ function resizeCanvas() {
 		throw new Error("Canvas not found");
 
 	/* Rotate canvas if needed */
-	if (window.innerHeight > window.innerWidth) {
-		canvas.height = window.innerHeight * 0.8;
-		canvas.width = canvas.height / GOLDEN_NUMBER;
-
-		/* Rotate */
-		ctx.translate(canvas.width / 2, canvas.height / 2); // Move to center
-		ctx.rotate(Math.PI / 2); // Rotate 90 degrees
-		ctx.translate(-canvas.height / 2, -canvas.width / 2); // Move back
-	}
-	else {
+	if (window.innerHeight < window.innerWidth) {
 		canvas.width = window.innerWidth * 0.8;
 		canvas.height = canvas.width / GOLDEN_NUMBER;
 
 		/* Rotate */
 		ctx.rotate(0); // No rotation needed for portrait
 	}
-	const player_offset = 0.05 * canvas.width;
-	game.player_1.pos.x = player_offset;
-	game.player_2.pos.x = canvas.width - player_offset;
-	game.player_1.pos.y = (canvas.height - PLAYER_HEIGHT) / 2;
-	game.player_2.pos.y = (canvas.height - PLAYER_HEIGHT) / 2;
 	PLAYER_WIDTH = canvas.width * PLAYER_WIDTH_RATIO;
 	PLAYER_HEIGHT = PLAYER_WIDTH * PLAYER_WIDTH_HEIGHT_RATIO;
 	TERRAIN_LINE_FAT = 0.01 * Math.max(canvas.width, canvas.height);
 	BALL_RADIUS = 0.01 * Math.min(canvas.width, canvas.height);
 	FONT_SIZE = 0.08 * Math.min(canvas.width, canvas.height);
-
-	//Adjust ball speed
-	BALL_INIT_SPEED = canvas.width * BASE_SPEED_RATIO;
-	BALL_MAX_SPEED = BALL_INIT_SPEED * 1.2;
 }
 
 /**
@@ -662,9 +652,8 @@ function resizeCanvas() {
  *
  * This function should be called when the rigth html page is loaded
  */
-function ft_pong_ia() {
+function load_script(p1_name: string, p2_name: string) {
 	try {
-		window.addEventListener("resize", resizeCanvas); /* Resize "Responsivness" attempt */
 		canvas = document.getElementById("pong_canvas") as HTMLCanvasElement;
 		if (!canvas)
 			throw new Error("Canvas not found");
@@ -672,14 +661,13 @@ function ft_pong_ia() {
 		if (!ctx)
 			throw new Error("Context not found");
 
-			launch_game("Jojo", "Lili");
-		// reset_button.addEventListener("click", () => {
-		// 	saveQTableToFile();
-		// 	canvas.style.display = 'none';
-
-		// });
+		/* Set events listeners */
+			/* Start game */
+			resizeCanvas();
+			launch_game(p1_name, p2_name);
 		document.addEventListener("keydown", pressedKeyHandler, false);
 		document.addEventListener("keyup", releasedKeyHandler, false);
+		window.addEventListener("resize", resizeCanvas); /* Resize "Responsivness" attempt */
 	}
 	catch (err: any) {
 		console.log(err);
