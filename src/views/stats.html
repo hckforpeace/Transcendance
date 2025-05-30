@@ -1,4 +1,4 @@
-<div class="w-auto h-300 grid grid-cols-2 grid-rows-2 grid-flow-col gap-4 mb-50 mt-20">
+<div class="w-auto h-290 grid grid-cols-2 grid-rows-2 grid-flow-col gap-4">
   
   <div class="border-4 rounded-xl border-blue-500 ">
     <h2 class="text-center text-blue-500 text-4xl mb-5 font-bold" id="lobby"> Profile </h2>
@@ -95,37 +95,22 @@
   <h2 class="text-center text-blue-500 text-4xl mb-3 font-bold">Friends</h2>
 
   <!-- Scrollable friends list -->
-  <div class="flex-1 overflow-auto px-6">
-    <div class="flex justify-between py-2 border-b">
-      <p>Pablo</p>
-      <p class="text-green-600">Connected</p>
-    </div>
-    <!-- Repeat friend items here -->
+  <div id= "friends" class="flex-1 overflow-auto px-6">
   </div>
 
 </div>
 
 <div class=" border-4 rounded-xl border-blue-500 flex flex-col h-full">
 
-
   <div id="notFriends" class="flex-1 overflow-auto px-6 space-y-2 py-4">
-    
-  <!-- John -->
-    <!-- <div> -->
-    <!--   <input type="checkbox" id="toggle-john" class="peer hidden" value="John" name="friends"> -->
-    <!--   <label for="toggle-john" class="flex justify-center py-2 border-b cursor-pointer  -->
-    <!--     peer-checked:bg-blue-100 transition-colors rounded text-lg font-medium"> -->
-    <!--     John -->
-    <!--   </label> -->
-    <!-- </div> -->
-
 
 
   </div>
 
   <div class="p-4 border-t">
     <input type="button" onclick="getFriends()" value="Add Friends" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-    <input type="button" onclick="getFriendsList()" value="Test Socket" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <!-- <input type="button" onclick="getFriendsList()" value="getFriends" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"> -->
+    <!-- <input type="button" onclick="ProfileSocketConnection()" value="Test Socket" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"> -->
   </div>
   </div>
     <!-- <div class="row-span-2  border-4 rounded-xl border-blue-500"> -->

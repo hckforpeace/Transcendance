@@ -29,7 +29,7 @@ const connectedUsers = async (req, reply) => {
 }
 
 const profileFriends = async (req, reply) => {
-  const friends = await requests.getFriends(id);
+  const friends = await requests.getNonFriends(id);
   if (!friends)
     reply.code(500)
   else
@@ -64,11 +64,12 @@ const profileSocket = async (socket, req, fastify) => {
 }
 
 const addFriends = async (req, reply)  => {
-  const friendsId = req.params.id;
+  const stringFriends =  JSON.parse(req.body); // Assuming the body is a JSON string
+  const friendsId = stringFriends.map(str => +str);
   const userId = 2; // TODO change to jwt coockie id
   var res =  await requests.addFriend(userId, friendsId)
-  if (res != 1)
-    reply.code(500).send(res)
+  // if (res != 1)
+  //   reply.code(500).send(res)
 }
 
-export default { profileInfo, updateProfileData, connectedUsers, profileFriends, profileSocket, addFriends};
+export default { profileInfo, updateProfileData, connectedUsers, profileFriends, profileSocket, addFriends, connections};

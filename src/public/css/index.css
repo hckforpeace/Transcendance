@@ -252,6 +252,12 @@
   .mt-2 {
     margin-top: calc(var(--spacing) * 2);
   }
+  .mt-5 {
+    margin-top: calc(var(--spacing) * 5);
+  }
+  .mt-10 {
+    margin-top: calc(var(--spacing) * 10);
+  }
   .mt-20 {
     margin-top: calc(var(--spacing) * 20);
   }
@@ -305,6 +311,9 @@
   }
   .h-100 {
     height: calc(var(--spacing) * 100);
+  }
+  .h-290 {
+    height: calc(var(--spacing) * 290);
   }
   .h-300 {
     height: calc(var(--spacing) * 300);
@@ -591,6 +600,9 @@
   }
   .italic {
     font-style: italic;
+  }
+  .underline {
+    text-decoration-line: underline;
   }
   .placeholder-white {
     &::placeholder {

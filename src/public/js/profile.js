@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var socket;
 // Function to fetch and update profile data 
 const getProfileData = () => {
@@ -32,9 +41,9 @@ const updateFields = (data) => {
         img_avatar.src = "images/" + avatar_file_name;
     }
 };
-// Add Friends Section
+// AddFriends Section
 const getFriendsList = () => {
-    fetch('/api/profile/friends')
+    fetch('/api/profile/add/friends')
         .then(response => {
         if (!response.ok) {
             throw new Error('Failed to fetch');
@@ -45,6 +54,9 @@ const getFriendsList = () => {
         data.forEach((item) => {
             filladdFriendsDiv(item.id, item.name);
         });
+    })
+        .then(error => {
+        console.error('Error fetching friends list:', error);
     });
 };
 function filladdFriendsDiv(id, name) {
@@ -67,7 +79,8 @@ function filladdFriendsDiv(id, name) {
     friendDiv.appendChild(labelTag);
     div.appendChild(friendDiv);
 }
-function getFriends() {
+const getFriends = () => __awaiter(void 0, void 0, void 0, function* () {
+    var friends = [];
     // Select all checked checkboxes inside the document
     const checkedBoxes = document.querySelectorAll('input[type="checkbox"]:checked');
     // Extract values (friend name and ID)
@@ -80,28 +93,80 @@ function getFriends() {
     }
     else {
         selectedFriends.forEach(element => {
-            fetch("/api/profile/friends/" + element.id, { method: "PATCH" })
-                .then(response => {
+            friends.push(element.id);
+        }); // Remove each friend's container div
+        fetch("/api/profile/add/friends", { method: "PATCH", body: JSON.stringify(friends) })
+            .then(response => {
+            try {
                 if (!response.ok) {
                     throw new Error('Failed to fetch');
                 }
                 return response.json(); // ✅ return the parsed JSON
-            });
+            }
+            catch (error) {
+                console.error('Error:', error);
+            }
+        })
+            .then(data => {
+            console.log("Added friend: ", data);
+        })
+            .then(error => {
+            console.error('Error fetching friends list:', error);
         });
-    } // Remove each friend's container div
-    checkedBoxes.forEach(cb => {
-        const friendDiv = cb.closest('div');
-        if (friendDiv) {
-            friendDiv.remove();
-        }
-    });
-}
+        checkedBoxes.forEach(cb => {
+            const friendDiv = cb.closest('div');
+            if (friendDiv) {
+                friendDiv.remove();
+            }
+        });
+    }
+});
 // TODO
-function UpdateActualFriends() {
-    const div = document.createElement('div');
-    const div1 = document.createElement('div');
-    const p = document.createElement('p');
-    const p1 = document.createElement('p');
+function UpdateActualFriends(data) {
+    const id = data.id;
+    const name = data.name;
+    const connected = data.connected;
+    const friendsDiv = document.getElementById("friends");
+    const friendElement = document.getElementById(id.toString());
+    if (friendElement) {
+        var status = document.getElementById(id.toString() + "-status");
+        if (status && status.getAttribute("data-value") != connected.toString()) {
+            if (status.getAttribute("data-value") == "1") {
+                status.setAttribute("data-value", "1");
+                status.className = "";
+                status.classList.add("text-green-600");
+                status.innerHTML = "connected";
+            }
+            else {
+                status.setAttribute("data-value", "0");
+                status.className = "";
+                status.classList.add("text-green-600");
+                status.innerHTML = "disconnected";
+            }
+        }
+    }
+    else {
+        const div = document.createElement('div');
+        const p = document.createElement('p');
+        const p1 = document.createElement('p');
+        div.classList.add('flex', 'justify-between', 'py-2', 'border-b');
+        div.id = id.toString();
+        p.id = id.toString() + "-name";
+        p.innerHTML = name;
+        p1.setAttribute("data-value", connected.toString());
+        p1.id = id.toString() + "-status";
+        if (connected == 1) {
+            p1.classList.add('text-green-600');
+            p1.innerHTML = "connected";
+        }
+        else {
+            p1.classList.add('text-red-600');
+            p1.innerHTML = "disconnected";
+        }
+        div.appendChild(p);
+        div.appendChild(p1);
+        friendsDiv.appendChild(div);
+    }
 }
 // function 
 function displayProfileFriends() {
@@ -116,18 +181,6 @@ function displayProfileFriends() {
         console.log(data);
         updateFields(data);
     });
-}
-function socketConnection() {
-    const socket = new WebSocket('wss://' + currentRoot + '/api/profile/socket');
-    socket.onopen = () => {
-        console.log('WebSocket connected');
-    };
-    socket.onclose = () => {
-        console.log('WebSocket disconnected');
-    };
-    socket.onmessage = (event) => {
-        console.log('Message:', event.data);
-    };
 }
 // function updateUser() {
 // 	const formElement = document.getElementById("updateForm") as HTMLFormElement;
@@ -169,3 +222,5 @@ function socketConnection() {
 // 	xhttp.send(formData);
 // }
 getProfileData();
+getFriendsList();
+ProfileSocketConnection();

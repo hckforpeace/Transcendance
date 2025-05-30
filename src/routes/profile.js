@@ -4,10 +4,12 @@ import users from '../database/requests.js'
 //TODO add prehandler to all the routes to check if the user is authenticated with JWT
 async function routes (fastify, options) {
   fastify.get('/api/profile/info', api.profileInfo) // TODO
-  fastify.post('/api/profile/info', api.updateProfileData)
-  fastify.get('/api/profile/friends', api.profileFriends)
+   fastify.post('/api/profile/info', api.updateProfileData)
 
-  fastify.patch('/api/profile/friends/:id', api.addFriends) // TODO
+  fastify.get('/api/profile/add/friends', api.profileFriends)
+
+  // await fastify.patch('/api/profile/add/friends/:id', api.addFriends) // TODO
+  await fastify.patch('/api/profile/add/friends', api.addFriends) // TODO
   
   fastify.get('/api/profiles/connected', api.connectedUsers)
 

@@ -26,7 +26,6 @@ function wsEvent(event: any)
   socket.onerror = function(error) {
     console.log('connection refused');
   };
-
 }
 
 // Creates socket connection n
@@ -60,4 +59,22 @@ function parseIncommingSocketMsg(data: any)
   {
     console.log(error);
   }
+}
+
+function ProfileSocketConnection() {
+  const socket = new WebSocket('wss://' + currentRoot + '/api/profile/socket');
+
+  socket.onopen = () => {
+    console.log('WebSocket connected');
+  };
+
+  socket.onclose = () => {
+    console.log('WebSocket disconnected');
+  };
+
+  socket.onmessage = (event) => {
+    let data = JSON.parse(event.data);
+    console.log(data)
+    UpdateActualFriends(data); 
+  };
 }
