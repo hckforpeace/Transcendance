@@ -66,16 +66,6 @@ const login = async (req, reply) => {
       path: "/"
     });
 
-
-
-    // reply.setCookie("userId", String(user.id), {
-    //   httpOnly: true,
-    //   secure: true,
-    //   sameSite: "lax",
-    //   path: "/"
-    // });
-
-
   }
   catch (error) {
      req.log.error(error);
@@ -85,18 +75,20 @@ const login = async (req, reply) => {
 };
 
 const avatar = async (req, reply) => {
+  const db = getDB();
+
   try {
 
     const decoded = await req.jwtVerify()
 
-    const userId = decoded.userId;
 
-    const avatarPath = await db.get('SELECT avatarPath FROM users WHERE id = ?', [userId]);
-    console.log("************************************************************" + avatarPath)
+    const userId = decoded.userId;
+    const data = await db.get('SELECT avatarPath FROM users WHERE id = ?', [userId]);
+    console.log("************************************************************" + data.avatarPath)
 
     let avatarUrl = '/images/avatar.jpg'; // default avatar
-    if (avatarPath) {
-      avatarUrl = avatarPath;
+    if (data.avatarPath) {
+      avatarUrl = data.avatarPath;
     }
 
     reply.send({avatarUrl});
@@ -149,7 +141,7 @@ const register = async (req, reply) => {
   if (avatar && typeof avatar.stream === 'function' && avatar.name) {
     const ext = path.extname(avatar.name);
     const filename = avatar.name;
-    avatarPath = `public/images/${filename}`;
+    avatarPath = `images/${filename}`;
     const filePath = path.join(uploadDir, filename);
     console.log(`Saving avatar file to: ${filePath}`);
 

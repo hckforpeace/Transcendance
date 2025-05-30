@@ -12,11 +12,6 @@ export default fp(async function (fastify, opts) {
 
   fastify.decorate("authenticate", async function (request, reply) {
     try {
-    //   if (request.headers['sec-websocket-protocol']){
-    //     if (!fastify.jwt.verify(request.headers['sec-websocket-protocol']))
-    //       throw new Error('Invalid token');
-    //   }
-    //   else
         console.log("here" + request)
         await request.jwtVerify();
     } catch (err) {
