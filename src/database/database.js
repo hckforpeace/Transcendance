@@ -23,12 +23,13 @@ export const initDB = async () => {
 
     await db.exec(`CREATE TABLE IF NOT EXISTS stats (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        match_wins INTEGER DEFAULT 0,
-        tournament_wins INTEGER DEFAULT 0,
-        tournaments_played INTEGER DEFAULT 0,
-        matches_played INTEGER DEFAULT 0,
-        player_id INTEGER NOT NULL,
-        FOREIGN KEY (player_id) REFERENCES users(id) ON DELETE CASCADE
+        matchesWon INTEGER DEFAULT 0,
+        matchesLost INTEGER DEFAULT 0,
+        tournamentsWon INTEGER DEFAULT 0,
+        tournamentsPlayed INTEGER DEFAULT 0,
+        matchesPlayed INTEGER DEFAULT 0,
+        playerId INTEGER NOT NULL,
+        FOREIGN KEY (playerId) REFERENCES users(id) ON DELETE CASCADE
     )`);
 
     await db.exec(`CREATE TABLE IF NOT EXISTS "2fa_code" (

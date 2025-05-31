@@ -190,7 +190,8 @@ const users = async (req, reply) => {
   try {
     const db = getDB();
     const users = await db.all('SELECT * FROM users');
-    return reply.send({ users });
+    const stats = await db.all('SELECT * FROM stats');
+    return reply.send({ users, stats });
   } catch (error) {
     console.error('Error fetching users:', error);
     return reply.status(500).send({ error: 'Error fetching users' });

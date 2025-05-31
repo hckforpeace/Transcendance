@@ -1,6 +1,9 @@
 import { getDB } from "./database.js"
 import socket from "../controllers/profile.mjs"
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//                                       Request for Friends and AddFriend
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 const sendFriends = async (userId) => {
   const db = getDB();
@@ -13,16 +16,16 @@ const sendFriends = async (userId) => {
 
   const friends = JSON.parse(res.friends);
   for (const friend of friends) {
-    const temp = await db.get('SELECT connected, name FROM users WHERE id = ?', [friend]);
+    const temp = await db.get('SELECT connected, name, avatarPath FROM users WHERE id = ?', [friend]);
     if (temp) {
-      users.push({ id: friend, name: temp.name, connected: temp.connected });
+      users.push({ id: friend, name: temp.name, connected: temp.connected, avatar: temp.avatarPath });
     }
   }
 
   for (const user of users) {
     if (socket.connections.has(Number(userId))) {
       await socket.connections.get(Number(userId)).send(
-        JSON.stringify({ id: user.id, name: user.name, connected: user.connected })
+        JSON.stringify({ id: user.id, name: user.name, connected: user.connected, avatar: user.avatar})
       );
     }
   }
@@ -109,10 +112,10 @@ const addFriend = async (userId, friendId) => {
 
   try {
     friendId.forEach (async id => {
-      friendData = await db.get("SELECT friendedMe, connected, name from users WHERE id = ?", [id])
+      friendData = await db.get("SELECT friendedMe, connected, name, avatarPath from users WHERE id = ?", [id])
       if (!friendData)
         return (id + 'not found')
-      users.push({id: id, name: friendData.name, connected: friendData.connected})
+      users.push({id: id, name: friendData.name, connected: friendData.connected, avatar: friendData.avatarPath})
       friends = JSON.parse(friendData.friendedMe || "[]");
       if (!friends.includes(Number(userId))) {
         friends.push(Number(userId));
@@ -131,7 +134,7 @@ const addFriend = async (userId, friendId) => {
 
       users.forEach(async (user) => {
         if (socket.connections.has(Number(userId)))
-          await socket.connections.get(Number(userId)).send(JSON.stringify({id: user.id, name: user.name, connected: user.connected }))
+          await socket.connections.get(Number(userId)).send(JSON.stringify({id: user.id, name: user.name, connected: user.connected, avatar: user.avatar }))
       })
     }
   } catch (error) {
@@ -141,5 +144,29 @@ const addFriend = async (userId, friendId) => {
   return (1);
 }
 
-export default { getConnectedUsers, getProfileData , getNonFriends, updateConnected, updateDisconnected, addFriend, sendFriends };
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//                                              Requests for stats 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+const getStats = async (id) => {
+  const db = getDB()
+  var res;
+  var avg_lost;
+  var avg_win;
+
+  try {
+    res = await db.get("SELECT matchesWon, matchesLost  FROM stats WHERE playerId = ?",  [id])
+    avg_lost = (res.matchesLost * 100) / (res.matchesWon + res.matchesLost) 
+    avg_win = (res.matchesWon * 100) / (res.matchesWon + res.matchesLost) 
+    res['avg_win'] = avg_win;
+    res['avg_lost'] = avg_lost;
+    return res
+  } catch (error) {
+
+  }
+}
+
+
+export default { getConnectedUsers, getProfileData , getNonFriends, updateConnected, updateDisconnected, addFriend, sendFriends, getStats };
 

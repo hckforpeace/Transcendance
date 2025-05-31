@@ -1,4 +1,4 @@
-import requests from "../database/requests.js"
+import requests from "../database/profile.js"
 const id = 2;
 
 
@@ -72,5 +72,14 @@ const addFriends = async (req, reply)  => {
     reply.send({ message: "Friends added successfully" });
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+//                                      stats
+////////////////////////////////////////////////////////////////////////////////////////////////
 
-export default { profileInfo, updateProfileData, connectedUsers, profileFriends, profileSocket, addFriends, connections};
+const getStats = async (req, reply) => {
+  const id = 2; 
+  const res = await requests.getStats(id);
+  reply.send(res)
+}
+
+export default { profileInfo, updateProfileData, connectedUsers, profileFriends, profileSocket, addFriends , connections, getStats};

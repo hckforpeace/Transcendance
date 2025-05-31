@@ -31,26 +31,24 @@
   <div class="border-4 rounded-xl border-blue-500 flex flex-col">
     <h2 class="text-center text-blue-500 text-4xl mb-5 font-bold" id=""> Stats </h2>
     <div class="w-auto">
-        <h2 class=" text-center text-green-700 text-xl my-4 font-bold"> Total Wins </h2>
-        <h2 class=" text-center text-green-700 text-xl my-4 font-bold"> 4</h2>
-        <h2 class=" text-center text-red-700 text-xl my-4 font-bold"> Total Loses </h2>
-        <h2 class=" text-center text-red-700 text-xl my-4 font-bold"> 4</h2>
-        <h2 class=" text-center text-blue-700 text-xl my-4 font-bold"> Total Tournaments Won </h2>
-        <h2 class=" text-center text-blue-700 text-xl my-4 font-bold"> 4</h2>
+        <h2 class=" text-center text-green-700 text-xl my-4 font-bold"> Wins </h2>
+        <h2 class=" text-center text-green-700 text-xl my-4 font-bold" id="wins">4</h2>
+        <h2 class=" text-center text-red-700 text-xl my-4 font-bold"> Loses </h2>
+        <h2 class=" text-center text-red-700 text-xl my-4 font-bold" id="loses"> 4</h2>
     </div>
     <div class="flex justify-between mx-8">
       <div>
-        <p class="text-center text-green-700 text-xl my-2 font-bold">Average Won </p> 
+        <p class="text-center text-green-700 text-xl my-2 font-bold" id="avg-wins">Average Won </p> 
         <p class="text-center"> 2 %</p>
       </div>
       <div>
-        <p class="text-center text-red-700 text-xl my-2 font-bold">Average Loses</p>
+        <p class="text-center text-red-700 text-xl my-2 font-bold" id="avg-loses">Average Loses</p>
         <p class="text-center"> 98 %</p>
       </div>
     </div>
       
 
-    <div class="w-full max-h-30 overflow-auto my-4 ">
+    <div class="w-full mt-10 max-h-full overflow-auto my-4 ">
       <table class="min-w-full table-fixed border-collapse">
         <thead class="bg-gray-200 sticky">
           <tr>

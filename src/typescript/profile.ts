@@ -38,7 +38,7 @@ const updateFields = (data: UserData) => {
   if (mail_input && username_input) {
     mail_input.value = mail;
     username_input.value = username;
-    img_avatar.src = "images/" + avatar_file_name
+    img_avatar.src = avatar_file_name
   }
 }
 
@@ -138,12 +138,22 @@ function UpdateActualFriends(data: any) {
   const id = data.id;
   const name = data.name;
   const connected = data.connected;
+  const avatar = data.avatar
 
   const friendsDiv = document.getElementById("friends") as HTMLDivElement
 
   const friendElement = document.getElementById(id.toString()) as HTMLDivElement
   if (friendElement) {
+    var image = document.getElementById(id.toString() + '-image') as HTMLImageElement;
+    var name_paragraph = document.getElementById(id.toString() + '-name') as HTMLParagraphElement;
     var status = document.getElementById(id.toString() + "-status") as HTMLParagraphElement;
+
+    if (image) 
+      image.src = avatar
+    if (name_paragraph) {
+      name_paragraph.innerHTML = "dhd"
+    }
+
     if (status && status.getAttribute("data-value") != connected.toString() ) {
       if (status.getAttribute("data-value") == "1") {
         status.setAttribute("data-value", "1");
@@ -159,10 +169,18 @@ function UpdateActualFriends(data: any) {
       }
     }
   } else {
+    const img = document.createElement('img') as HTMLImageElement
     const div = document.createElement('div') as HTMLDivElement 
+    const div1 = document.createElement('div') as HTMLDivElement 
     const p =  document.createElement('p') as  HTMLParagraphElement 
     const p1 =  document.createElement('p') as HTMLParagraphElement 
 
+
+
+    img.id = id.toString() + '-image'
+    img.src = avatar
+    img.classList.add('w-7', 'h-7')
+    div1.classList.add('flex', 'space-x-1')
     div.classList.add('flex', 'justify-between', 'py-2', 'border-b') 
     div.id = id.toString();
     p.id = id.toString() + "-name";
@@ -178,7 +196,10 @@ function UpdateActualFriends(data: any) {
       p1.innerHTML = "disconnected"
     }
 
-    div.appendChild(p);
+    div1.appendChild(img)
+    div1.appendChild(p)
+    // div.appendChild(p);
+    div.appendChild(div1);
     div.appendChild(p1);
     friendsDiv.appendChild(div);
   }
@@ -198,62 +219,22 @@ function displayProfileFriends(){
     updateFields(data);})
 }
 
-// function getCurrentFriends() {
-//   fetch('/api/profile/friends')
-//     .then(response => {
-//       if (!response.ok) {
-//         throw new Error('Failed to fetch');
-//       }
-//       return response.json(); // ✅ return the parsed JSON
-//     })
-//   .then(data => {console.log(data)
-//     updateFields(data);})
-// }
+function getStats() {
+  fetch('/api/profile/stats')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch');
+      }
+      return response.json(); // ✅ return the parsed JSON
+    })
+  .then(data => {
+   console.log(data) })
+}
 
-// function updateUser() {
-// 	const formElement = document.getElementById("updateForm") as HTMLFormElement;
-// 	// if (!formElement)
-// 	// 	return;
-// 	// const errorMsg = document.getElementById("form-error-msg");
-// 	// if (!errorMsg)
-// 	// 	return;
-// 	// errorMsg.textContent = ""; // Reset previous error
-// 	// errorMsg.style.color = "red";
-// 	const formData = new FormData(formElement);
-// 	const xhttp = new XMLHttpRequest();
-
-// 	xhttp.onreadystatechange = function ()
-// 	{
-// 		if (this.readyState === 4)
-// 		{
-// 			try
-// 			{
-// 				if (this.status === 400 || this.status === 500)
-// 				{
-// 					const response = JSON.parse(this.responseText);
-// 				 	// errorMsg.textContent = response.error || "An error occurred.";
-// 				}
-// 				if (this.status === 200)
-// 				{
-//           alert("User updated successfully!");
-// 					// errorMsg.style.color = "green";
-// 					// errorMsg.textContent = "User registered successfully!";
-// 				}
-// 			}
-// 			catch (e)
-// 			{
-// 				// errorMsg.textContent = "Unexpected errro";
-// 			}
-// 		}
-// 	};
-
-// 	xhttp.open("POST", "/api/profile", true);
-// 	// console.log(formData);
-// 	xhttp.send(formData);
-// }
 document.addEventListener('DOMContentLoaded', () => {
   getProfileData();
   getFriendsList();
   ProfileSocketConnection();
+  getStats()
   // Your code here
 });

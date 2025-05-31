@@ -38,7 +38,7 @@ const updateFields = (data) => {
     if (mail_input && username_input) {
         mail_input.value = mail;
         username_input.value = username;
-        img_avatar.src = "images/" + avatar_file_name;
+        img_avatar.src = avatar_file_name;
     }
 };
 // AddFriends Section
@@ -126,10 +126,18 @@ function UpdateActualFriends(data) {
     const id = data.id;
     const name = data.name;
     const connected = data.connected;
+    const avatar = data.avatar;
     const friendsDiv = document.getElementById("friends");
     const friendElement = document.getElementById(id.toString());
     if (friendElement) {
+        var image = document.getElementById(id.toString() + '-image');
+        var name_paragraph = document.getElementById(id.toString() + '-name');
         var status = document.getElementById(id.toString() + "-status");
+        if (image)
+            image.src = avatar;
+        if (name_paragraph) {
+            name_paragraph.innerHTML = "dhd";
+        }
         if (status && status.getAttribute("data-value") != connected.toString()) {
             if (status.getAttribute("data-value") == "1") {
                 status.setAttribute("data-value", "1");
@@ -146,9 +154,15 @@ function UpdateActualFriends(data) {
         }
     }
     else {
+        const img = document.createElement('img');
         const div = document.createElement('div');
+        const div1 = document.createElement('div');
         const p = document.createElement('p');
         const p1 = document.createElement('p');
+        img.id = id.toString() + '-image';
+        img.src = avatar;
+        img.classList.add('w-7', 'h-7');
+        div1.classList.add('flex', 'space-x-1');
         div.classList.add('flex', 'justify-between', 'py-2', 'border-b');
         div.id = id.toString();
         p.id = id.toString() + "-name";
@@ -163,7 +177,10 @@ function UpdateActualFriends(data) {
             p1.classList.add('text-red-600');
             p1.innerHTML = "disconnected";
         }
-        div.appendChild(p);
+        div1.appendChild(img);
+        div1.appendChild(p);
+        // div.appendChild(p);
+        div.appendChild(div1);
         div.appendChild(p1);
         friendsDiv.appendChild(div);
     }
@@ -182,59 +199,22 @@ function displayProfileFriends() {
         updateFields(data);
     });
 }
-// function getCurrentFriends() {
-//   fetch('/api/profile/friends')
-//     .then(response => {
-//       if (!response.ok) {
-//         throw new Error('Failed to fetch');
-//       }
-//       return response.json(); // ✅ return the parsed JSON
-//     })
-//   .then(data => {console.log(data)
-//     updateFields(data);})
-// }
-// function updateUser() {
-// 	const formElement = document.getElementById("updateForm") as HTMLFormElement;
-// 	// if (!formElement)
-// 	// 	return;
-// 	// const errorMsg = document.getElementById("form-error-msg");
-// 	// if (!errorMsg)
-// 	// 	return;
-// 	// errorMsg.textContent = ""; // Reset previous error
-// 	// errorMsg.style.color = "red";
-// 	const formData = new FormData(formElement);
-// 	const xhttp = new XMLHttpRequest();
-// 	xhttp.onreadystatechange = function ()
-// 	{
-// 		if (this.readyState === 4)
-// 		{
-// 			try
-// 			{
-// 				if (this.status === 400 || this.status === 500)
-// 				{
-// 					const response = JSON.parse(this.responseText);
-// 				 	// errorMsg.textContent = response.error || "An error occurred.";
-// 				}
-// 				if (this.status === 200)
-// 				{
-//           alert("User updated successfully!");
-// 					// errorMsg.style.color = "green";
-// 					// errorMsg.textContent = "User registered successfully!";
-// 				}
-// 			}
-// 			catch (e)
-// 			{
-// 				// errorMsg.textContent = "Unexpected errro";
-// 			}
-// 		}
-// 	};
-// 	xhttp.open("POST", "/api/profile", true);
-// 	// console.log(formData);
-// 	xhttp.send(formData);
-// }
+function getStats() {
+    fetch('/api/profile/stats')
+        .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch');
+        }
+        return response.json(); // ✅ return the parsed JSON
+    })
+        .then(data => {
+        console.log(data);
+    });
+}
 document.addEventListener('DOMContentLoaded', () => {
     getProfileData();
     getFriendsList();
     ProfileSocketConnection();
+    getStats();
     // Your code here
 });
