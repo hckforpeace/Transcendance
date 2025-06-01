@@ -82,4 +82,4 @@ const getStats = async (req, reply) => {
   reply.send(res)
 }
 
-export default { profileInfo, updateProfileData, connectedUsers, profileFriends, profileSocket, addFriends , connections, getStats};
+export default { profileInfo, updateProfileData, connectedUsers, profileFriends, profileSocket, addFriends , getStats, connections};

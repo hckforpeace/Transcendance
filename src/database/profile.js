@@ -151,19 +151,21 @@ const addFriend = async (userId, friendId) => {
 
 const getStats = async (id) => {
   const db = getDB()
-  var res;
+  var stats = [];
+  var matches;
   var avg_lost;
   var avg_win;
 
   try {
-    res = await db.get("SELECT matchesWon, matchesLost  FROM stats WHERE playerId = ?",  [id])
-    avg_lost = (res.matchesLost * 100) / (res.matchesWon + res.matchesLost) 
-    avg_win = (res.matchesWon * 100) / (res.matchesWon + res.matchesLost) 
-    res['avg_win'] = avg_win;
-    res['avg_lost'] = avg_lost;
-    return res
+    stats = await db.get("SELECT matchesWon, matchesLost  FROM stats WHERE playerId = ?",  [id])
+    matches = await db.all("SELECT player1_alias, player2_alias, player1_score, player2_score, date FROM matches WHERE player1_id = ? OR player2_id = ?",  [id, id])
+    console.log(matches)
+    avg_lost = (stats.matchesLost * 100) / (stats.matchesWon + stats.matchesLost) 
+    avg_win = (stats.matchesWon * 100) / (stats.matchesWon + stats.matchesLost) 
+    stats = { matchesWon: stats.matchesWon, matchesLost: stats.matchesLost, avg_lost: avg_lost.toFixed(2), avg_win: avg_win.toFixed(2), matches: matches }
+    return stats ; 
   } catch (error) {
-
+    console.error("Error fetching stats:", error);
   }
 }
 

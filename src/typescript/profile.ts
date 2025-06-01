@@ -206,6 +206,52 @@ function UpdateActualFriends(data: any) {
 
 }
 
+
+function updateStates(data: any) {
+  var tr;
+  var tdP1;
+  var tdP2;
+  var tdScrP1;
+  var tdScrP2;
+  var tdDate;
+  const win = document.getElementById('wins') as HTMLParagraphElement;
+  const loses = document.getElementById('loses') as HTMLParagraphElement;
+  const avg_win = document.getElementById('avg-wins') as HTMLParagraphElement;
+  const avg_lost = document.getElementById('avg-loses') as HTMLParagraphElement;
+
+  avg_win.innerHTML = data.avg_win + " %"
+  avg_lost.innerHTML = data.avg_lost + " %"
+  win.innerHTML = data.matchesWon 
+  loses.innerHTML = data.matchesLost 
+
+  const matches = data.matches;
+  const table = document.getElementById('statsTable') as HTMLTableElement
+  matches.forEach( (match:any)  => {
+    tr = document.createElement('tr');
+    tdP1 = document.createElement('td') 
+    tdP2 = document.createElement('td') 
+    tdScrP1 = document.createElement('td') 
+    tdScrP2 = document.createElement('td') 
+    tdDate = document.createElement('td') 
+    
+    tr.classList.add('tr-all-center');
+    tdP1.innerHTML = match.player1_alias;
+    tdP2.innerHTML = match.player2_alias;
+    tdScrP1.innerHTML = match.player1_score;
+    tdScrP2.innerHTML = match.player2_score;
+    tdDate.innerHTML = match.date
+
+    tr.appendChild(tdP1)
+    tr.appendChild(tdP2)
+    tr.appendChild(tdScrP1)
+    tr.appendChild(tdScrP2)
+    tr.appendChild(tdDate)
+
+    table.appendChild(tr)
+
+  });
+}
+
 // function 
 function displayProfileFriends(){
   fetch('/api/profile/friends')
@@ -216,7 +262,8 @@ function displayProfileFriends(){
       return response.json(); // ✅ return the parsed JSON
     })
   .then(data => {console.log(data)
-    updateFields(data);})
+    updateFields(data);
+    })
 }
 
 function getStats() {
@@ -228,7 +275,10 @@ function getStats() {
       return response.json(); // ✅ return the parsed JSON
     })
   .then(data => {
-   console.log(data) })
+    console.log(data)
+    updateStates(data)
+    })
+
 }
 
 document.addEventListener('DOMContentLoaded', () => {

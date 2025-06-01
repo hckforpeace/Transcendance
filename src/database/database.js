@@ -59,6 +59,19 @@ export const initDB = async () => {
         FOREIGN KEY (match2_id) REFERENCES matches(match_id)
     )`);
 
+    await db.exec(`CREATE TABLE IF NOT EXISTS matches (
+        match_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        player1_alias TEXT NOT NULL,
+        player2_alias TEXT NOT NULL,
+        player1_id INTEGER NOT NULL,
+        player2_id INTEGER NOT NULL,
+        player1_score INTEGER DEFAULT 0,
+        player2_score INTEGER DEFAULT 0,
+        date DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (player1_id) REFERENCES users(id),
+        FOREIGN KEY (player2_id) REFERENCES users(id)
+    )`);
+
   } catch (error) {
     console.error('Error initializing the database:', error);
   }

@@ -185,6 +185,44 @@ function UpdateActualFriends(data) {
         friendsDiv.appendChild(div);
     }
 }
+function updateStates(data) {
+    var tr;
+    var tdP1;
+    var tdP2;
+    var tdScrP1;
+    var tdScrP2;
+    var tdDate;
+    const win = document.getElementById('wins');
+    const loses = document.getElementById('loses');
+    const avg_win = document.getElementById('avg-wins');
+    const avg_lost = document.getElementById('avg-loses');
+    avg_win.innerHTML = data.avg_win + " %";
+    avg_lost.innerHTML = data.avg_lost + " %";
+    win.innerHTML = data.matchesWon;
+    loses.innerHTML = data.matchesLost;
+    const matches = data.matches;
+    const table = document.getElementById('statsTable');
+    matches.forEach((match) => {
+        tr = document.createElement('tr');
+        tdP1 = document.createElement('td');
+        tdP2 = document.createElement('td');
+        tdScrP1 = document.createElement('td');
+        tdScrP2 = document.createElement('td');
+        tdDate = document.createElement('td');
+        tr.classList.add('tr-all-center');
+        tdP1.innerHTML = match.player1_alias;
+        tdP2.innerHTML = match.player2_alias;
+        tdScrP1.innerHTML = match.player1_score;
+        tdScrP2.innerHTML = match.player2_score;
+        tdDate.innerHTML = match.date;
+        tr.appendChild(tdP1);
+        tr.appendChild(tdP2);
+        tr.appendChild(tdScrP1);
+        tr.appendChild(tdScrP2);
+        tr.appendChild(tdDate);
+        table.appendChild(tr);
+    });
+}
 // function 
 function displayProfileFriends() {
     fetch('/api/profile/friends')
@@ -209,6 +247,7 @@ function getStats() {
     })
         .then(data => {
         console.log(data);
+        updateStates(data);
     });
 }
 document.addEventListener('DOMContentLoaded', () => {
