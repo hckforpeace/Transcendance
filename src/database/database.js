@@ -18,7 +18,8 @@ export const initDB = async () => {
         avatarPath TEXT,
         friends TEXT DEFAULT '[]',
         socketConnectionProfile BOOL DEFAULT 0,
-        friendedMe TEXT DEFAULT '[]'
+        friendedMe TEXT DEFAULT '[]',
+        last_active INTEGER
     )`);
 
     await db.exec(`CREATE TABLE IF NOT EXISTS stats (

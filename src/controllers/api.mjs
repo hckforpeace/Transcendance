@@ -157,7 +157,8 @@ const register = async (req, reply) => {
 
   try {
     const hashed_password = await bcrypt.hash(password, 10);
-    const result = await db.run(`INSERT INTO users (name, email, hashed_password, avatarPath) VALUES (?, ?, ?, ?)`, [name, email, hashed_password, avatarPath]);
+    const last_active = Date.now();
+    const result = await db.run(`INSERT INTO users (name, email, hashed_password, avatarPath, last_active) VALUES (?, ?, ?, ?, ?)`, [name, email, hashed_password, avatarPath, last_active]);
     //reply.send({ message: 'User registered successfully', result });
     // return reply.redirect('/');
   } catch (error) {
