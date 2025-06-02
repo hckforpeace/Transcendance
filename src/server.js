@@ -20,9 +20,8 @@ import populate from './database/populate.js'
 import fastifyCookie from '@fastify/cookie'
 import fastifyFormbody from '@fastify/formbody'
 import fastifyMultipart from "@fastify/multipart"
-import xss from 'xss';
 import dotenv from 'dotenv';
-import { rateLimiter, sqlInjectionCheck, xssSanitizeBody } from './WAF.js';
+import { rateLimiter, sql_xss_check } from './WAF.js';
 //import routesPong from './routes/pong.js';
 
 dotenv.config();
@@ -45,10 +44,6 @@ const fastify = Fastify({
   logger: true,
 });
 
-// WAF Hooks
-fastify.addHook('preHandler', sqlInjectionCheck);
-fastify.addHook('preHandler', xssSanitizeBody);
-fastify.addHook('preHandler', rateLimiter(100, 60000));
 
 // Plugins
 fastify.register(fastifyCookie);
@@ -62,6 +57,11 @@ fastify.register(jwtPlugin);
 
 // To handle form submissions
 fastify.register(fastifyFormbody);
+
+// WAF Hooks
+fastify.addHook('preHandler', sql_xss_check);
+fastify.addHook('onRequest', sql_xss_check);
+fastify.addHook('preHandler', rateLimiter(100, 60000));
 
 // fastify/static
 fastify.register(fastifyStatic, {

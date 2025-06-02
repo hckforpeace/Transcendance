@@ -18,8 +18,46 @@ const loginSchema = {
   },
 };
 
+function xss_test_route(fastify) {
+  fastify.get('/test-xss', async (req, reply) => {
+    const name = req.query.name || '';
+    
+    // Injection directe non échappée (volontaire pour tester XSS)
+    const html = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Test XSS</title>
+      </head>
+      <body>
+        <form method="GET" accept-charset="UTF-8">
+          <input type="text" name="name" />
+          <input type="submit" value="Envoyer" />
+        </form>
+
+        <div>
+          Bonjour, ${name}
+        </div>
+      </body>
+      </html>
+    `;
+
+    reply.type('text/html').send(html);
+  });
+  fastify.post('/test-xss', async (req, reply) => {
+    const name = req.body.name;
+    reply
+      .header('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'")
+      .type('text/html')
+  });
+}
+
+
 // routes/api.js
 async function routes (fastify, options) {
+  
+  xss_test_route(fastify)
 
   fastify.get('/api/users', { preHandler: [fastify.authenticate] }, api.users);
   
@@ -59,27 +97,8 @@ async function routes (fastify, options) {
   // connect to the websocket server
   fastify.get('/api/remote', {preHandler: [fastify.authenticate], websocket: true}, (socket, req) => {
     api.sock_con(socket, req, fastify);})
-
-
-
 }
 
 export default routes;
     
   
-  // XSS test with a route
-// fastify.get('/test-xss', async (req, reply) => {
-//   reply.type('text/html').send(`
-//     <form method="POST" action="/test-xss">
-//       <input type="text" name="name" />
-//       <button type="submit">Envoyer</button>
-//     </form>
-//   `);
-// });
-
-// fastify.post('/test-xss', async (req, reply) => {
-//   const name = req.body.name;
-//   reply
-//     .header('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'")
-//     .type('text/html')
-// });
