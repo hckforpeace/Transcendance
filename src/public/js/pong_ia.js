@@ -60,6 +60,7 @@ class Player {
         this.name = name;
         this.score = 0;
         this.pos = pos;
+        this.speed = PLAYER_SPEED;
     }
 }
 class Ball {
@@ -272,9 +273,9 @@ function update_ia_pos() {
     action = chooseAction(state); // Action choisie par l'IA
     console.log("State = ", state, "Action = ", action);
     if (action == 1)
-        p2.pos.y -= PLAYER_SPEED;
+        p2.pos.y -= p2.speed;
     if (action == 2)
-        p2.pos.y += PLAYER_SPEED;
+        p2.pos.y += p2.speed;
     // Limit of the screen for the player
     if (p2.pos.y < 0)
         p2.pos.y = 0;
@@ -297,14 +298,14 @@ function update_player_pos() {
         p1.pos.y = game.ball.pos.y - (PLAYER_HEIGHT / 2);
     else {
         if (p1_upPressed && !p1_downPressed)
-            p1.pos.y -= PLAYER_SPEED;
+            p1.pos.y -= p1.speed;
         if (!p1_upPressed && p1_downPressed)
-            p1.pos.y += PLAYER_SPEED;
+            p1.pos.y += p1.speed;
+        if (p2_upPressed && !p2_downPressed)
+            p2.pos.y -= p2.speed;
+        if (!p2_upPressed && p2_downPressed)
+            p2.pos.y += p2.speed;
     }
-    if (p2_upPressed && !p2_downPressed)
-        p2.pos.y -= PLAYER_SPEED;
-    if (!p2_upPressed && p2_downPressed)
-        p2.pos.y += PLAYER_SPEED;
     let player_offset = 0.05 * canvas.width;
     p1.pos.x = player_offset;
     p2.pos.x = canvas.width - player_offset;
@@ -387,6 +388,7 @@ function draw_finish() {
     draw_player(game.player_2);
     draw_ball(game.ball);
     draw_score();
+    resizeCanvas();
     ctx.font = `${FONT_SIZE}px ${FONT_NAME}`;
     if (game.player_1.score >= game.score_max)
         ctx.fillText("YOU WIN", msg_pos.x - msg_len, msg_pos.y);
@@ -511,6 +513,7 @@ function launch_game(p1_name, p2_name) {
         throw new Error("Canvas not found");
     if (!p1_name || !p2_name)
         throw new Error("Invalid player name");
+    resizeCanvas();
     game = new Pong(p1_name, p2_name, { x: canvas.width / 2, y: canvas.height / 2 });
     game.ball.direction = { x: 0.5, y: 0.5 };
     end_game = false;
@@ -527,6 +530,11 @@ function resizeCanvas() {
         throw new Error("Context not found");
     if (!canvas)
         throw new Error("Canvas not found");
+    // if(window.innerHeight < 700 && window.innerWidth < 900)
+    // {
+    // 	console.log("BLAAAA");
+    // 	return
+    // }
     /* Rotate canvas if needed */
     if (window.innerHeight < window.innerWidth) {
         canvas.width = window.innerWidth * 0.8;
@@ -539,6 +547,13 @@ function resizeCanvas() {
     TERRAIN_LINE_FAT = 0.01 * Math.max(canvas.width, canvas.height);
     BALL_RADIUS = 0.01 * Math.min(canvas.width, canvas.height);
     FONT_SIZE = 0.08 * Math.min(canvas.width, canvas.height);
+    if (game) {
+        const BALL_SPEED_RATIO = 0.012;
+        const PLAYER_SPEED_RATIO = 0.015;
+        game.ball.speed = BALL_SPEED_RATIO * canvas.height;
+        game.player_1.speed = PLAYER_SPEED_RATIO * canvas.height;
+        game.player_2.speed = PLAYER_SPEED_RATIO * canvas.height;
+    }
 }
 /**
  * @brief Load the different event for the pong game
@@ -555,11 +570,10 @@ function load_script(p1_name, p2_name) {
             throw new Error("Context not found");
         /* Set events listeners */
         /* Start game */
-        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas); /* Resize "Responsivness" attempt */
         launch_game(p1_name, p2_name);
         document.addEventListener("keydown", pressedKeyHandler, false);
         document.addEventListener("keyup", releasedKeyHandler, false);
-        window.addEventListener("resize", resizeCanvas); /* Resize "Responsivness" attempt */
     }
     catch (err) {
         console.log(err);
