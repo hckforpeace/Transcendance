@@ -4,6 +4,63 @@ const sql_add_match = "INSERT INTO matches (player1_alias , player2_alias, playe
 
 const populateDB = async (db) => 
 {
+
+  await db.run(sql_add_user, ['sob', "password", "pomemo@gmail.com", 0, "images/avatar.jpg", '[]'], function(err) {
+    if (err) {
+      console.error('Error inserting admin user:', err);
+    } else {
+      console.log("user added");
+    }
+  })
+  await db.run(sql_add_user, ['lob', "password", "hshsh@gmail.com", 0, "images/avatar.jpg", '[]'], function(err) {
+    if (err) {
+      console.error('Error inserting admin user:', err);
+    } else {
+      console.log("user added");
+    }
+  })
+  await db.run(sql_add_user, ['pqwoieurqpowieru', "hs", "lolo@gmail.com", 0, "images/avatar.jpg", '[]'], function(err) {
+    if (err) {
+      console.error('Error inserting admin user:', err);
+    } else {
+      console.log("user added");
+    }
+  })
+  await db.run(sql_add_user, ['lkajsdhlkasdhj', "password", "ibn@gmail.com", 0, "images/avatar.jpg", '[]'], function(err) {
+    if (err) {
+      console.error('Error inserting admin user:', err);
+    } else {
+      console.log("user added");
+    }
+  })
+  await db.run(sql_add_user, ['ahmaed', "password", "ahmaed@gmail.com", 1, "images/avatar.jpg", '[]'], function(err) {
+    if (err) {
+      console.error('Error inserting admin user:', err);
+    } else {
+      console.log("user added");
+    }
+  })
+  await db.run(sql_add_user, ['paul', "password", "hasdhasd@gmail.com", 1, "images/avatar.jpg", '[]'], function(err) {
+    if (err) {
+      console.error('Error inserting admin user:', err);
+    } else {
+      console.log("user added");
+    }
+  })
+  await db.run(sql_add_user, ['hdhashda', "password", "sdhssajahdad@gmail.com", 1, "images/avatar.jpg", '[]'], function(err) {
+    if (err) {
+      console.error('Error inserting admin user:', err);
+    } else {
+      console.log("user added");
+    }
+  })
+  await db.run(sql_add_user, ['hashda', "password", "ssajahdad@gmail.com", 1, "images/avatar.jpg", '[]'], function(err) {
+    if (err) {
+      console.error('Error inserting admin user:', err);
+    } else {
+      console.log("user added");
+    }
+  })
   await db.run(sql_add_user, ['pablo', "password", "sjahdad@gmail.com", 1, "images/avatar.jpg", '[]'], function(err) {
     if (err) {
       console.error('Error inserting admin user:', err);
@@ -41,7 +98,7 @@ const populateDB = async (db) =>
   })
   
   // adding to stats some stuff
-  await db.run(sql_add_stats, [4, 10, 4, 4, 4, 2], function(err) { 
+    await db.run(sql_add_stats, [4, 10, 4, 4, 4, 2], function(err) { 
     if (err) {
       console.error('Error inserting admin user:', err);
     } else {
@@ -50,6 +107,27 @@ const populateDB = async (db) =>
   })
 
   // populating the matches table
+  await db.run(sql_add_match, ['mel', 'pablo', 2, 1, 5, 7], function(err) { 
+    if (err) {
+      console.error('Error inserting admin user:', err);
+    } else {
+      console.log("user added");
+    }
+  })
+  await db.run(sql_add_match, ['mel', 'pablo', 2, 1, 5, 7], function(err) { 
+    if (err) {
+      console.error('Error inserting admin user:', err);
+    } else {
+      console.log("user added");
+    }
+  })
+  await db.run(sql_add_match, ['mel', 'pablo', 2, 1, 5, 7], function(err) { 
+    if (err) {
+      console.error('Error inserting admin user:', err);
+    } else {
+      console.log("user added");
+    }
+  })
   await db.run(sql_add_match, ['mel', 'pablo', 2, 1, 5, 7], function(err) { 
     if (err) {
       console.error('Error inserting admin user:', err);
