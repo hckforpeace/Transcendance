@@ -30,6 +30,18 @@ async function routes (fastify, options) {
   fastify.get('/home', (req, reply) => { 
     const data = fs.readFileSync(path.join(__dirname, '../views/home.ejs'), 'utf-8');
     reply.send(data);});
+  fastify.get('/rgpd', (req, reply) => { 
+  const data = fs.readFileSync(path.join(__dirname, '../views/rgpd.ejs'), 'utf-8');
+  reply.send(data);});
+
+  fastify.get('/pong_ia', (req, reply) => { 
+  const data = fs.readFileSync(path.join(__dirname, '../views/pong_ia.ejs'), 'utf-8');
+  reply.send(data);
+  });
+
+  fastify.get('/game_menu', (req, reply) => { 
+  const data = fs.readFileSync(path.join(__dirname, '../views/game_menu.ejs'), 'utf-8');
+  reply.send(data);});
 
   fastify.get('/api/register', (req, reply) => { 
     const data = fs.readFileSync(path.join(__dirname, '../views/register.ejs'), 'utf-8');
@@ -53,3 +65,21 @@ async function routes (fastify, options) {
 }
 
 export default routes;
+    
+  
+  // XSS test with a route
+// fastify.get('/test-xss', async (req, reply) => {
+//   reply.type('text/html').send(`
+//     <form method="POST" action="/test-xss">
+//       <input type="text" name="name" />
+//       <button type="submit">Envoyer</button>
+//     </form>
+//   `);
+// });
+
+// fastify.post('/test-xss', async (req, reply) => {
+//   const name = req.body.name;
+//   reply
+//     .header('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'")
+//     .type('text/html')
+// });

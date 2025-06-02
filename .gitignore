@@ -4,4 +4,4 @@ src/.env
 src/secret/certs 
 vault
 mydatabase.db
-src/secret/certs/server.key
+bin/
