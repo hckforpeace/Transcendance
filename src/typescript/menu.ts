@@ -32,4 +32,13 @@ function updateUserAvatar(avatarUrl: string) {
 	profileImg.src = avatarUrl || '/images/avatar.jpg';
 }
 
-
+// function goBackHome() {
+//    fetch("/home")
+//     .then(response => response.text())
+//     .then(html => {
+//       var content = document.getElementById("content-div");
+//       if (!content)
+//         throw new Error("Content div not found");
+//       content.innerHTML = html;
+//     })
+// }
