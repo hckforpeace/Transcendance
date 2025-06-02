@@ -24,41 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 });
 
-// document.addEventListener('DOMContentLoaded', () => {
-//   const loginBtn = document.getElementById('profile');
+function updateUserAvatar(avatarUrl: string) {
+	const profileImg = document.getElementById('profile') as HTMLImageElement | null;
 
-//   if (loginBtn) {
-//     loginBtn.addEventListener('click', async () => {
-//       try {
-//         // const res = await fetch('/api/register', {});
-//         // .then
-//         // const html = await res.text();
-//         await fetch("/api/stats")
-//           .then(response => response.text())
-//           .then(html => {
-//       var content = document.getElementById("content-div");
-//       if (!content)
-//         throw new Error("Content div not found");
-//       content.innerHTML = html;
-//       })
-//         // Optionally load related JS (like form handling)
-//         //import('./public/js/register.js');
-//       } catch (err) {
-//         console.error('Error loading login view:', err);
-//       }
-//     });
-//   }
-// });
+	if (!profileImg) return;
 
-// export function updateUserAvatar(userName: string) {
-//   const profileImg = document.getElementById('profile') as HTMLImageElement | null;
-//   if (!profileImg) return;
+	profileImg.src = avatarUrl || '/images/avatar.jpg';
+}
 
-//   const avatarUrl = `/images/${userName}.jpg`;
 
-//   profileImg.src = avatarUrl;
-
-//   profileImg.onerror = () => {
-//     profileImg.src = '/images/avatar.jpg';
-//   };
-// }

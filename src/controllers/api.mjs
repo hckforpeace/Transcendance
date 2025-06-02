@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import bcrypt from 'bcryptjs';
 import { getDB } from "../database/database.js"
 import { pipeline } from 'stream/promises';
+import { request } from 'http';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -65,14 +66,6 @@ const login = async (req, reply) => {
       path: "/"
     });
 
-    reply.setCookie("userId", String(user.id), {
-      httpOnly: true,
-      secure: true,
-      sameSite: "lax",
-      path: "/"
-    });
-
-
   }
   catch (error) {
      req.log.error(error);
@@ -80,6 +73,30 @@ const login = async (req, reply) => {
   }
 
 };
+
+const avatar = async (req, reply) => {
+  const db = getDB();
+
+  try {
+
+    const decoded = await req.jwtVerify()
+
+
+    const userId = decoded.userId;
+    const data = await db.get('SELECT avatarPath FROM users WHERE id = ?', [userId]);
+    console.log("************************************************************" + data.avatarPath)
+
+    let avatarUrl = '/images/avatar.jpg'; // default avatar
+    if (data.avatarPath) {
+      avatarUrl = data.avatarPath;
+    }
+
+    reply.send({avatarUrl});
+  } catch (err) {
+    return reply.status(401).send({ error: 'Non authentifié: token invalide' });
+  }
+};
+
 
 const register = async (req, reply) => {
 
@@ -123,8 +140,8 @@ const register = async (req, reply) => {
 
   if (avatar && typeof avatar.stream === 'function' && avatar.name) {
     const ext = path.extname(avatar.name);
-    const filename = name + ext;
-    avatarPath = `public/images/${filename}`;
+    const filename = avatar.name;
+    avatarPath = `images/${filename}`;
     const filePath = path.join(uploadDir, filename);
     console.log(`Saving avatar file to: ${filePath}`);
 
@@ -217,4 +234,4 @@ const users = async (req, reply) => {
   }
 };
 
-export default { auth, sock_con, pong_view, login, register, users };
+export default { auth, sock_con, pong_view, login, register, users, avatar };

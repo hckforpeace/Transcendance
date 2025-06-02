@@ -1,7 +1,7 @@
 // // login.ts
 
 // const loginURL:string = "https://" + currentUrl + ':' + currentPort + '/api/login';
-var local_user:string;
+var local_user: string;
 
 // // json object for login request
 // const headerLoginRequest = (uname: string, pw: string ) => ({
@@ -16,7 +16,7 @@ var local_user:string;
 
 // // fetch request to login
 // async function login(url:string,  header:any){
-  
+
 //   await fetch(url, header)
 //     .then(response => response.json())
 //     .then((data) => {
@@ -122,25 +122,31 @@ function login() {
 	const formData = new FormData(formElement);
 	const xhttp = new XMLHttpRequest();
 
-	xhttp.onreadystatechange = function ()
-	{
-		if (this.readyState === 4)
-		{
-			try
-			{
-				if (this.status === 400 || this.status === 500)
-				{
+	xhttp.onreadystatechange = function () {
+		if (this.readyState === 4) {
+			try {
+				if (this.status === 400 || this.status === 500) {
 					const response = JSON.parse(this.responseText);
-				 	errorMsg.textContent = response.error || "An error occurred.";
+					errorMsg.textContent = response.error || "An error occurred.";
 				}
-				if (this.status === 200)
-				{
+				if (this.status === 200) {
 					errorMsg.style.color = "green";
 					errorMsg.textContent = "Welcome!";
+
+					// Corrected: fetch avatar and update it
+					fetch("/api/avatar")
+						.then(response => response.json())
+						.then(data => {
+							if (data.avatarUrl) {
+								updateUserAvatar(data.avatarUrl);
+							}
+						})
+						.catch(err => {
+							console.error("Error fetching avatar:", err);
+						});
 				}
 			}
-			catch (e)
-			{
+			catch (e) {
 				errorMsg.textContent = "Unexpected error";
 			}
 		}
