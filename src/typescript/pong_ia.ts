@@ -57,7 +57,7 @@ const GAMMA: number = 0.7;
 let EPSILON: number = 1;
 let EPSILON_MIN: number = 0.2;
 const epsilon_decay_rate: number = 0.00001;
-let Q_table: number[][] = [[-22.34909697288755,-18.672088820879214,-22.681317665204006],[201.20160061283946,200.97569260299449,195.00441685755996],[-20.36312989626267,-17.431753761725425,-12.731436767743997]]
+let Q_table: number[][] = [[-22.34909697288755, -18.672088820879214, -22.681317665204006], [201.20160061283946, 200.97569260299449, 195.00441685755996], [-20.36312989626267, -17.431753761725425, -12.731436767743997]]
 // VERY STRONG [[21.31108513974205,75.20125498633924,23.204609907685626],[-7.970433733155105,-7.631723162062445,-6.697510940912556],[-53.43026720319538,-29.41950667903459,-54.90903501468911]];
 let Q_table_training: number[][] = Array.from({ length: NUM_STATES }, () => new Array(NUM_ACTIONS).fill(0));
 /*                              CLASSES && INTERFACES                         */
@@ -237,13 +237,11 @@ function getFutureY(): number {
 	while (x < playerX) {
 		let timeToWall = dy > 0 ? (height - BALL_RADIUS - y) / dy : (BALL_RADIUS - y) / dy;
 		let timeToPaddle = (playerX - x) / dx;
-		if (timeToPaddle < timeToWall)
-		{
+		if (timeToPaddle < timeToWall) {
 			y += dy * timeToPaddle;
 			break;
 		}
-		else
-		{
+		else {
 			// rebond contre mur
 			x += dx * timeToWall;
 			y += dy * timeToWall;
@@ -579,8 +577,8 @@ function finish_game() {
 function game_loop() {
 	if (game.player_1.score >= game.score_max || game.player_2.score >= game.score_max) {
 		end_game = true;
-		clearInterval(game_interval);
 		finish_game();
+		clearInterval(game_interval);
 		saveQTableToFile();
 		return;
 	}
@@ -604,7 +602,6 @@ function launch_game(p1_name: string, p2_name: string) {
 	game = new Pong(p1_name, p2_name, { x: canvas.width / 2, y: canvas.height / 2 });
 	game.ball.direction = { x: 0.5, y: 0.5 };
 	end_game = false;
-	game_interval = setInterval(game_loop, 10);
 }
 
 /* ************************************************************************* */
@@ -644,10 +641,12 @@ function load_script(p1_name: string, p2_name: string) {
 		ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 		if (!ctx)
 			throw new Error("Context not found");
-		
-		/* Set events listeners */
-			/* Start game */
+
+		/* Start game */
+		if (!game)
+			game_interval = setInterval(game_loop, 8);
 		launch_game(p1_name, p2_name);
+		/* Set events listeners */
 		document.addEventListener("keydown", pressedKeyHandler, false);
 		document.addEventListener("keyup", releasedKeyHandler, false);
 	}

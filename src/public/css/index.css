@@ -344,15 +344,6 @@
   .w-100 {
     width: calc(var(--spacing) * 100);
   }
-  .w-\[100px\] {
-    width: 100px;
-  }
-  .w-\[1200px\] {
-    width: 1200px;
-  }
-  .w-\[1300px\] {
-    width: 1300px;
-  }
   .w-\[1400px\] {
     width: 1400px;
   }
@@ -388,9 +379,6 @@
   }
   .cursor-pointer {
     cursor: pointer;
-  }
-  .resize {
-    resize: both;
   }
   .list-disc {
     list-style-type: disc;
@@ -504,9 +492,6 @@
   }
   .bg-\[\#f9f9f9\] {
     background-color: #f9f9f9;
-  }
-  .bg-black {
-    background-color: var(--color-black);
   }
   .bg-blue-500 {
     background-color: var(--color-blue-500);
@@ -667,9 +652,6 @@
   }
   .text-white {
     color: var(--color-white);
-  }
-  .underline {
-    text-decoration-line: underline;
   }
   .shadow-lg {
     --tw-shadow: 0 10px 15px -3px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 4px 6px -4px var(--tw-shadow-color, rgb(0 0 0 / 0.1));

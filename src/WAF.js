@@ -1,4 +1,3 @@
-import pkg from 'busboy';
 import xss from 'xss';
 
 const rateLimitMap = new Map();
@@ -69,16 +68,14 @@ function rateLimiter(maxRequests, timeWindowMs) {
 /* -----------------------------------------------------------------------SQL injections -------------------------------------------------------------------------- */
 
 
-
 async function sqlInjectionCheck(request, reply) {
-  const { method, url, headers } = request;
-  const contentType = headers['content-type'] || '';
+  const { method, url, body } = request;
 
-  // Parse URL and block suspicious patterns in URL
   try {
     const decodedUrl = decodeURIComponent(url);
     if (suspicious_sql_patterns.some(r => r.test(decodedUrl))) {
       request.log.warn(`❌ Request blocked (pattern SQL URL) : ${decodedUrl}`);
+
       return reply.code(403).type('text/html').view('WAF.ejs', {
         text: 'Access Blocked by WAF',
       });
@@ -87,143 +84,43 @@ async function sqlInjectionCheck(request, reply) {
     request.log.error('Erreur décodage URL:', err.message);
   }
 
-  // Block forbidden paths in URL
+  const rawBody = JSON.stringify(body || {});
   for (const path of forbiddenPaths) {
-    if (url.includes(path)) {
+    if (url.includes(path) || rawBody.includes(path)) {
       request.log.warn(`❌❌❌❌ Request blocked (Forbidden Path) : ${path}`);
+      //console.log("La\n\n\n\n\n\n\n\n\n\n\n\n\n");
       return reply.code(403).type('text/html').view('WAF.ejs', {
         text: 'Access Blocked by WAF',
       });
     }
   }
-
-  const { Busboy } = pkg;
-
-  // Now handle body inspection
-  if (['POST', 'PUT', 'PATCH'].includes(method)) {
-    if (contentType.startsWith('multipart/form-data')) {
-      // Parse multipart/form-data with Busboy
-      await new Promise((resolve, reject) => {
-        const bb = new Busboy({ headers });
-        const fields = {};
-
-        bb.on('field', (fieldname, val) => {
-        fields[fieldname] = val;
+if (
+  ['POST', 'PUT', 'PATCH'].includes(method) &&
+  body &&
+  typeof body === 'object' &&
+  !Array.isArray(body)
+) {
+  for (const key in body) {
+    const value = String(body[key] || '');
+    if (suspicious_sql_patterns.some(r => r.test(value))) {
+      request.log.warn(`❌ Request blocked (pattern SQL BODY: ${key})`);
+      return reply.code(403).type('text/html').view('WAF.ejs', {
+        text: 'Access Blocked by WAF',
       });
-
-      bb.on('file', (fieldname, file) => {
-        file.resume();
-      });
-
-      bb.on('finish', () => {
-        for (const [key, value] of Object.entries(fields)) {
-          if (suspicious_sql_patterns.some(r => r.test(value))) {
-            request.log.warn(`❌ Request blocked (pattern SQL in multipart field: ${key})`);
-            reply.code(403).type('text/html').view('WAF.ejs', {
-              text: 'Access Blocked by WAF',
-            });
-            reject(new Error('Blocked by WAF'));
-            return;
-          }
-        }
-        resolve();
-      });
-
-      bb.on('error', err => {
-        request.log.error('Error parsing multipart/form-data:', err);
-        reject(err);
-      });
-
-      request.raw.pipe(bb);
-    });
-    } else if (contentType.startsWith('application/json')) {
-      // For JSON bodies, assume body is parsed into request.body
-      const body = request.body || {};
-
-      const rawBody = JSON.stringify(body);
-      for (const path of forbiddenPaths) {
-        if (rawBody.includes(path)) {
-          request.log.warn(`❌❌❌❌ Request blocked (Forbidden Path) : ${path}`);
-          return reply.code(403).type('text/html').view('WAF.ejs', {
-            text: 'Access Blocked by WAF',
-          });
-        }
-      }
-
-      if (typeof body === 'object' && !Array.isArray(body)) {
-        for (const key in body) {
-          const value = String(body[key] || '');
-          if (suspicious_sql_patterns.some(r => r.test(value))) {
-            request.log.warn(`❌ Request blocked (pattern SQL BODY: ${key})`);
-            return reply.code(403).type('text/html').view('WAF.ejs', {
-              text: 'Access Blocked by WAF',
-            });
-          }
-        }
-      }
-    } else {
-      // Other content types - you can add more handlers or skip
     }
   }
-
-  return; // let request continue if no issue found
+    const { username = '', password = '' } = body;
+    if (
+      suspicious_sql_patterns.some(r => r.test(username)) ||
+      suspicious_sql_patterns.some(r => r.test(password))
+    ) {
+      return reply.code(403).type('text/html').view('WAF.ejs', {
+        text: 'Access Blocked by WAF',
+      });
+    }
+  }
+  return ;
 }
-
-
-
-// async function sqlInjectionCheck(request, reply) {
-//   const { method, url, body } = request;
-
-//   try {
-//     const decodedUrl = decodeURIComponent(url);
-//     if (suspicious_sql_patterns.some(r => r.test(decodedUrl))) {
-//       request.log.warn(`❌ Request blocked (pattern SQL URL) : ${decodedUrl}`);
-
-//       return reply.code(403).type('text/html').view('WAF.ejs', {
-//         text: 'Access Blocked by WAF',
-//       });
-//     }
-//   } catch (err) {
-//     request.log.error('Erreur décodage URL:', err.message);
-//   }
-
-//   const rawBody = JSON.stringify(body || {});
-//   for (const path of forbiddenPaths) {
-//     if (url.includes(path) || rawBody.includes(path)) {
-//       request.log.warn(`❌❌❌❌ Request blocked (Forbidden Path) : ${path}`);
-//       //console.log("La\n\n\n\n\n\n\n\n\n\n\n\n\n");
-//       return reply.code(403).type('text/html').view('WAF.ejs', {
-//         text: 'Access Blocked by WAF',
-//       });
-//     }
-//   }
-// if (
-//   ['POST', 'PUT', 'PATCH'].includes(method) &&
-//   body &&
-//   typeof body === 'object' &&
-//   !Array.isArray(body)
-// ) {
-//   for (const key in body) {
-//     const value = String(body[key] || '');
-//     if (suspicious_sql_patterns.some(r => r.test(value))) {
-//       request.log.warn(`❌ Request blocked (pattern SQL BODY: ${key})`);
-//       return reply.code(403).type('text/html').view('WAF.ejs', {
-//         text: 'Access Blocked by WAF',
-//       });
-//     }
-//   }
-//     const { username = '', password = '' } = body;
-//     if (
-//       suspicious_sql_patterns.some(r => r.test(username)) ||
-//       suspicious_sql_patterns.some(r => r.test(password))
-//     ) {
-//       return reply.code(403).type('text/html').view('WAF.ejs', {
-//         text: 'Access Blocked by WAF',
-//       });
-//     }
-//   }
-//   return ;
-// }
 
 /* ----------------------------------------------------------------------- XSS attacks -------------------------------------------------------------------------- */
 

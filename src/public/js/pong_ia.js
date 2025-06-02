@@ -484,8 +484,8 @@ function finish_game() {
 function game_loop() {
     if (game.player_1.score >= game.score_max || game.player_2.score >= game.score_max) {
         end_game = true;
-        clearInterval(game_interval);
         finish_game();
+        clearInterval(game_interval);
         saveQTableToFile();
         return;
     }
@@ -508,7 +508,6 @@ function launch_game(p1_name, p2_name) {
     game = new Pong(p1_name, p2_name, { x: canvas.width / 2, y: canvas.height / 2 });
     game.ball.direction = { x: 0.5, y: 0.5 };
     end_game = false;
-    game_interval = setInterval(game_loop, 10);
 }
 /* ************************************************************************* */
 /*                                    SPECIAL                                 */
@@ -543,9 +542,11 @@ function load_script(p1_name, p2_name) {
         ctx = canvas.getContext("2d");
         if (!ctx)
             throw new Error("Context not found");
-        /* Set events listeners */
         /* Start game */
+        if (!game)
+            game_interval = setInterval(game_loop, 8);
         launch_game(p1_name, p2_name);
+        /* Set events listeners */
         document.addEventListener("keydown", pressedKeyHandler, false);
         document.addEventListener("keyup", releasedKeyHandler, false);
     }
