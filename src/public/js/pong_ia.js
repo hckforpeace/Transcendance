@@ -1,6 +1,5 @@
 "use strict";
 const TRAINING = true;
-// good q_table [[-70.28332858639581,-67.39572839787385,-67.9925017203187],[-169.1303716177985,-170.35391922866512,-168.04508258288976],[-82.30781956258527,-104.16800033585639,-83.28559188861938]]
 /* ************************************************************************** */
 /*                                GLOBAL VARIABLES                            */
 /* ************************************************************************** */
@@ -52,8 +51,9 @@ const ALPHA = 0.2;
 const GAMMA = 0.7;
 let EPSILON = 1;
 let EPSILON_MIN = 0.2;
-const epsilon_decay_rate = 0.000001;
-let Q_table = [[-70.28332858639581, -67.39572839787385, -67.9925017203187], [-169.1303716177985, -170.35391922866512, -168.04508258288976], [-82.30781956258527, -104.16800033585639, -83.28559188861938]];
+const epsilon_decay_rate = 0.00001;
+let Q_table = [[-22.34909697288755, -18.672088820879214, -22.681317665204006], [201.20160061283946, 200.97569260299449, 195.00441685755996], [-20.36312989626267, -17.431753761725425, -12.731436767743997]];
+// VERY STRONG [[21.31108513974205,75.20125498633924,23.204609907685626],[-7.970433733155105,-7.631723162062445,-6.697510940912556],[-53.43026720319538,-29.41950667903459,-54.90903501468911]];
 let Q_table_training = Array.from({ length: NUM_STATES }, () => new Array(NUM_ACTIONS).fill(0));
 class Player {
     constructor(name, pos) {
@@ -79,7 +79,7 @@ class Pong {
         this.player_2 = new Player(player_2_name, { x: canvas.width - player_offset, y: (canvas.height - PLAYER_HEIGHT) / 2 });
         this.ball = new Ball(center);
         if (TRAINING)
-            this.score_max = 3;
+            this.score_max = 150;
         else
             this.score_max = 10;
         this.new_round = true;
@@ -135,7 +135,6 @@ function update_ball_state() {
     let ball = game.ball;
     let dir = game.ball.direction;
     let ball_next_pos = { x: ball.pos.x + ball.speed * dir.x, y: ball.pos.y + ball.speed * dir.y };
-    // console.log("BALL SPEED -> ", ball.speed, "FLAG -> ", number);
     /* Check for wall collision */
     if (ball_next_pos.y > canvas.height - BALL_RADIUS || ball_next_pos.y < BALL_RADIUS)
         dir.y = -dir.y;
@@ -143,16 +142,14 @@ function update_ball_state() {
         && (ball.pos.y > p1.pos.y && ball.pos.y < p1.pos.y + PLAYER_HEIGHT) && number == 0) {
         number = 1;
         dir.x = -dir.x;
-        dir.y += 0.45;
-        console.log("DIR Y P1 -> ", dir.y);
+        dir.y += 0.08;
         game.ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
     }
     if ((ball.pos.x > p2.pos.x && ball.pos.x < p2.pos.x + PLAYER_WIDTH)
         && (ball.pos.y > p2.pos.y && ball.pos.y < p2.pos.y + PLAYER_HEIGHT) && number == 1) {
         number = 0;
         dir.x = -dir.x;
-        dir.y += -0.55;
-        console.log("DIR Y P2 -> ", dir.y);
+        dir.y += -0.08;
         ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
     }
     /* Check if player1 win a point */
@@ -183,7 +180,6 @@ function getFutureY() {
     const speed = ball.speed;
     const playerX = game.player_2.pos.x;
     const height = canvas.height;
-    // Si la balle va vers la gauche, on prédit rien
     if (dir.x <= 0 || ball.speed == 0)
         return (game.player_2.pos.y);
     let x = pos.x;
@@ -191,10 +187,8 @@ function getFutureY() {
     let dx = dir.x * speed;
     let dy = dir.y * speed;
     while (x < playerX) {
-        // temps pour atteindre le prochain bord haut ou bas
         let timeToWall = dy > 0 ? (height - BALL_RADIUS - y) / dy : (BALL_RADIUS - y) / dy;
         let timeToPaddle = (playerX - x) / dx;
-        // Si la balle touche le paddle avant un mur
         if (timeToPaddle < timeToWall) {
             y += dy * timeToPaddle;
             break;
@@ -203,7 +197,7 @@ function getFutureY() {
             // rebond contre mur
             x += dx * timeToWall;
             y += dy * timeToWall;
-            dy = -dy; // inversion de la direction verticale
+            dy = -dy;
         }
     }
     return (y - PLAYER_HEIGHT / 2);
@@ -222,7 +216,7 @@ function chooseAction(state) {
     let best_action = 0;
     if (TRAINING) {
         EPSILON = Math.max(EPSILON_MIN, EPSILON * (1 - epsilon_decay_rate));
-        console.log("EPSILON -> ", EPSILON);
+        // console.log("EPSILON -> ", EPSILON);
         if (Math.random() < EPSILON)
             best_action = Math.floor(Math.random() * NUM_ACTIONS);
         else if (Q_table_training[state]) {
@@ -250,8 +244,8 @@ function get_reward() {
         reward += max_reward;
     return Math.max(min_reward, reward);
 }
-let lastTimeIA = Date.now(); // Variable globale pour stocker le temps du dernier rafraîchissement de l'IA
-let lastTime = Date.now(); // Variable globale pour stocker le temps du dernier rafraîchissement de l'IA
+let lastTimeIA = Date.now();
+let lastTime = Date.now();
 let currTimeIA = 0;
 let currTime = 0;
 let up = false;
@@ -267,11 +261,9 @@ function update_ia_pos() {
         future_pos_y = getFutureY();
         lastTimeIA = currTimeIA;
     }
-    // p2.pos.y = getFutureY();
-    console.log("future_pos_y => ", future_pos_y);
     state = getState();
     action = chooseAction(state); // Action choisie par l'IA
-    console.log("State = ", state, "Action = ", action);
+    // console.log("State = ", state, "Action = ", action);
     if (action == 1)
         p2.pos.y -= p2.speed;
     if (action == 2)
@@ -286,7 +278,6 @@ function update_ia_pos() {
         let next_state = getState();
         updateTable(state, action, instant_reward, next_state);
     }
-    // console.log("Q_table : ", Q_table);
 }
 function update_player_pos() {
     let p1 = game.player_1;
@@ -530,30 +521,14 @@ function resizeCanvas() {
         throw new Error("Context not found");
     if (!canvas)
         throw new Error("Canvas not found");
-    // if(window.innerHeight < 700 && window.innerWidth < 900)
-    // {
-    // 	console.log("BLAAAA");
-    // 	return
-    // }
-    /* Rotate canvas if needed */
-    if (window.innerHeight < window.innerWidth) {
-        canvas.width = window.innerWidth * 0.8;
-        canvas.height = canvas.width / GOLDEN_NUMBER;
-        /* Rotate */
-        ctx.rotate(0); // No rotation needed for portrait
-    }
+    // Fixe une taille constante au canvas
+    canvas.width = screen.width * 0.73;
+    canvas.height = screen.height * 0.73;
     PLAYER_WIDTH = canvas.width * PLAYER_WIDTH_RATIO;
     PLAYER_HEIGHT = PLAYER_WIDTH * PLAYER_WIDTH_HEIGHT_RATIO;
     TERRAIN_LINE_FAT = 0.01 * Math.max(canvas.width, canvas.height);
     BALL_RADIUS = 0.01 * Math.min(canvas.width, canvas.height);
     FONT_SIZE = 0.08 * Math.min(canvas.width, canvas.height);
-    if (game) {
-        const BALL_SPEED_RATIO = 0.012;
-        const PLAYER_SPEED_RATIO = 0.015;
-        game.ball.speed = BALL_SPEED_RATIO * canvas.height;
-        game.player_1.speed = PLAYER_SPEED_RATIO * canvas.height;
-        game.player_2.speed = PLAYER_SPEED_RATIO * canvas.height;
-    }
 }
 /**
  * @brief Load the different event for the pong game
@@ -570,7 +545,6 @@ function load_script(p1_name, p2_name) {
             throw new Error("Context not found");
         /* Set events listeners */
         /* Start game */
-        window.addEventListener("resize", resizeCanvas); /* Resize "Responsivness" attempt */
         launch_game(p1_name, p2_name);
         document.addEventListener("keydown", pressedKeyHandler, false);
         document.addEventListener("keyup", releasedKeyHandler, false);
