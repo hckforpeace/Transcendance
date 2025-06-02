@@ -69,4 +69,3 @@ function previewAvatar(event: Event): void {
 
   reader.readAsDataURL(file);
 }
-

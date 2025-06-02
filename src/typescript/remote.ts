@@ -1,7 +1,4 @@
-const currentUrl = window.location.hostname;
-const currentPort = window.location.port;
 const currentRoot = currentUrl + ":" + currentPort;
-var socket: WebSocket;
 var playerSide:string;
 var gameId: number;
 var opponent: string;
@@ -31,8 +28,6 @@ function moveBall(data:any)
   game.ball.pos.y = Number(data.y); 
   console.log("ball pos x: " + game.ball.pos.x);
   console.log("ball pos y: " + game.ball.pos.y);
-  // ball.style.top = data.y + 'px';
-
 }
 
 function moveOpponent(data:any)
@@ -59,44 +54,16 @@ function moveOpponent(data:any)
         p2_upPressed = false;
       else
         p1_upPressed = false;
-      // p2_upPressed = false;
     }
     else {
       if (playerSide == 'p1')
         p2_downPressed = false;
       else
         p1_downPressed = false;
-      // p2_downPressed = false;
     }
   }
-  // console.log("p2_upPressed:&&  " + p2_upPressed);
-  // console.log("p2_downPressed: " + p2_downPressed);
 }
 
-function parseIncommingSocketMsg(data: any)
-{
-  // const jsonData = JSON.parse(data);
-  try {
-    if (!data.users && !data.type)
-      throw new Error("wrong data format server error");
-    if (data.users != null)
-      updateLobbyUsers(data); 
-    else if (data.type == 'invite')
-      IncomingInvitationAlert(data);
-    else if (data.type == 'startgame')
-      launchPongRemote(data); 
-    else if (data.type == 'pressed' || data.type == 'released')
-      moveOpponent(data); 
-    else if (data.type == 'moveBall')
-      moveBall(data);
-    else if (data.type == 'opponentdisconnect')
-      alert("opponent " + data.opponent + " was disconnected");
-  }
-  catch (error)
-  {
-    console.log(error);
-  }
-}
 
 function listclick()
 {
@@ -220,43 +187,4 @@ async function fetchPong() {
     }); 
 }
 
-// TODO: do something with event parameter
-function wsEvent(event: any) 
-{
-  console.log(currentRoot);
-  socket = new WebSocket('wss://' + currentRoot + '/api/remote', localStorage.getItem("token")?.toString());
-  socket.onopen = function (event) {
-    renderLobby();
-    listclick();
-  };
 
-  socket.onmessage = function(event) {
-    let data = JSON.parse(event.data);
-    // if (!data)
-    //   return ;
-    console.log('received: ' + data);
-    parseIncommingSocketMsg(data);
-  };
-
-  socket.onclose = function(event) {
-    if (event.wasClean) {
-      console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-    } else {
-      // par exemple : processus serveur arrêté ou réseau en panne
-      // event.code est généralement 1006 dans ce cas
-      console.log('[close] Connection died');
-    }
-  };
-
-  socket.onerror = function(error) {
-    console.log('connection refused');
-  };
-
-}
-
-function socket_connect() {
-  const remote = document.getElementById("start") ;
-  if (!remote)
-    return;
-  remote.addEventListener("click", wsEvent);
-}

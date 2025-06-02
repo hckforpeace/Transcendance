@@ -4,9 +4,7 @@ import Fastify from 'fastify'
 import routesItems from './routes/items.js'
 import routesHome from './routes/home.js'
 import routesApi from './routes/api.js'
-import swagger from '@fastify/swagger'
-import swaggerUi from '@fastify/swagger-ui'
-import swaggerConfig from './swagger.js'
+import routesProfile from './routes/profile.js'
 import view from '@fastify/view'
 import ejs from 'ejs'
 import { fileURLToPath } from 'url'
@@ -16,16 +14,15 @@ import websockets from '@fastify/websocket'
 import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 import { initDB } from './database/database.js'
+import { getDB } from './database/database.js'
+
+import populate from './database/populate.js'
 import fastifyCookie from '@fastify/cookie'
 import fastifyFormbody from '@fastify/formbody'
 import fastifyMultipart from "@fastify/multipart"
 import dotenv from 'dotenv'; 
-//import routesPong from './routes/pong.js';
-//import vaultFactory from 'node-vault';
-//import { getCertsFromVault, putCertsToVault } from './vault.js';
 import xss from 'xss';
 
-const { swg_config, swgUI_config } = swaggerConfig;
 dotenv.config();
 // setting up the PORT TODO: use .env ?
 const PORT = 3000;
@@ -52,27 +49,27 @@ const suspicious_sql_patterns = [
 ];
 
 // Rate limiter helper
-const rateLimitMap = new Map();
-function rateLimiter(maxRequests, timeWindowMs) {
-  return async (request, reply) => {
-    const ip = request.ip;
-    const now = Date.now();
-    const entry = rateLimitMap.get(ip) || { count: 0, startTime: now };
+// const rateLimitMap = new Map();
+// function rateLimiter(maxRequests, timeWindowMs) {
+//   return async (request, reply) => {
+//     const ip = request.ip;
+//     const now = Date.now();
+//     const entry = rateLimitMap.get(ip) || { count: 0, startTime: now };
 
-    if (now - entry.startTime > timeWindowMs) {
-      entry.count = 1;
-      entry.startTime = now;
-    } else {
-      entry.count++;
-    }
+//     if (now - entry.startTime > timeWindowMs) {
+//       entry.count = 1;
+//       entry.startTime = now;
+//     } else {
+//       entry.count++;
+//     }
 
-    rateLimitMap.set(ip, entry);
+//     rateLimitMap.set(ip, entry);
 
-    if (entry.count > maxRequests) {
-      reply.code(429).send({ error: 'Too many requests from this IP. Please try again later.' });
-    }
-  };
-}
+//     if (entry.count > maxRequests) {
+//       reply.code(429).send({ error: 'Too many requests from this IP. Please try again later.' });
+//     }
+//   };
+// }
 
 
 const fastify = Fastify({
@@ -85,60 +82,61 @@ const fastify = Fastify({
 
 
 // WAF Hooks
-fastify.addHook('onRequest', async (request, reply) => {
-  await rateLimiter(100, 60 * 1000)(request, reply);
+// fastify.addHook('onRequest', async (request, reply) => {
+//   // await rateLimiter(100, 60 * 1000)(request, reply);
 
-  const { method, url } = request;
+//   if (request.headers.upgrade === 'websocket') return;
+//   const { method, url } = request;
 
-  try {
-    const decodedUrl = decodeURIComponent(url);
-    if (suspicious_sql_patterns.some(r => r.test(decodedUrl))) {
-      fastify.log.warn(`❌ Requête bloquée par WAF (pattern SQL) : ${decodedUrl}`);
-      return reply.code(403).send({ error: 'Blocked by WAF' });
-    }
-  } catch (err) {
-    fastify.log.error('Erreur lors de la décodification de l’URL:', err.message);
-  }
+//   try {
+//     const decodedUrl = decodeURIComponent(url);
+//     if (suspicious_sql_patterns.some(r => r.test(decodedUrl))) {
+//       fastify.log.warn(`❌ Requête bloquée par WAF (pattern SQL) : ${decodedUrl}`);
+//       return reply.code(403).send({ error: 'Blocked by WAF' });
+//     }
+//   } catch (err) {
+//     fastify.log.error('Erreur lors de la décodification de l’URL:', err.message);
+//   }
 
-  const rawBody = JSON.stringify(request.body || {});
-  for (const path of forbiddenPaths) {
-    if (url.includes(path) || rawBody.includes(path)) {
-      fastify.log.warn(`❌ Requête bloquée (chemin interdit) : ${path}`);
-      return reply.code(403).send({ error: `Forbidden pattern detected: ${path}` });
-    }
-  }
-});
+//   const rawBody = JSON.stringify(request.body || {});
+//   for (const path of forbiddenPaths) {
+//     if (url.includes(path) || rawBody.includes(path)) {
+//       fastify.log.warn(`❌ Requête bloquée (chemin interdit) : ${path}`);
+//       return reply.code(403).send({ error: `Forbidden pattern detected: ${path}` });
+//     }
+//   }
+// });
 
-fastify.addHook('preHandler', async (request, reply) => {
-  const { method, url, body } = request;
+// fastify.addHook('preHandler', async (request, reply) => {
+//   const { method, url, body } = request;
 
-  if (
-    ['POST', 'PUT', 'PATCH'].includes(method) &&
-    body &&
-    typeof body === 'object' &&
-    !Array.isArray(body)
-  ) {
-    const { username = '', password = '' } = body;
-    if (
-      suspicious_sql_patterns.some(r => r.test(username)) ||
-      suspicious_sql_patterns.some(r => r.test(password))
-    ) {
-      return reply.code(403).send({ error: 'Blocked by WAF' });
-    }
-    const sanitizedBody = {};
+//   if (
+//     ['POST', 'PUT', 'PATCH'].includes(method) &&
+//     body &&
+//     typeof body === 'object' &&
+//     !Array.isArray(body)
+//   ) {
+//     const { username = '', password = '' } = body;
+//     if (
+//       suspicious_sql_patterns.some(r => r.test(username)) ||
+//       suspicious_sql_patterns.some(r => r.test(password))
+//     ) {
+//       return reply.code(403).send({ error: 'Blocked by WAF' });
+//     }
+//     const sanitizedBody = {};
 
-    for (const key in request.body) {
-    const field = request.body[key];
+//     for (const key in request.body) {
+//     const field = request.body[key];
 
-    if (field.type === 'field' && typeof field.value === 'string') {
-      sanitizedBody[key] = { ...field, value: xss(field.value) };
-    } else {
-      sanitizedBody[key] = field;
-    }
-  }
-    request.body = sanitizedBody;
-  }
-});
+//     if (field.type === 'field' && typeof field.value === 'string') {
+//       sanitizedBody[key] = { ...field, value: xss(field.value) };
+//     } else {
+//       sanitizedBody[key] = field;
+//     }
+//   }
+//     request.body = sanitizedBody;
+//   }
+// });
 
 // XSS test with a route
 fastify.get('/test-xss', async (req, reply) => {
@@ -163,9 +161,7 @@ fastify.register(fastifyCookie);
 
 fastify.register(websockets);
 
-fastify.register(swagger, swg_config);
 
-fastify.register(swaggerUi, swgUI_config);
 
 // jwt plugin
 fastify.register(jwtPlugin);
@@ -202,6 +198,7 @@ fastify.addHook('preHandler', async (req, reply) => {
 });
 
 await initDB();
+await populate.populateDB(getDB());
 
 // view
 fastify.register(view, {
@@ -214,9 +211,9 @@ fastify.register(fastifyMultipart, { attachFieldsToBody: true });
 
 
 // regiter routes
-fastify.register(routesItems);
 fastify.register(routesHome);
 fastify.register(routesApi);
+fastify.register(routesProfile);
 
 // server is listening
 fastify.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {
