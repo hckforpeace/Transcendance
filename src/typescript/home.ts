@@ -1,3 +1,6 @@
+var isLoggedIn = false;
+
+
 const loginRedir = async () => {
   try {
     await fetch("/api/login")

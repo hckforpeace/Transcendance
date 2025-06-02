@@ -32,4 +32,22 @@ function updateUserAvatar(avatarUrl: string) {
 	profileImg.src = avatarUrl || '/images/avatar.jpg';
 }
 
+function getProfileView() {
+  fetch('/html/stats.html')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch');
+      }
+      return response.text(); // ✅ return the parsed JSON
+    })
+  .then(data => {
+    console.log('helloo')
+      injectProfileView(data)
+    })
+}
 
+function injectProfileView(data: any) {
+  const contentDiv = document.getElementById('content-div') as HTMLDivElement;
+  contentDiv.innerHTML = data;
+  renderProfile()
+}

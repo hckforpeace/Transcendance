@@ -1,5 +1,4 @@
 import requests from "../database/profile.js"
-const id = 2;
 
 
 let connections = new Map();
@@ -7,7 +6,9 @@ let connections = new Map();
 
 // TODO : get from the jwt the user id 
 const profileInfo = async (req, reply) => {
-  const res = await requests.getProfileData(id);
+  const decoded = await req.jwtVerify()
+  const userId = decoded.userId;
+  const res = await requests.getProfileData(userId);
   if (!res)
     reply.code(500)
   else
@@ -27,7 +28,9 @@ const connectedUsers = async (req, reply) => {
 }
 
 const profileFriends = async (req, reply) => {
-  const friends = await requests.getNonFriends(id);
+  const decoded = await req.jwtVerify()
+  const userId = decoded.userId;
+  const friends = await requests.getNonFriends(userId);
   if (!friends)
     reply.code(500)
   else
@@ -37,8 +40,8 @@ const profileFriends = async (req, reply) => {
 // TODO retreive data from cookie as userId
 const profileSocket = async (socket, req, fastify) => {
   try {
-    var userId = 2; // This should be replaced with the actual user ID from the JWT or session
-
+    const decoded = await req.jwtVerify()
+    const userId = decoded.userId;
     if (connections.has(userId)) {
       console.log(`🔌 WebSocket already connected for user ${userId} `);
       await connections.get(userId).close(); // Close the existing connection 
@@ -47,8 +50,8 @@ const profileSocket = async (socket, req, fastify) => {
     }
 
     connections.set(userId, socket)
-    requests.sendFriends(userId);
     requests.updateConnected(userId)
+    requests.sendFriends(userId);
 
     // when a message is sent
     socket.on('close', message => { 
@@ -64,7 +67,8 @@ const profileSocket = async (socket, req, fastify) => {
 const addFriends = async (req, reply)  => {
   const stringFriends =  JSON.parse(req.body); // Assuming the body is a JSON string
   const friendsId = stringFriends.map(str => +str); // makes sure to convert strings to numbers
-  const userId = 2; // TODO change to jwt coockie id
+  const decoded = await req.jwtVerify()
+  const userId = decoded.userId;
   var res =  await requests.addFriend(userId, friendsId)
   if (res != 1)
     reply.code(500).send(res)
@@ -77,8 +81,9 @@ const addFriends = async (req, reply)  => {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 const getStats = async (req, reply) => {
-  const id = 2; 
-  const res = await requests.getStats(id);
+  const decoded = await req.jwtVerify()
+  const userId = decoded.userId;
+  const res = await requests.getStats(userId);
   reply.send(res)
 }
 

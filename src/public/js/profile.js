@@ -51,6 +51,7 @@ const getFriendsList = () => {
         return response.json(); // ✅ return the parsed JSON
     })
         .then(data => {
+        console.log(data);
         data.forEach((item) => {
             filladdFriendsDiv(item.id, item.name);
         });
@@ -250,10 +251,12 @@ function getStats() {
         updateStates(data);
     });
 }
-document.addEventListener('DOMContentLoaded', () => {
+// document.addEventListener('DOMContentLoaded', () => {
+function renderProfile() {
     getProfileData();
     getFriendsList();
     ProfileSocketConnection();
     getStats();
-    // Your code here
-});
+}
+// Your code here
+// });

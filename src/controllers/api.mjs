@@ -15,23 +15,23 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-const auth = async (req, reply) => {
-  // password: req.body.password 
-  try {
-    const user_data = { username: req.body.username, id: uuidv4() };
+// const auth = async (req, reply) => {
+//   // password: req.body.password 
+//   try {
+//     const user_data = { username: req.body.username, id: uuidv4() };
 
-    const token = await reply.jwtSign(user_data, { expiresIn: "1h" });
+//     const token = await reply.jwtSign(user_data, { expiresIn: "1h" });
 
-    return reply.status(200).send({
-      message: 'Login successful',
-      token: token
-    });
-  }
-  catch (error) {
-    req.log.error(error);
-    return reply.status(500).send({ message: 'Internal server error' });
-  }
-};
+//     return reply.status(200).send({
+//       message: 'Login successful',
+//       token: token
+//     });
+//   }
+//   catch (error) {
+//     req.log.error(error);
+//     return reply.status(500).send({ message: 'Internal server error' });
+//   }
+// };
 
 const login = async (req, reply) => {
 
@@ -57,7 +57,7 @@ const login = async (req, reply) => {
       return reply.status(400).send({ error: "Wrong password, try again" });
     }
 
-    const token = await reply.jwtSign({ userId: user.id, email: user.email }, { expiresIn: "1m" });
+    const token = await reply.jwtSign({ userId: user.id, email: user.email }, { expiresIn: "1h" });
 
     reply.setCookie("token", token, {
       httpOnly: true,
@@ -136,7 +136,7 @@ const register = async (req, reply) => {
     return reply.status(400).send({ error: "Email is already in use" });
   }
 
-  let avatarPath = "";  // <- déclaration ici
+  let avatarPath = "images/avatar.jpg";  // <- déclaration ici
 
   if (avatar && typeof avatar.stream === 'function' && avatar.name) {
     const ext = path.extname(avatar.name);
@@ -231,4 +231,4 @@ const users = async (req, reply) => {
   }
 };
 
-export default { auth, sock_con, pong_view, login, register, users, avatar };
+export default { sock_con, pong_view, login, register, users, avatar };

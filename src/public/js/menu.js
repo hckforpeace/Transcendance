@@ -39,3 +39,21 @@ function updateUserAvatar(avatarUrl) {
         return;
     profileImg.src = avatarUrl || '/images/avatar.jpg';
 }
+function getProfileView() {
+    fetch('/html/stats.html')
+        .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch');
+        }
+        return response.text(); // ✅ return the parsed JSON
+    })
+        .then(data => {
+        console.log('helloo');
+        injectProfileView(data);
+    });
+}
+function injectProfileView(data) {
+    const contentDiv = document.getElementById('content-div');
+    contentDiv.innerHTML = data;
+    renderProfile();
+}
