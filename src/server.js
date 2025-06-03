@@ -23,6 +23,7 @@ import fastifyMultipart from "@fastify/multipart"
 import dotenv from 'dotenv';
 import { rateLimiter, sql_xss_check } from './WAF.js';
 //import routesPong from './routes/pong.js';
+import {check_token_validity} from './handle_account.js';
 
 dotenv.config();
 // setting up the PORT TODO: use .env ?
@@ -51,7 +52,6 @@ fastify.register(fastifyCookie);
 fastify.register(websockets);
 
 
-
 // jwt plugin
 fastify.register(jwtPlugin);
 
@@ -76,6 +76,9 @@ fastify.addHook('onRequest', async (req, reply) => {
 		try {
 			const user = await req.jwtVerify();
 			req.user = user;
+			const now = Date.now();
+			await fastify.db.run(`UPDATE users SET token_exp = ? WHERE id = ?`, [now, user.id]
+			);
 		}
 		catch (err) {
 			req.user = null;
@@ -114,3 +117,5 @@ fastify.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {
     process.exit(1);
   }
 })
+
+check_token_validity()

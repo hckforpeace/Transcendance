@@ -19,7 +19,7 @@ export const initDB = async () => {
         friends TEXT DEFAULT '[]',
         socketConnectionProfile BOOL DEFAULT 0,
         friendedMe TEXT DEFAULT '[]',
-        last_active INTEGER
+        token_exp INTEGER
     )`);
 
     await db.exec(`CREATE TABLE IF NOT EXISTS stats (

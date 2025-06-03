@@ -57,7 +57,7 @@ const login = async (req, reply) => {
       return reply.status(400).send({ error: "Wrong password, try again" });
     }
 
-    const token = await reply.jwtSign({ userId: user.id, email: user.email }, { expiresIn: "1m" });
+    const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name}, { expiresIn: "1m" });
 
     reply.setCookie("token", token, {
       httpOnly: true,
@@ -157,8 +157,8 @@ const register = async (req, reply) => {
 
   try {
     const hashed_password = await bcrypt.hash(password, 10);
-    const last_active = Date.now();
-    const result = await db.run(`INSERT INTO users (name, email, hashed_password, avatarPath, last_active) VALUES (?, ?, ?, ?, ?)`, [name, email, hashed_password, avatarPath, last_active]);
+    const token_exp = Date.now();
+    const result = await db.run(`INSERT INTO users (name, email, hashed_password, avatarPath, token_exp) VALUES (?, ?, ?, ?, ?)`, [name, email, hashed_password, avatarPath, token_exp]);
     //reply.send({ message: 'User registered successfully', result });
     // return reply.redirect('/');
   } catch (error) {
