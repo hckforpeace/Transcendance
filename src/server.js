@@ -69,33 +69,17 @@ fastify.register(fastifyStatic, {
 	prefix: '/',
 });
 
-fastify.addHook('onRequest', async (req, reply) => {
-	const token = req.cookies.token;
-
-	if (token) {
-		try {
-			const user = await req.jwtVerify();
-			req.user = user;
-			const now = Date.now();
-			await fastify.db.run(`UPDATE users SET token_exp = ? WHERE id = ?`, [now, user.id]
-			);
-		}
-		catch (err) {
-			req.user = null;
-		}
-	}
-	else {
-		req.user = null;
-	}
-});
 
 fastify.addHook('preHandler', async (req, reply) => {
 	reply.locals = reply.locals || {};
 	reply.locals.user = req.user;
 });
 
+// Get the DB
 await initDB();
-await populate.populateDB(getDB());
+const db = getDB();
+await populate.populateDB(db);
+fastify.decorate('db', db);
 
 // view
 fastify.register(view, {
@@ -117,5 +101,25 @@ fastify.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {
     process.exit(1);
   }
 })
+
+fastify.addHook('onRequest', async (req, reply) => {
+	const token = req.cookies.token;
+	if (token) {
+		try {
+			const user = await req.jwtVerify();
+			const now = Date.now();
+			console.log(user.id)
+
+			db.run(`UPDATE users SET token_exp = ? WHERE id = ?`, [now, user.id])
+			req.user = user;
+		}
+		catch (err) {
+			req.user = null;
+		}
+	}
+	else {
+		req.user = null;
+	}
+});
 
 check_token_validity()

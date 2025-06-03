@@ -169,6 +169,5 @@ const getStats = async (id) => {
   }
 }
 
-
 export default { getConnectedUsers, getProfileData , getNonFriends, updateConnected, updateDisconnected, addFriend, sendFriends, getStats };
 

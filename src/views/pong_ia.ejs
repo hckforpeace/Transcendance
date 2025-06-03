@@ -1,9 +1,35 @@
+
+  <script>
+     console.log("Script chargé");
+  async function get_player_1() {
+    try {
+      const token = localStorage.getItem('token'); // récupère le JWT
+      const response = await fetch('/api/get_player', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) throw new Error('Erreur réseau');
+      const data = await response.json();
+      return data.name || "Joueur inconnu";
+    } catch (err) {
+      console.error('Erreur lors du fetch du joueur 1:', err);
+      return "Erreur joueur";
+    }
+  }
+  
+    // Met à jour dynamiquement le DOM avec le nom
+    get_player_1().then(name => {
+      document.getElementById("left-player-name").textContent = name;
+    });
+  </script>
+
 <!-- Conteneur principal centré -->
 <div class="flex justify-center mt-10">
   <div class="relative w-[1400px] h-[1000px]">
 
     <!-- Affichage des noms des joueurs -->
-    <div class="absolute top-4 left-6 text-white text-2xl font-bold z-10" id="left-player-name">Player 1</div>
+    <div class="absolute top-4 left-6 text-white text-2xl font-bold z-10" id="left-player-name"></div>
     <div class="absolute top-4 right-6 text-white text-2xl font-bold z-10 text-right" id="right-player-name">Bot</div>
 
     <!-- Canvas du jeu Pong -->

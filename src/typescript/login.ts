@@ -1,5 +1,4 @@
 // // login.ts
-
 // const loginURL:string = "https://" + currentUrl + ':' + currentPort + '/api/login';
 var local_user: string;
 
@@ -151,7 +150,6 @@ function login() {
 			}
 		}
 	};
-
 	xhttp.open("POST", "/api/login", true);
 	console.log(formData);
 	xhttp.send(formData);
