@@ -16,6 +16,7 @@ async function routes (fastify, options) {
   fastify.get('/api/profiles/connected', { preHandler: [fastify.authenticate] }, api.connectedUsers)
 
   // preHandler: [fastify.authenticate],
+  fastify.post('/api/profile/update', { preHandler: [fastify.authenticate] }, api.updateProfileData)
   fastify.get('/api/profile/socket', { websocket: true, preHandler: [fastify.authenticate] }, (socket, req) => {api.profileSocket(socket, req)})
 }
 

@@ -40,7 +40,10 @@ function updateUserAvatar(avatarUrl) {
     profileImg.src = avatarUrl || '/images/avatar.jpg';
 }
 function getProfileView() {
-    fetch('/html/stats.html')
+    console.log(isLoggedIn);
+    if (isLoggedIn === false)
+        return;
+    fetch('/html/profile.html')
         .then(response => {
         if (!response.ok) {
             throw new Error('Failed to fetch');

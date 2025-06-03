@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				// const res = await fetch('/api/register', {});
 				// .then
 				// const html = await res.text();
-				await fetch("/home")
+        await fetch("/home")
 					.then(response => response.text())
 					.then(html => {
 						var content = document.getElementById("content-div");
@@ -32,8 +32,12 @@ function updateUserAvatar(avatarUrl: string) {
 	profileImg.src = avatarUrl || '/images/avatar.jpg';
 }
 
+
 function getProfileView() {
-  fetch('/html/stats.html')
+  console.log(isLoggedIn)
+  if (isLoggedIn === false) 
+    return;
+  fetch('/html/profile.html')
     .then(response => {
       if (!response.ok) {
         throw new Error('Failed to fetch');

@@ -282,6 +282,50 @@ function getStats() {
 
 }
 
+// Function to update credentials and info of user 
+function ChangeProfileData() {
+	const formElement = document.getElementById("update-form") as HTMLFormElement;
+	if (!formElement)
+		return;
+	const errorMsg = document.getElementById("form-error-msg");
+	if (!errorMsg)
+		return;
+	errorMsg.textContent = ""; // Reset previous error
+	errorMsg.style.color = "red";
+	const formData = new FormData(formElement);
+	const xhttp = new XMLHttpRequest();
+
+	xhttp.onreadystatechange = function ()
+	{
+		if (this.readyState === 4)
+		{
+			try
+			{
+				if (this.status === 400 || this.status === 500)
+				{
+					const response = JSON.parse(this.responseText);
+				 	errorMsg.textContent = response.error || "An error occurred.";
+            console.log(response.error)
+            console.log('errooorrr')
+				}
+				if (this.status === 200)
+				{
+					errorMsg.style.color = "green";
+					errorMsg.textContent = "User registered successfully!";
+          displayAvatarMenu();
+				}
+			}
+			catch (e)
+			{
+				errorMsg.textContent = "Unexpected error";
+			}
+		}
+	};
+	xhttp.open("POST", "/api/profile/update", true);
+  console.log(formData)
+	xhttp.send(formData);
+}
+
 // document.addEventListener('DOMContentLoaded', () => {
 function renderProfile() {
   getProfileData();

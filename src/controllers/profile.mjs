@@ -1,6 +1,17 @@
+import path from 'path'
+import { pipeline } from 'stream/promises';
+import bcrypt from 'bcryptjs';
 import requests from "../database/profile.js"
+import { fileURLToPath } from 'url'
+import fs from 'fs';
+import { getDB } from "../database/database.js"
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
+const uploadDir = path.join(__dirname, '..', 'public/images');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 let connections = new Map();
 
 
@@ -15,9 +26,6 @@ const profileInfo = async (req, reply) => {
     reply.send(res)
 }
 
-const updateProfileData = async (req, reply) => {
-  const formData = await req.formData();
-}
 
 const connectedUsers = async (req, reply) => {
   const users = await requests.getConnectedUsers();
@@ -87,4 +95,85 @@ const getStats = async (req, reply) => {
   reply.send(res)
 }
 
-export default { profileInfo, updateProfileData, connectedUsers, profileFriends, profileSocket, addFriends , getStats, connections};
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//                                      Update profile
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+const  updateProfileData = async (req, reply) => {
+
+  var hashed;
+  var modified = 0;
+  const formData = await req.formData();
+  const email = formData.get("email");
+  const name = formData.get("name");
+  const password = formData.get("password");
+  const confirm_password = formData.get("confirm_password");
+  const avatar = formData.get("avatar");
+  const decoded = await req.jwtVerify()
+  const userId = decoded.userId;
+  var dbreq;
+  const db = getDB();
+
+
+  const userInfo = await db.get("SELECT * FROM users WHERE id = ?", [userId])
+
+  console.log("******************** this is the call to update profile *****************************************")
+
+  if (name && name != userInfo.name) { 
+    dbreq = await db.get("SELECT *  FROM users WHERE name = ?", name)
+    if (dbreq) {
+      reply.code(400).send({error: 'name already in use'})
+    }
+  }
+
+  if (email && email != userInfo.email) { 
+    dbreq = await db.get("SELECT *  FROM users WHERE email = ?", email)
+    if (dbreq)
+      reply.code(400).send({error: 'email already in use'})
+    if (!email.includes("@"))
+      reply.code(400).send({error: 'Invalid email address'})
+  }
+
+  if (password || confirm_password) {
+    if (password != confirm_password)
+      reply.code(400).send({error: 'Passwords does not match'})
+  }
+
+  if (name && name != userInfo.name) {
+    dbreq = await db.run("UPDATE users SET name = ? WHERE id = ?", [name, userId])
+    modified = 1;
+  }
+  if (email && email != userInfo.email) { 
+    dbreq = await db.run("UPDATE users SET email = ? WHERE id = ?", [email, userId]) 
+    modified = 1;
+  }
+
+  if (password || confirm_password) {
+    hashed = await bcrypt.hash(password, 10);
+    dbreq = await db.run('UPDATE  users SET hashed_password = ? WHERE id = ?', [hashed, userId])
+    modified = 1;
+  } 
+
+  if (avatar && typeof avatar.stream === 'function' && avatar.name) {
+    const ext = path.extname(avatar.name);
+    const filename = `${Date.now()}_${avatar.name}`; // avoid collisions
+    const avatarPath = `images/${filename}`;
+    const filePath = path.join(uploadDir, filename);
+    console.log(`Saving avatar file to: ${filePath}`);
+
+    try {
+      await pipeline(avatar.stream(), fs.createWriteStream(filePath));
+      console.log("Avatar saved successfully!");
+
+      await db.run('UPDATE users SET avatarPath = ? WHERE id = ?', [avatarPath, userId]);
+      modified = 1;
+    } catch (err) {
+      console.error("Error saving avatar:", err);
+      reply.code(500).send({ error: "Avatar upload failed." });
+      return;
+    }
+  }
+}
+
+export default { profileInfo, updateProfileData, connectedUsers, profileFriends, profileSocket, addFriends , getStats, connections, updateProfileData};
