@@ -18,6 +18,7 @@
     --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-blue-600: oklch(54.6% 0.245 262.881);
     --color-blue-700: oklch(48.8% 0.243 264.376);
+    --color-purple-600: oklch(55.8% 0.288 302.321);
     --color-gray-50: oklch(98.5% 0.002 247.839);
     --color-gray-100: oklch(96.7% 0.003 264.542);
     --color-gray-200: oklch(92.8% 0.006 264.531);
@@ -46,6 +47,7 @@
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
+    --leading-relaxed: 1.625;
     --radius-lg: 0.5rem;
     --radius-xl: 0.75rem;
     --radius-2xl: 1rem;
@@ -342,20 +344,8 @@
   .h-full {
     height: 100%;
   }
-  .max-h-48 {
-    max-height: calc(var(--spacing) * 48);
-  }
-  .max-h-\[100px\] {
-    max-height: 100px;
-  }
   .max-h-full {
     max-height: 100%;
-  }
-  .min-h-\[300px\] {
-    min-height: 300px;
-  }
-  .min-h-\[500px\] {
-    min-height: 500px;
   }
   .min-h-screen {
     min-height: 100vh;
@@ -408,9 +398,6 @@
   .flex-1 {
     flex: 1;
   }
-  .flex-shrink {
-    flex-shrink: 1;
-  }
   .flex-shrink-0 {
     flex-shrink: 0;
   }
@@ -431,9 +418,6 @@
   }
   .grid-flow-col {
     grid-auto-flow: column;
-  }
-  .auto-rows-fr {
-    grid-auto-rows: minmax(0, 1fr);
   }
   .grid-cols-1 {
     grid-template-columns: repeat(1, minmax(0, 1fr));
@@ -511,9 +495,6 @@
   }
   .overflow-auto {
     overflow: auto;
-  }
-  .overflow-hidden {
-    overflow: hidden;
   }
   .overflow-y-auto {
     overflow-y: auto;
@@ -718,9 +699,6 @@
   .italic {
     font-style: italic;
   }
-  .underline {
-    text-decoration-line: underline;
-  }
   .shadow-md {
     --tw-shadow: 0 4px 6px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 2px 4px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -818,31 +796,15 @@
       line-height: var(--tw-leading, var(--text-3xl--line-height));
     }
   }
-  .md\:text-sm {
-    @media (width >= 48rem) {
-      font-size: var(--text-sm);
-      line-height: var(--tw-leading, var(--text-sm--line-height));
-    }
-  }
   .md\:text-xl {
     @media (width >= 48rem) {
       font-size: var(--text-xl);
       line-height: var(--tw-leading, var(--text-xl--line-height));
     }
   }
-  .lg\:row-span-2 {
-    @media (width >= 64rem) {
-      grid-row: span 2 / span 2;
-    }
-  }
   .lg\:w-1\/3 {
     @media (width >= 64rem) {
       width: calc(1/3 * 100%);
-    }
-  }
-  .lg\:grid-cols-2 {
-    @media (width >= 64rem) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
   .lg\:grid-cols-4 {
