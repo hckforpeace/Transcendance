@@ -15,7 +15,7 @@ export const initDB = async () => {
         hashed_password TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL, 
         connected BOOLEAN DEFAULT 0, 
-        avatarPath TEXT,
+        avatarPath TEXT DEFAULT '/images/avatar.jpg',
         friends TEXT DEFAULT '[]',
         socketConnectionProfile BOOL DEFAULT 0,
         friendedMe TEXT DEFAULT '[]'

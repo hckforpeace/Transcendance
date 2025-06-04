@@ -114,19 +114,10 @@ function login() {
                     errorMsg.textContent = response.error || "An error occurred.";
                 }
                 if (this.status === 200) {
+                    isLoggedIn = true;
                     errorMsg.style.color = "green";
                     errorMsg.textContent = "Welcome!";
-                    // Corrected: fetch avatar and update it
-                    fetch("/api/avatar")
-                        .then(response => response.json())
-                        .then(data => {
-                        if (data.avatarUrl) {
-                            updateUserAvatar(data.avatarUrl);
-                        }
-                    })
-                        .catch(err => {
-                        console.error("Error fetching avatar:", err);
-                    });
+                    displayAvatarMenu();
                 }
             }
             catch (e) {
@@ -138,3 +129,16 @@ function login() {
     console.log(formData);
     xhttp.send(formData);
 }
+const displayAvatarMenu = () => {
+    // Corrected: fetch avatar and update it
+    fetch("/api/avatar")
+        .then(response => response.json())
+        .then(data => {
+        if (data.avatarUrl) {
+            updateUserAvatar(data.avatarUrl);
+        }
+    })
+        .catch(err => {
+        console.error("Error fetching avatar:", err);
+    });
+};

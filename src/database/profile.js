@@ -23,6 +23,7 @@ const sendFriends = async (userId) => {
   }
 
   for (const user of users) {
+    console.log(`Sending friend data to user ${userId}:`, user);
     if (socket.connections.has(Number(userId))) {
       await socket.connections.get(Number(userId)).send(
         JSON.stringify({ id: user.id, name: user.name, connected: user.connected, avatar: user.avatar})
@@ -149,26 +150,70 @@ const addFriend = async (userId, friendId) => {
 //                                              Requests for stats 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-const getStats = async (id) => {
+/* const getStats = async (id) => {
   const db = getDB()
   var stats = [];
-  var matches;
+  var matches = [];
   var avg_lost;
   var avg_win;
 
   try {
+    console.log('id of Request: ' + id)
     stats = await db.get("SELECT matchesWon, matchesLost  FROM stats WHERE playerId = ?",  [id])
     matches = await db.all("SELECT player1_alias, player2_alias, player1_score, player2_score, date FROM matches WHERE player1_id = ? OR player2_id = ?",  [id, id])
-    console.log(matches)
-    avg_lost = (stats.matchesLost * 100) / (stats.matchesWon + stats.matchesLost) 
-    avg_win = (stats.matchesWon * 100) / (stats.matchesWon + stats.matchesLost) 
-    stats = { matchesWon: stats.matchesWon, matchesLost: stats.matchesLost, avg_lost: avg_lost.toFixed(2), avg_win: avg_win.toFixed(2), matches: matches }
+    if (stats) {
+      avg_lost = (stats.matchesLost * 100) / (stats.matchesWon + stats.matchesLost) 
+      avg_win = (stats.matchesWon * 100) / (stats.matchesWon + stats.matchesLost) 
+      stats = { matchesWon: stats.matchesWon, matchesLost: stats.matchesLost, avg_lost: avg_lost.toFixed(2), avg_win: avg_win.toFixed(2)}
+    }
+    if (matches !== null) {
+      stats.push({'matches': matches})
+    }
     return stats ; 
   } catch (error) {
     console.error("Error fetching stats:", error);
   }
-}
+} */
 
+const getStats = async (id) => {
+  const db = getDB();
+  let stats = null;
+  let matches = [];
+  let avg_lost;
+  let avg_win;
+
+  try {
+    console.log('id of Request: ' + id);
+    stats = await db.get("SELECT matchesWon, matchesLost FROM stats WHERE playerId = ?", [id]);
+    matches = await db.all("SELECT player1_alias, player2_alias, player1_score, player2_score, date FROM matches WHERE player1_id = ? OR player2_id = ?", [id, id]);
+
+    if (stats) {
+      const total = stats.matchesWon + stats.matchesLost;
+      avg_lost = total > 0 ? (stats.matchesLost * 100) / total : 0;
+      avg_win = total > 0 ? (stats.matchesWon * 100) / total : 0;
+
+      stats = {
+        matchesWon: stats.matchesWon,
+        matchesLost: stats.matchesLost,
+        avg_lost: avg_lost.toFixed(2),
+        avg_win: avg_win.toFixed(2),
+        matches: matches || []  // Include matches in the same object
+      };
+    } else {
+      stats = {
+        matchesWon: 0,
+        matchesLost: 0,
+        avg_lost: "0.00",
+        avg_win: "0.00",
+        matches: []
+      };
+    }
+
+    return stats;
+  } catch (error) {
+    console.error("Error fetching stats:", error);
+  }
+};
 
 export default { getConnectedUsers, getProfileData , getNonFriends, updateConnected, updateDisconnected, addFriend, sendFriends, getStats };
 

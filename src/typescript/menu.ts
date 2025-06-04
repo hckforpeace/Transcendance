@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				// const res = await fetch('/api/register', {});
 				// .then
 				// const html = await res.text();
-				await fetch("/home")
+        await fetch("/home")
 					.then(response => response.text())
 					.then(html => {
 						var content = document.getElementById("content-div");
@@ -32,13 +32,26 @@ function updateUserAvatar(avatarUrl: string) {
 	profileImg.src = avatarUrl || '/images/avatar.jpg';
 }
 
-// function goBackHome() {
-//    fetch("/home")
-//     .then(response => response.text())
-//     .then(html => {
-//       var content = document.getElementById("content-div");
-//       if (!content)
-//         throw new Error("Content div not found");
-//       content.innerHTML = html;
-//     })
-// }
+
+function getProfileView() {
+  console.log(isLoggedIn)
+  if (isLoggedIn === false) 
+    return;
+  fetch('/html/profile.html')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch');
+      }
+      return response.text(); // ✅ return the parsed JSON
+    })
+  .then(data => {
+    console.log('helloo')
+      injectProfileView(data)
+    })
+}
+
+function injectProfileView(data: any) {
+  const contentDiv = document.getElementById('content-div') as HTMLDivElement;
+  contentDiv.innerHTML = data;
+  renderProfile()
+}

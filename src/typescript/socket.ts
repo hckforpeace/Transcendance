@@ -78,3 +78,11 @@ function ProfileSocketConnection() {
     UpdateActualFriends(data); 
   };
 }
+
+window.addEventListener('hashchange', () => {
+  
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    socket.close();
+  }
+});
+

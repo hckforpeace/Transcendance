@@ -3,20 +3,21 @@ import users from '../database/profile.js'
 
 //TODO add prehandler to all the routes to check if the user is authenticated with JWT
 async function routes (fastify, options) {
-  fastify.get('/api/profile/info', api.profileInfo) // TODO
-   fastify.post('/api/profile/info', api.updateProfileData)
+  fastify.get('/api/profile/info', { preHandler: [fastify.authenticate] }, api.profileInfo) // TODO
+   fastify.post('/api/profile/info', { preHandler: [fastify.authenticate] }, api.updateProfileData)
 
-  fastify.get('/api/profile/add/friends', api.profileFriends)
-  fastify.patch('/api/profile/add/friends', api.addFriends) // TODO
+  fastify.get('/api/profile/add/friends', { preHandler: [fastify.authenticate] }, api.profileFriends)
+  fastify.patch('/api/profile/add/friends', { preHandler: [fastify.authenticate] }, api.addFriends) // TODO
  
-  fastify.get('/api/profile/stats', api.getStats)
+  fastify.get('/api/profile/stats', { preHandler: [fastify.authenticate] }, api.getStats)
 
 
   // fastify.get('/api/profile/friends', api.getFriends) // TODO;
-  fastify.get('/api/profiles/connected', api.connectedUsers)
+  fastify.get('/api/profiles/connected', { preHandler: [fastify.authenticate] }, api.connectedUsers)
 
   // preHandler: [fastify.authenticate],
-  fastify.get('/api/profile/socket', { websocket: true}, (socket, req) => {api.profileSocket(socket, req)})
+  fastify.post('/api/profile/update', { preHandler: [fastify.authenticate] }, api.updateProfileData)
+  fastify.get('/api/profile/socket', { websocket: true, preHandler: [fastify.authenticate] }, (socket, req) => {api.profileSocket(socket, req)})
 }
 
 export default routes;
