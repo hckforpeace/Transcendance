@@ -52,11 +52,7 @@ function getProfileView() {
     })
         .then(data => {
         console.log('helloo');
-        injectProfileView(data);
+        injectViewToContentDiv(data);
+        renderProfile();
     });
-}
-function injectProfileView(data) {
-    const contentDiv = document.getElementById('content-div');
-    contentDiv.innerHTML = data;
-    renderProfile();
 }

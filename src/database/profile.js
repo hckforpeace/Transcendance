@@ -208,12 +208,12 @@ const getStats = async (id) => {
         matches: []
       };
     }
-
     return stats;
   } catch (error) {
     console.error("Error fetching stats:", error);
   }
 };
+
 
 export default { getConnectedUsers, getProfileData , getNonFriends, updateConnected, updateDisconnected, addFriend, sendFriends, getStats };
 

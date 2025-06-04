@@ -46,12 +46,8 @@ function getProfileView() {
     })
   .then(data => {
     console.log('helloo')
-      injectProfileView(data)
+      injectViewToContentDiv(data)
+      renderProfile()
     })
 }
 
-function injectProfileView(data: any) {
-  const contentDiv = document.getElementById('content-div') as HTMLDivElement;
-  contentDiv.innerHTML = data;
-  renderProfile()
-}
