@@ -15,24 +15,6 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-const auth = async (req, reply) => {
-  // password: req.body.password 
-  try {
-    const user_data = { username: req.body.username, id: uuidv4() };
-
-    const token = await reply.jwtSign(user_data, { expiresIn: "1h" });
-
-    return reply.status(200).send({
-      message: 'Login successful',
-      token: token
-    });
-  }
-  catch (error) {
-    req.log.error(error);
-    return reply.status(500).send({ message: 'Internal server error' });
-  }
-};
-
 const login = async (req, reply) => {
 
   try {
@@ -86,7 +68,6 @@ const avatar = async (req, reply) => {
 
     const userId = decoded.userId;
     const data = await db.get('SELECT avatarPath FROM users WHERE id = ?', [userId]);
-    console.log("************************************************************" + data.avatarPath)
 
     let avatarUrl = '/images/avatar.jpg'; // default avatar
     if (data.avatarPath) {
@@ -138,7 +119,7 @@ const register = async (req, reply) => {
     return reply.status(400).send({ error: "Email is already in use" });
   }
 
-  let avatarPath = "";  // <- déclaration ici
+  let avatarPath = "images/avatar.jpg";  // <- déclaration ici
 
   if (avatar && typeof avatar.stream === 'function' && avatar.name) {
     const ext = path.extname(avatar.name);
@@ -156,13 +137,9 @@ const register = async (req, reply) => {
   } else {
     console.log("No valid avatar file to save.");
   }
-
   try {
     const hashed_password = await bcrypt.hash(password, 10);
-    const token_exp = Date.now();
-    const result = await db.run(`INSERT INTO users (name, email, hashed_password, avatarPath, token_exp) VALUES (?, ?, ?, ?, ?)`, [name, email, hashed_password, avatarPath, token_exp]);
-    //reply.send({ message: 'User registered successfully', result });
-    // return reply.redirect('/');
+    const result = await db.run(`INSERT INTO users (name, email, hashed_password, avatarPath) VALUES (?, ?, ?, ?)`, [name, email, hashed_password, avatarPath]);
   } catch (error) {
     console.error('Error registering user:', error); // Affiche l'erreur dans la console
     return reply.status(500).send({ error: 'Error registering user' });
@@ -207,8 +184,6 @@ const sock_con = async (socket, req, fastify) => {
     socket.on('close', () => {
       console.log('Connection closed:', id);
       remoteObj.DisconnectPlayer(id);
-      // remoteObj.removePlayer(id);
-      // remoteObj.sendCurrentUsers(id);
     });
   }
   catch (error) {
@@ -234,4 +209,4 @@ const users = async (req, reply) => {
   }
 };
 
-export default { auth, sock_con, pong_view, login, register, users, avatar };
+export default { sock_con, pong_view, login, register, users, avatar };

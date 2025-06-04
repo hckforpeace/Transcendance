@@ -12,7 +12,6 @@ export default fp(async function (fastify, opts) {
 
   fastify.decorate("authenticate", async function (request, reply) {
     try {
-        console.log("here" + request)
         await request.jwtVerify();
     } catch (err) {
       reply.code(401).send({ message: 'Invalid token' });

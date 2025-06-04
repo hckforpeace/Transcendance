@@ -1,7 +1,7 @@
 node_modules/
 ./src/public/**/*.js
 src/.env
-src/secret/certs 
+./src/secret/certs 
 vault
 mydatabase.db
 bin/

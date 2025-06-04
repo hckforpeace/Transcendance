@@ -22,8 +22,10 @@ function login() {
                     errorMsg.textContent = response.error || "An error occurred.";
                 }
                 if (this.status === 200) {
+                    isLoggedIn = true;
                     errorMsg.style.color = "green";
                     errorMsg.textContent = "Welcome!";
+<<<<<<< HEAD
                     if (formData.get("name"))
                         username = formData.get("name");
                     // Corrected: fetch avatar and update it
@@ -37,6 +39,9 @@ function login() {
                         .catch(err => {
                         console.error("Error fetching avatar:", err);
                     });
+=======
+                    displayAvatarMenu();
+>>>>>>> 052f6505afa333d33134ffe158dbdb6288ef887d
                 }
             }
             catch (e) {
@@ -48,3 +53,16 @@ function login() {
     console.log(formData);
     xhttp.send(formData);
 }
+const displayAvatarMenu = () => {
+    // Corrected: fetch avatar and update it
+    fetch("/api/avatar")
+        .then(response => response.json())
+        .then(data => {
+        if (data.avatarUrl) {
+            updateUserAvatar(data.avatarUrl);
+        }
+    })
+        .catch(err => {
+        console.error("Error fetching avatar:", err);
+    });
+};
