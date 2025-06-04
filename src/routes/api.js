@@ -53,7 +53,6 @@ function xss_test_route(fastify) {
   });
 }
 
-import { get_player } from '../controllers/get_player.mjs';
 
 // routes/api.js
 async function routes(fastify, options) {
@@ -66,10 +65,10 @@ async function routes(fastify, options) {
 
   fastify.get('/api/avatar', { preHandler: [fastify.authenticate] }, api.avatar)
 
-  fastify.get('/api/get_player', { preHandler: [fastify.authenticate] }, async (req, reply) => {
-    const username = await get_player(req, reply);
-    return { name: username };
-  });
+  // fastify.get('/api/get_player', { preHandler: [fastify.authenticate] }, async (req, reply) => {
+  //   const username = await get_player(req, reply);
+  //   return { name: username };
+  // });
 
   fastify.get('/home', (req, reply) => {
     const data = fs.readFileSync(path.join(__dirname, '../views/home.ejs'), 'utf-8');

@@ -60,7 +60,6 @@ fastify.register(fastifyFormbody);
 
 // WAF Hooks
 fastify.addHook('preHandler', sql_xss_check);
-fastify.addHook('onRequest', sql_xss_check);
 fastify.addHook('preHandler', rateLimiter(100, 60000));
 
 // fastify/static
@@ -107,10 +106,6 @@ fastify.addHook('onRequest', async (req, reply) => {
 	if (token) {
 		try {
 			const user = await req.jwtVerify();
-			const now = Date.now();
-			console.log(user.id)
-
-			db.run(`UPDATE users SET token_exp = ? WHERE id = ?`, [now, user.id])
 			req.user = user;
 		}
 		catch (err) {

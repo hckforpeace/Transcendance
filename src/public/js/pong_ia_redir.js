@@ -10,6 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 function pong_ia_redir() {
     return __awaiter(this, void 0, void 0, function* () {
+        if (!username)
+            return;
         try {
             const response = yield fetch("/pong_ia");
             const html = yield response.text();
@@ -17,7 +19,10 @@ function pong_ia_redir() {
             if (!content)
                 throw new Error("Content div not found");
             content.innerHTML = html;
-            load_script("Jerome", "Bot");
+            load_script(username, "Bot");
+            var left_name = document.getElementById("left-player-name");
+            if (left_name)
+                left_name.innerHTML = username;
         }
         catch (err) {
             console.error("Error loading pong_ia view:", err);

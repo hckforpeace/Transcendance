@@ -59,6 +59,8 @@ const login = async (req, reply) => {
 
     const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name}, { expiresIn: "1m" });
 
+    db.run("UPDATE users SET token_exp = ? WHERE id = ?", [Date.now(), user.id]);
+    
     reply.setCookie("token", token, {
       httpOnly: true,
       secure: true,
