@@ -2,8 +2,7 @@ import cron from 'node-cron';
 import { getDB } from './database/database.js';
 
 function check_token_validity() {
-  cron.schedule('* * * * *', async () => {
-    console.log('CRON TAB LAUNCH !!!');
+  cron.schedule('0 8 * * *', async () => {
 
     const db = getDB();
     const oneMonthInSeconds = 30 * 24 * 60 * 60; // 30 days
@@ -17,14 +16,14 @@ function check_token_validity() {
         const diff = nowInSeconds - tokenExpSeconds;
 
         if (nowInSeconds - tokenExpSeconds > oneMonthInSeconds) {
-          console.log(`User ${user.id} supprimé car token expiré.`);
+          console.log(`User ${user.id} suppressed from the database.`);
           await db.run('DELETE FROM users WHERE id = ?', [user.id]);
         } else {
-          console.log(`User ${user.id} token valide, expire dans ${diff} secondes`);
+          console.log(`User ${user.id} user account expire in ${diff} secondes`);
         }
       }
     } catch (error) {
-      console.error('Erreur dans la tâche cron:', error);
+      console.error('Error chron task:', error);
     }
   });
 }
