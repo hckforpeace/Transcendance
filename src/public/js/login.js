@@ -25,7 +25,6 @@ function login() {
                     isLoggedIn = true;
                     errorMsg.style.color = "green";
                     errorMsg.textContent = "Welcome!";
-<<<<<<< HEAD
                     if (formData.get("name"))
                         username = formData.get("name");
                     // Corrected: fetch avatar and update it
@@ -39,9 +38,6 @@ function login() {
                         .catch(err => {
                         console.error("Error fetching avatar:", err);
                     });
-=======
-                    displayAvatarMenu();
->>>>>>> 052f6505afa333d33134ffe158dbdb6288ef887d
                 }
             }
             catch (e) {

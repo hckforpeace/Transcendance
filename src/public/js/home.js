@@ -39,3 +39,7 @@ const registerRedir = () => __awaiter(void 0, void 0, void 0, function* () {
         console.error('Error loading register view:', err);
     }
 });
+function injectViewToContentDiv(data) {
+    const contentDiv = document.getElementById('content-div');
+    contentDiv.innerHTML = data;
+}

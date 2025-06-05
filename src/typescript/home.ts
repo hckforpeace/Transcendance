@@ -30,3 +30,8 @@ const registerRedir = async () => {
     console.error('Error loading register view:', err);
   }
 }
+
+function injectViewToContentDiv(data: any) {
+  const contentDiv = document.getElementById('content-div') as HTMLDivElement;
+  contentDiv.innerHTML = data;
+}

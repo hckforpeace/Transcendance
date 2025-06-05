@@ -5,6 +5,7 @@ import requests from "../database/profile.js"
 import { fileURLToPath } from 'url'
 import fs from 'fs';
 import { getDB } from "../database/database.js"
+import { request } from 'http';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -48,6 +49,7 @@ const profileFriends = async (req, reply) => {
 // TODO retreive data from cookie as userId
 const profileSocket = async (socket, req, fastify) => {
   try {
+    var friends;
     const decoded = await req.jwtVerify()
     const userId = decoded.userId;
     if (connections.has(userId)) {
@@ -59,7 +61,9 @@ const profileSocket = async (socket, req, fastify) => {
 
     connections.set(userId, socket)
     requests.updateConnected(userId)
-    requests.sendFriends(userId);
+    friends = await requests.getFriends(userId)
+    console.log('sending:', JSON.stringify(friends))
+    socket.send(JSON.stringify(friends));
 
     // when a message is sent
     socket.on('close', message => { 
@@ -176,4 +180,20 @@ const  updateProfileData = async (req, reply) => {
   }
 }
 
-export default { profileInfo, updateProfileData, connectedUsers, profileFriends, profileSocket, addFriends , getStats, connections, updateProfileData};
+////////////////////////////////////////////////////////////////////////////////////////////////
+//                                      Get Friends data / stats
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+const getFriendInfo = async (req, reply) => {
+  const friendId = req.params.id;
+  const friendInfo = await requests.getProfileData(friendId);
+  reply.code(200).send(friendInfo);
+}
+
+const getFriendStats = async (req, reply) => {
+  const friendId = req.params.id;
+  const friendStats = await requests.getStats(friendId);
+  reply.code(200).send(friendStats);
+}
+
+export default { profileInfo, updateProfileData, connectedUsers, profileFriends, profileSocket, addFriends , getStats, connections, updateProfileData, getFriendStats, getFriendInfo};

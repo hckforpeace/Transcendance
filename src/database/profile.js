@@ -1,179 +1,218 @@
-import path from 'path'
-import { pipeline } from 'stream/promises';
-import bcrypt from 'bcryptjs';
-import requests from "../database/profile.js"
-import { fileURLToPath } from 'url'
-import fs from 'fs';
-import { getDB } from "../database/database.js"
+import { getDB } from "./database.js"
+import socket from "../controllers/profile.mjs"
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//                                       Request for Friends and AddFriend
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
-const uploadDir = path.join(__dirname, '..', 'public/images');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-let connections = new Map();
-
-
-// TODO : get from the jwt the user id 
-const profileInfo = async (req, reply) => {
-  const decoded = await req.jwtVerify()
-  const userId = decoded.userId;
-  const res = await requests.getProfileData(userId);
-  if (!res)
-    reply.code(500)
-  else
-    reply.send(res)
-}
-
-
-const connectedUsers = async (req, reply) => {
-  const users = await requests.getConnectedUsers();
-  if (!users)
-    reply.code(500);
-  else
-    reply.send(users);
-}
-
-const profileFriends = async (req, reply) => {
-  const decoded = await req.jwtVerify()
-  const userId = decoded.userId;
-  const friends = await requests.getNonFriends(userId);
-  if (!friends)
-    reply.code(500)
-  else
-    reply.send(friends)
-}
-
-// TODO retreive data from cookie as userId
-const profileSocket = async (socket, req, fastify) => {
-  try {
-    const decoded = await req.jwtVerify()
-    const userId = decoded.userId;
-    if (connections.has(userId)) {
-      console.log(`🔌 WebSocket already connected for user ${userId} `);
-      await connections.get(userId).close(); // Close the existing connection 
-      connections.delete(userId); // Remove the existing connection from the map
-      // requests.updateDisconnected(userId); // Remove the socket from the database
-    }
-
-    connections.set(userId, socket)
-    requests.updateConnected(userId)
-    requests.sendFriends(userId);
-
-    // when a message is sent
-    socket.on('close', message => { 
-      console.log(`❌ WebSocket disconnected for user ${userId} `);
-      requests.updateDisconnected(userId) // Remove the socket from the database
-      connections.delete(userId) // Remove the connection from the map
-    })
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-const addFriends = async (req, reply)  => {
-  const stringFriends =  JSON.parse(req.body); // Assuming the body is a JSON string
-  const friendsId = stringFriends.map(str => +str); // makes sure to convert strings to numbers
-  const decoded = await req.jwtVerify()
-  const userId = decoded.userId;
-  var res =  await requests.addFriend(userId, friendsId)
-  if (res != 1)
-    reply.code(500).send(res)
-  else
-    reply.send({ message: "Friends added successfully" });
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-//                                      stats
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-const getStats = async (req, reply) => {
-  const decoded = await req.jwtVerify()
-  const userId = decoded.userId;
-  const res = await requests.getStats(userId);
-  reply.send(res)
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-//                                      Update profile
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-const  updateProfileData = async (req, reply) => {
-
-  var hashed;
-  var modified = 0;
-  const formData = await req.formData();
-  const email = formData.get("email");
-  const name = formData.get("name");
-  const password = formData.get("password");
-  const confirm_password = formData.get("confirm_password");
-  const avatar = formData.get("avatar");
-  const decoded = await req.jwtVerify()
-  const userId = decoded.userId;
-  var dbreq;
+const getFriends = async (userId) => {
   const db = getDB();
+  const users = [];
 
+  if (!db) return null;
 
-  const userInfo = await db.get("SELECT * FROM users WHERE id = ?", [userId])
+  const res = await db.get("SELECT friends FROM users WHERE id = ?", [userId]);
+  if (!res || !res.friends) return [];
 
-  console.log("******************** this is the call to update profile *****************************************")
-
-  if (name && name != userInfo.name) { 
-    dbreq = await db.get("SELECT *  FROM users WHERE name = ?", name)
-    if (dbreq) {
-      reply.code(400).send({error: 'name already in use'})
+  const friends = JSON.parse(res.friends);
+  for (const friend of friends) {
+    const temp = await db.get('SELECT connected, name, avatarPath FROM users WHERE id = ?', [friend]);
+    if (temp) {
+      users.push({ id: friend, name: temp.name, connected: temp.connected, avatar: temp.avatarPath });
     }
   }
 
-  if (email && email != userInfo.email) { 
-    dbreq = await db.get("SELECT *  FROM users WHERE email = ?", email)
-    if (dbreq)
-      reply.code(400).send({error: 'email already in use'})
-    if (!email.includes("@"))
-      reply.code(400).send({error: 'Invalid email address'})
+  return users;
+  // if (socket.connections.has(Number(userId))) {
+  //   await socket.connections.get(Number(userId)).send(
+  //     JSON.stringify(users)
+  //   );
+  // }
+};
+const getConnectedUsers = async () => {
+  const db = getDB();
+  const users = await db.all("SELECT name FROM users WHERE connected = 1");
+  return (users);
+};
+
+
+// Used to display actual name, mail and avatar in the form of a profile 
+const getProfileData = async (id) => {
+  const db = getDB();
+  if (db)
+  {
+    const res = await db.get("SELECT name, email, avatarPath from users WHERE id = ? ", [id]);
+    return (res);
   }
+  else 
+    return (null);
+}
 
-  if (password || confirm_password) {
-    if (password != confirm_password)
-      reply.code(400).send({error: 'Passwords does not match'})
-  }
-
-  if (name && name != userInfo.name) {
-    dbreq = await db.run("UPDATE users SET name = ? WHERE id = ?", [name, userId])
-    modified = 1;
-  }
-  if (email && email != userInfo.email) { 
-    dbreq = await db.run("UPDATE users SET email = ? WHERE id = ?", [email, userId]) 
-    modified = 1;
-  }
-
-  if (password || confirm_password) {
-    hashed = await bcrypt.hash(password, 10);
-    dbreq = await db.run('UPDATE  users SET hashed_password = ? WHERE id = ?', [hashed, userId])
-    modified = 1;
-  } 
-
-  if (avatar && typeof avatar.stream === 'function' && avatar.name) {
-    const ext = path.extname(avatar.name);
-    const filename = `${Date.now()}_${avatar.name}`; // avoid collisions
-    const avatarPath = `images/${filename}`;
-    const filePath = path.join(uploadDir, filename);
-    console.log(`Saving avatar file to: ${filePath}`);
-
+// used to display the list of friends in the profile page
+const getNonFriends = async (id) => {
+    const db = getDB();
+    let res;
+    let friends, allUsers;
+    
     try {
-      await pipeline(avatar.stream(), fs.createWriteStream(filePath));
-      console.log("Avatar saved successfully!");
-
-      await db.run('UPDATE users SET avatarPath = ? WHERE id = ?', [avatarPath, userId]);
-      modified = 1;
-    } catch (err) {
-      console.error("Error saving avatar:", err);
-      reply.code(500).send({ error: "Avatar upload failed." });
-      return;
+        // Get the user's friends list
+        res = await db.get("SELECT friends FROM users WHERE id = ?", [id]);
+        if (!res || !res.friends) return null;
+        
+        friends = JSON.parse(res.friends);
+        
+        // Get all users
+        const allUsersRes = await db.all("SELECT id, name FROM users"); // assuming you want name too
+        if (!allUsersRes) return null;
+        
+        // Filter out users who are in the friends list
+        const nonFriends = allUsersRes.filter(user => 
+            !friends.includes(user.id) && user.id !== id // exclude self too
+        );
+        
+        return nonFriends;
+        
+    } catch (error) {
+        console.error("Error fetching non-friends:", error);
+        return null;
     }
+}
+
+// Profile socket management
+const updateConnected = async (userId) => {
+  const db = getDB()
+  try {
+    const res = await db.run("UPDATE users SET socketConnectionProfile = ? WHERE id = ?", [1, userId])
+    return (res);
+  } catch (error) {
+    console.error("Error inserting socket:", error);
+    return (null);
   }
 }
 
-export default { profileInfo, updateProfileData, connectedUsers, profileFriends, profileSocket, addFriends , getStats, connections, updateProfileData};
+
+const updateDisconnected = async (userId) => {
+  const db = getDB()
+  try {
+    const res = await db.run("UPDATE users SET socketConnectionProfile = ? WHERE id = ?", [0, userId])
+    return (res);
+  } catch (error) {
+    console.error("Error removing socket:", error);
+    return (null);
+  }
+}
+
+const addFriend = async (userId, friendId) => {
+  var users = [];
+  const db = getDB();
+  var friendData
+  var friends;
+  var res;
+
+  try {
+    friendId.forEach (async id => {
+      friendData = await db.get("SELECT friendedMe, connected, name, avatarPath from users WHERE id = ?", [id])
+      if (!friendData)
+        return (id + 'not found')
+      users.push({id: id, name: friendData.name, connected: friendData.connected, avatar: friendData.avatarPath})
+      friends = JSON.parse(friendData.friendedMe || "[]");
+      if (!friends.includes(Number(userId))) {
+        friends.push(Number(userId));
+        await db.run("UPDATE users SET friendedMe = ? WHERE id = ?", [JSON.stringify(friends), id]);
+      }
+    })
+
+    // updating userId line
+    res = await db.get("SELECT friends FROM users WHERE id = ?", [userId]); 
+    friends = JSON.parse(res.friends || "[]"); 
+
+    // Ensure friendId is a number
+    if (!friends.includes(friendId)) { 
+      friendId.forEach (id => { friends.push(id) }) 
+      await db.run("UPDATE users SET friends = ? WHERE id = ?", [JSON.stringify(friends), userId]);
+
+      // users.forEach(async (user) => {
+      //   if (socket.connections.has(Number(userId)))
+      //     await socket.connections.get(Number(userId)).send(JSON.stringify({id: user.id, name: user.name, connected: user.connected, avatar: user.avatar }))
+      // })
+    }
+      if (socket.connections.has(Number(userId)))
+        await socket.connections.get(Number(userId)).send(JSON.stringify(users));
+  } catch (error) {
+    console.error("Error adding friend:", error);
+    return (null);
+  } 
+  return (1);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//                                              Requests for stats 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+/* const getStats = async (id) => {
+  const db = getDB()
+  var stats = [];
+  var matches = [];
+  var avg_lost;
+  var avg_win;
+
+  try {
+    console.log('id of Request: ' + id)
+    stats = await db.get("SELECT matchesWon, matchesLost  FROM stats WHERE playerId = ?",  [id])
+    matches = await db.all("SELECT player1_alias, player2_alias, player1_score, player2_score, date FROM matches WHERE player1_id = ? OR player2_id = ?",  [id, id])
+    if (stats) {
+      avg_lost = (stats.matchesLost * 100) / (stats.matchesWon + stats.matchesLost) 
+      avg_win = (stats.matchesWon * 100) / (stats.matchesWon + stats.matchesLost) 
+      stats = { matchesWon: stats.matchesWon, matchesLost: stats.matchesLost, avg_lost: avg_lost.toFixed(2), avg_win: avg_win.toFixed(2)}
+    }
+    if (matches !== null) {
+      stats.push({'matches': matches})
+    }
+    return stats ; 
+  } catch (error) {
+    console.error("Error fetching stats:", error);
+  }
+} */
+
+const getStats = async (id) => {
+  const db = getDB();
+  let stats = null;
+  let matches = [];
+  let avg_lost;
+  let avg_win;
+
+  try {
+    console.log('id of Request: ' + id);
+    stats = await db.get("SELECT matchesWon, matchesLost FROM stats WHERE playerId = ?", [id]);
+    matches = await db.all("SELECT player1_alias, player2_alias, player1_score, player2_score, date FROM matches WHERE player1_id = ? OR player2_id = ?", [id, id]);
+
+    if (stats) {
+      const total = stats.matchesWon + stats.matchesLost;
+      avg_lost = total > 0 ? (stats.matchesLost * 100) / total : 0;
+      avg_win = total > 0 ? (stats.matchesWon * 100) / total : 0;
+
+      stats = {
+        matchesWon: stats.matchesWon,
+        matchesLost: stats.matchesLost,
+        avg_lost: avg_lost.toFixed(2),
+        avg_win: avg_win.toFixed(2),
+        matches: matches || []  // Include matches in the same object
+      };
+    } else {
+      stats = {
+        matchesWon: 0,
+        matchesLost: 0,
+        avg_lost: "0.00",
+        avg_win: "0.00",
+        matches: []
+      };
+    }
+    return stats;
+  } catch (error) {
+    console.error("Error fetching stats:", error);
+  }
+};
+
+
+export default { getConnectedUsers, getProfileData , getNonFriends, updateConnected, updateDisconnected, addFriend, getFriends, getStats };

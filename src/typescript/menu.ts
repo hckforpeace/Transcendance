@@ -33,25 +33,24 @@ function updateUserAvatar(avatarUrl: string) {
 }
 
 
-function getProfileView() {
-  console.log(isLoggedIn)
-  if (isLoggedIn === false) 
-    return;
-  fetch('/html/profile.html')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to fetch');
-      }
-      return response.text(); // ✅ return the parsed JSON
+function getProfileView(callback: () => void) {
+    if (isLoggedIn === false)
+        return;
+    fetch('/html/profile.html')
+        .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch');
+        }
+        return response.text(); // ✅ return the parsed JSON
     })
-  .then(data => {
-    console.log('helloo')
-      injectProfileView(data)
-    })
+        .then(data => {
+        injectViewToContentDiv(data);
+        setTimeout(callback, 0)
+    });
 }
 
-function injectProfileView(data: any) {
-  const contentDiv = document.getElementById('content-div') as HTMLDivElement;
-  contentDiv.innerHTML = data;
-  renderProfile()
+function loadProfileView() {
+  getProfileView( () => {
+    renderProfile();
+  });
 }
