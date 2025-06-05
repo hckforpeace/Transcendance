@@ -64,8 +64,11 @@ function ProfileSocketConnection() {
     };
     socket.onmessage = (event) => {
         let data = JSON.parse(event.data);
-        console.log(data);
-        UpdateActualFriends(data);
+        // console.log(data)
+        // UpdateActualFriends(data); 
+        data.forEach((item) => {
+            UpdateActualFriends(item);
+        });
     };
 }
 window.addEventListener('hashchange', () => {

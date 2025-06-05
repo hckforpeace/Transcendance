@@ -5,7 +5,7 @@ import socket from "../controllers/profile.mjs"
 //                                       Request for Friends and AddFriend
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-const sendFriends = async (userId) => {
+const getFriends = async (userId) => {
   const db = getDB();
   const users = [];
 
@@ -22,14 +22,12 @@ const sendFriends = async (userId) => {
     }
   }
 
-  for (const user of users) {
-    console.log(`Sending friend data to user ${userId}:`, user);
-    if (socket.connections.has(Number(userId))) {
-      await socket.connections.get(Number(userId)).send(
-        JSON.stringify({ id: user.id, name: user.name, connected: user.connected, avatar: user.avatar})
-      );
-    }
-  }
+  return users;
+  // if (socket.connections.has(Number(userId))) {
+  //   await socket.connections.get(Number(userId)).send(
+  //     JSON.stringify(users)
+  //   );
+  // }
 };
 const getConnectedUsers = async () => {
   const db = getDB();
@@ -133,11 +131,13 @@ const addFriend = async (userId, friendId) => {
       friendId.forEach (id => { friends.push(id) }) 
       await db.run("UPDATE users SET friends = ? WHERE id = ?", [JSON.stringify(friends), userId]);
 
-      users.forEach(async (user) => {
-        if (socket.connections.has(Number(userId)))
-          await socket.connections.get(Number(userId)).send(JSON.stringify({id: user.id, name: user.name, connected: user.connected, avatar: user.avatar }))
-      })
+      // users.forEach(async (user) => {
+      //   if (socket.connections.has(Number(userId)))
+      //     await socket.connections.get(Number(userId)).send(JSON.stringify({id: user.id, name: user.name, connected: user.connected, avatar: user.avatar }))
+      // })
     }
+      if (socket.connections.has(Number(userId)))
+        await socket.connections.get(Number(userId)).send(JSON.stringify(users));
   } catch (error) {
     console.error("Error adding friend:", error);
     return (null);
@@ -215,5 +215,5 @@ const getStats = async (id) => {
 };
 
 
-export default { getConnectedUsers, getProfileData , getNonFriends, updateConnected, updateDisconnected, addFriend, sendFriends, getStats };
+export default { getConnectedUsers, getProfileData , getNonFriends, updateConnected, updateDisconnected, addFriend, getFriends, getStats };
 

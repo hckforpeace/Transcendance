@@ -39,8 +39,7 @@ function updateUserAvatar(avatarUrl) {
         return;
     profileImg.src = avatarUrl || '/images/avatar.jpg';
 }
-function getProfileView() {
-    console.log(isLoggedIn);
+function getProfileView(callback) {
     if (isLoggedIn === false)
         return;
     fetch('/html/profile.html')
@@ -51,8 +50,12 @@ function getProfileView() {
         return response.text(); // ✅ return the parsed JSON
     })
         .then(data => {
-        console.log('helloo');
         injectViewToContentDiv(data);
+        setTimeout(callback, 0);
+    });
+}
+function loadProfileView() {
+    getProfileView(() => {
         renderProfile();
     });
 }

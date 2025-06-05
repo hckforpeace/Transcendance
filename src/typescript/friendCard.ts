@@ -1,4 +1,3 @@
-
 function getFriendCardView(callback: () => void) {
   fetch('/html/friendProfile.html')
     .then(response => {

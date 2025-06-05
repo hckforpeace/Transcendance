@@ -49,6 +49,7 @@ const profileFriends = async (req, reply) => {
 // TODO retreive data from cookie as userId
 const profileSocket = async (socket, req, fastify) => {
   try {
+    var friends;
     const decoded = await req.jwtVerify()
     const userId = decoded.userId;
     if (connections.has(userId)) {
@@ -60,7 +61,9 @@ const profileSocket = async (socket, req, fastify) => {
 
     connections.set(userId, socket)
     requests.updateConnected(userId)
-    requests.sendFriends(userId);
+    friends = await requests.getFriends(userId)
+    console.log('sending:', JSON.stringify(friends))
+    socket.send(JSON.stringify(friends));
 
     // when a message is sent
     socket.on('close', message => { 
@@ -176,7 +179,6 @@ const  updateProfileData = async (req, reply) => {
     }
   }
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //                                      Get Friends data / stats
