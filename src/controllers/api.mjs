@@ -39,7 +39,7 @@ const login = async (req, reply) => {
       return reply.status(400).send({ error: "Wrong password, try again" });
     }
 
-    const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name}, { expiresIn: "1m" });
+    const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name}, { expiresIn: "1h" });
 
     db.run("UPDATE users SET token_exp = ? WHERE id = ?", [Date.now(), user.id]);
     
