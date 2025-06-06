@@ -1,7 +1,7 @@
 "use strict";
 var socket;
 // TODO: do something with event parameter
-function wsEvent(event) {
+function wsEvent() {
     var _a;
     socket = new WebSocket('wss://' + currentRoot + '/api/remote', (_a = localStorage.getItem("token")) === null || _a === void 0 ? void 0 : _a.toString());
     socket.onopen = function (event) {
@@ -26,12 +26,12 @@ function wsEvent(event) {
     };
 }
 // Creates socket connection n
-function socket_connect() {
-    const remote = document.getElementById("start");
-    if (!remote)
-        return;
-    remote.addEventListener("click", wsEvent);
-}
+// function socket_connect() {
+//   const remote = document.getElementById("start") ;
+//   if (!remote)
+//     return;
+//   remote.addEventListener("click", wsEvent);
+// }
 function parseIncommingSocketMsg(data) {
     // const jsonData = JSON.parse(data);
     try {

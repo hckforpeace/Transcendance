@@ -1,7 +1,7 @@
 var socket: WebSocket;
 
 // TODO: do something with event parameter
-function wsEvent(event: any) 
+function wsEvent() 
 {
   socket = new WebSocket('wss://' + currentRoot + '/api/remote', localStorage.getItem("token")?.toString());
   socket.onopen = function (event) {
@@ -29,12 +29,12 @@ function wsEvent(event: any)
 }
 
 // Creates socket connection n
-function socket_connect() {
-  const remote = document.getElementById("start") ;
-  if (!remote)
-    return;
-  remote.addEventListener("click", wsEvent);
-}
+// function socket_connect() {
+//   const remote = document.getElementById("start") ;
+//   if (!remote)
+//     return;
+//   remote.addEventListener("click", wsEvent);
+// }
 
 function parseIncommingSocketMsg(data: any)
 {

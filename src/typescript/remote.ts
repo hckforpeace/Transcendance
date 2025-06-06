@@ -139,23 +139,17 @@ function renderLobby()
       throw new Error('missing content_div ')
     content_div.innerHTML = '';
 
-    // content_div.classList.add('content-center');
-   var list = document.createElement("div");
-    list.id = 'users_list';
-    list.classList.add('border-3', 'p-9', 'rounded-xl', 'border-blue-500');
-    // list.classList.add('border');
-    list.classList.add('w-100');
-    list.classList.add('h-100');
-    // list.style.width = '300px';
-    // list.style.height = '100 px';
-    // list.style.border = '1px solid black';
-    content_div.appendChild(list);
-  
-    // var request_btn = document.createElement('input');
-    // request_btn.type = 'button';
-    // request_btn.value = 'send invitation';
-    // request_btn.id = 'request';
-    // content_div.appendChild(request_btn);    
+    fetch('/html/lobby.html')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch');
+        }
+        return response.text(); // ✅ return the parsed JSON
+      })
+      .then(data => {
+        injectViewToContentDiv(data);
+        // socket_connect();
+      })
   }
   catch (error)
   {
@@ -164,11 +158,10 @@ function renderLobby()
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  socket_connect();
 });
 
 async function fetchPong() {
-  await fetch("https://" + currentUrl + ":" + currentPort + "/api/pong", {
+  await fetch("/api/pong", {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -180,11 +173,14 @@ async function fetchPong() {
         throw new Error("Content div not found");
       content.className = "";
       content.innerHTML = html;
-      changeRegion();
+      // changeRegion();
     })
     .catch((error) => {
       console.error("Error:", error);
     }); 
 }
 
-
+function loadRemoteLobby() {
+  // renderLobby();
+  wsEvent();
+}

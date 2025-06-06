@@ -106,7 +106,7 @@ async function routes(fastify, options) {
   fastify.get('/api/pong', { preHandler: [fastify.authenticate] }, api.pong_view);
   // connect to the websocket server
   fastify.get('/api/remote', { preHandler: [fastify.authenticate], websocket: true }, (socket, req) => {
-    api.sock_con(socket, req, fastify);
+    api.sock_con(socket, req);
   })
 }
 

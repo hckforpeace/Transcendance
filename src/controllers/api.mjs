@@ -146,23 +146,17 @@ const register = async (req, reply) => {
   }
 };
 
-const sock_con = async (socket, req, fastify) => {
+const sock_con = async (socket, req) => {
   try {
-    var token = req.headers['sec-websocket-protocol'];
+    var token = await req.jwtVerify()
     if (!token)
       throw new Error('No token provided');
 
-    var decodedToken = fastify.jwt.verify(token);
-    if (!decodedToken)
-      throw new Error('failed to decode token');
-
-    var username = decodedToken['username'];
-    var id = decodedToken['id']
-
+    var username = token.name;
+    var id = token.userId;
+    console.log('user conenction with id, username :', id, username)
     remoteObj.addPlayer(id, token, username, socket);
-
-    remoteObj.sendCurrentUsers(id);
-    // remoteObj.getUsers();
+    remoteObj.sendCurrentUsers();
 
     socket.on('message', message => {
       try {

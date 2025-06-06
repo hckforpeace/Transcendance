@@ -264,6 +264,8 @@ function getUsers(id){
 function broadcast()
 {
   Players.forEach((values, keys) => {
+    console.log('broadcasting to ' + values.username, ' with id: ' + keys);
+    console.log('socket: ', getUsers(keys));
       values.socket.send(getUsers(keys));
   })
 }
