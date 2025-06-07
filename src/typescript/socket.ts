@@ -3,10 +3,10 @@ var socket: WebSocket;
 // TODO: do something with event parameter
 function wsEvent() 
 {
-  socket = new WebSocket('wss://' + currentRoot + '/api/remote', localStorage.getItem("token")?.toString());
+  renderLobby();
+  // listclick();
+  socket = new WebSocket('wss://' + currentRoot  + '/api/remote');
   socket.onopen = function (event) {
-    renderLobby();
-    listclick();
   };
 
   socket.onmessage = function(event) {
@@ -28,13 +28,6 @@ function wsEvent()
   };
 }
 
-// Creates socket connection n
-// function socket_connect() {
-//   const remote = document.getElementById("start") ;
-//   if (!remote)
-//     return;
-//   remote.addEventListener("click", wsEvent);
-// }
 
 function parseIncommingSocketMsg(data: any)
 {

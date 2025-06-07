@@ -1,6 +1,5 @@
 let Games = new Map();
 let Players = new Map();
-var PlayerId = 0;
 
 class Player {
   constructor(Token, PlayerID, username, socket) {
@@ -11,6 +10,10 @@ class Player {
     this._socket = socket;
     this._pendingInvite = false;
     this._inGame = null;
+  }
+
+  get PlayerId() {
+    return this._PlayerId;
   }
 
   get pendingInvite() {
@@ -91,7 +94,6 @@ class Game {
 function addPlayer(uid, Token, username, socket){
   let npalyer = new Player(Token, uid, username, socket);
   Players.set(uid, npalyer);
-  PlayerId++;
 }
 
 function moveBall(data) {
@@ -144,20 +146,19 @@ function moveOpponent(data) {
   }
 }
 
-function startGame(data, gameId)
+function startGame(data, id, gameId)
 {
   var p1, p2;
   var uname1, uname2;
   
   try {
-    uname1 = data.user; 
-    uname2 = data.src; 
-    if (!uname1 || !uname2)
-      throw new Error("wrong data format"); 
+
+    console.log('id : ' + id);
+    p1 = Players.get(id); 
+    p2 = Players.get(Number(data.userId));
        
-    console.log('p1: ' + uname1 + ', p2: ' + uname2)
-    p1 = findPlayer(uname1);
-    p2 = findPlayer(uname2);
+    // p1 = findPlayer(uname1);
+    // p2 = findPlayer(uname2);
     p1.pendingInvite = false; 
     p2.pendingInvite = false; 
 
@@ -199,19 +200,21 @@ function findPlayer(uname)
   return (p);
 }
 
-function invitePlayer(data, socket){
+function invitePlayer(data, InitId ){
   let invited_player;
   let src_player;
 
   try {
-    invited_player = findPlayer(data.user);
-    src_player = findPlayer(data.src);
    
+    invited_player = Players.get(Number(data.userId));
+    src_player = Players.get(InitId);
+
+
     if (!invited_player || !src_player)
       throw new Error("players not found")
 
     if (!invited_player.pendingInvite)
-      invited_player.socket.send(JSON.stringify(data));
+      invited_player.socket.send(JSON.stringify({type: 'invite', username: src_player.username, userId: InitId}));
     invited_player.pendingInvite = true;
   } catch (error) {
     console.log(error);
@@ -248,31 +251,32 @@ function DisconnectPlayer(id){
   }
 }
 
+
 function getUsers(id){
-  
+ 
   var usersList = {};
   var key = 'users';
   usersList[key] = [];
 
   Players.forEach((values, keys) => {
     if (keys != id)
-      usersList[key].push(values.username);
+      usersList[key].push({id: values.PlayerId, username: values.username});
   })
+
   return (JSON.stringify(usersList));
 }
 
-function broadcast()
-{
-  Players.forEach((values, keys) => {
-    console.log('broadcasting to ' + values.username, ' with id: ' + keys);
-    console.log('socket: ', getUsers(keys));
-      values.socket.send(getUsers(keys));
-  })
-}
+
 
 function sendCurrentUsers()
 {
-  broadcast();
+  var users;
+  Players.forEach((values, keys) => {
+    users = getUsers(keys);
+    console.log('the user ' + values.name + ' should receive: ' + users + ' his socket is: ' + values.socket)
+    values.socket.send(users);
+  })
+
 }
 
 function isValidGame(game){

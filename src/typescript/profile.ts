@@ -335,30 +335,6 @@ function renderProfile() {
   ProfileSocketConnection();
   getStats()
 }
-  // Your code here
-// });
-// const updateFieldsFriendsCard = (data: UserData) => {
-//   const mail: string = data.email
-//   const username: string = data.name
-//   const avatar_file_name: string = data.avatarPath
-
-//   const mail_input = document.getElementById('email') as HTMLDivElement;
-//   const username_input = document.getElementById('uname') as HTMLDivElement;
-//   const img_avatar = document.getElementById('avatar-preview') as HTMLImageElement;
-
-//   if (!mail || !username || !img_avatar){
-//     console.log("error while reading user data");
-//     return ;
-//   }
-
-//     console.log('are not null')
-//   if (mail_input && username_input) {
-//     console.log(mail, username, avatar_file_name)
-//     mail_input.innerHTML = mail;
-//     username_input.innerHTML = username;
-//     img_avatar.src = avatar_file_name;
-//   }
-// }
 
 const updateFieldsFriendsCard = (data: UserData) => {
   const mail: string = data.email;

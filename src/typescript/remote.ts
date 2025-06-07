@@ -6,10 +6,10 @@ var truePong: boolean = false;
 
 function IncomingInvitationAlert(data: any)
 {
-  if (confirm('Player: ' + data.src + ' is inviting you to play !'))
-    socket.send(JSON.stringify({type: 'accept', user: data.src, src: local_user}));
+  if (confirm('Player: ' + data.username + ' is inviting you to play !'))
+    socket.send(JSON.stringify({type: 'accept', userId: data.userId}));
   else
-    socket.send(JSON.stringify({type: 'refuse', user: data.src, src: local_user}));
+    socket.send(JSON.stringify({type: 'refuse', userId: data.userId}));
 }
 
 function launchPongRemote(data:any)
@@ -65,46 +65,54 @@ function moveOpponent(data:any)
 }
 
 
-function listclick()
-{
-  document.getElementById('users_list')?.addEventListener('click', function (event) {
-    try {
-      const listItem = event.target as HTMLElement;
-      if (!listItem)
-        throw new Error('li not found');
-      const user = listItem.closest('p');
-      if (!user)
-        throw new Error('usli value not defined not found');
-      // console.log();
-      socket.send(JSON.stringify({ type: 'invite', user: user.innerHTML, src: local_user }));
-    }
-    catch (error) {
-      console.log(error);
-    }
-  })
+// function listclick()
+// {
+//   document.getElementById('users_list')?.addEventListener('click', function (event) {
+//     try {
+//       const listItem = event.target as HTMLElement;
+//       if (!listItem)
+//         throw new Error('li not found');
+//       const user = listItem.closest('p');
+//       if (!user)
+//         throw new Error('usli value not defined not found');
+//       console.log(user.innerHTML);
+//       socket.send(JSON.stringify({ type: 'invite', user: user.innerHTML, src: local_user }));
+//     }
+//     catch (error) {
+//       console.log(error);
+//     }
+//   })
+
+// }
+
+
+function sendInvitation(id: any) {
+  console.log('I am caaled the id is :' + id);
+  // var para = document.getElementById(id) as HTMLParagraphElement 
+  socket.send(JSON.stringify({ type: 'invite', userId: id}));
 }
 
-function changeRegion()
-{
-    var tag = document.getElementById("dynamic-script") as HTMLScriptElement;
-    if (!tag) {
-      return
-    }
-    tag.remove(); // remove the old script tag
-  
-    var newTag = document.createElement("script");
-    newTag.id = "dynamic-script";
-    newTag.type = "text/javascript";
-    newTag.src = 'js/pong.js';
-    var footer = document.head;
-    console.log(  "change region");
-    if (!footer) {
-      console.log(  "footer failed");
-      return ;
-    }
-    footer.appendChild(newTag);
-    console.log("script loaded");
-}
+// function changeRegion()
+// {
+//     var tag = document.getElementById("dynamic-script") as HTMLScriptElement;
+//     if (!tag) {
+//       return
+//     }
+//     tag.remove(); // remove the old script tag
+//   
+//     var newTag = document.createElement("script");
+//     newTag.id = "dynamic-script";
+//     newTag.type = "text/javascript";
+//     newTag.src = 'js/pong.js';
+//     var footer = document.head;
+//     console.log(  "change region");
+//     if (!footer) {
+//       console.log(  "footer failed");
+//       return ;
+//     }
+//     footer.appendChild(newTag);
+//     console.log("script loaded");
+// }
 
 function updateLobbyUsers(data: any)
 {
@@ -114,17 +122,19 @@ function updateLobbyUsers(data: any)
   if (data.users === undefined)
     return;
 
-  const numberofusers = data.users.length;
+  // const numberofusers = data.users.length;
   
   var users_tag = document.getElementById('users_list');
   if (!users_tag)
     throw new Error('li not found');
   users_tag.innerHTML = '';
-  for (let i = 0; i < numberofusers; i++)
+  for (const user of data.users)
   {
     let element = document.createElement('p');
-    element.classList.add('text-center'); 
-    element.innerHTML = data.users[i];
+    element.id =  user.id; 
+    element.innerHTML = user.username;
+    element.classList.add("flex", "justify-center", "py-2", "border-b", "cursor-pointer", "peer-checked:bg-blue-100", "transition-colors", "rounded", "text-lg", "font-medium")
+    element.setAttribute('onclick', 'sendInvitation(this.id)')
     element.style.cursor = 'pointer';
     users_tag.appendChild(element);
   }
@@ -161,18 +171,15 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 async function fetchPong() {
-  await fetch("/api/pong", {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  })
+  await fetch("/html/pong.html")
     .then(response => response.text())
     .then(html => {
-      var content = document.getElementById("content-div");
-      if (!content)
-        throw new Error("Content div not found");
-      content.className = "";
-      content.innerHTML = html;
+      injectViewToContentDiv(html);
+      // var content = document.getElementById("content-div");
+      // if (!content)
+      //   throw new Error("Content div not found");
+      // content.className = "";
+      // content.innerHTML = html;
       // changeRegion();
     })
     .catch((error) => {

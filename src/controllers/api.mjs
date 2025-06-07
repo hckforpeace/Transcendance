@@ -146,7 +146,7 @@ const register = async (req, reply) => {
   }
 };
 
-const sock_con = async (socket, req) => {
+const sock_con = async (socket, req, fastify) => {
   try {
     var token = await req.jwtVerify()
     if (!token)
@@ -154,17 +154,16 @@ const sock_con = async (socket, req) => {
 
     var username = token.name;
     var id = token.userId;
-    console.log('user conenction with id, username :', id, username)
-    remoteObj.addPlayer(id, token, username, socket);
+    remoteObj.addPlayer(id, token, username, socket);    // DEBUG: Check socket state immediately after connection
     remoteObj.sendCurrentUsers();
 
     socket.on('message', message => {
       try {
         message = JSON.parse(message);
         if (message != null && message.type == 'invite')
-          remoteObj.invitePlayer(message, socket);
+          remoteObj.invitePlayer(message, id);
         else if (message.type == 'accept' || message.type == 'refuse')
-          remoteObj.startGame(message, uuidv4());
+          remoteObj.startGame(message, id, uuidv4());
         else if (message.type == 'pressed' || message.type == 'released')
           remoteObj.moveOpponent(message);
         else if (message.type == 'moveBall')
@@ -178,6 +177,7 @@ const sock_con = async (socket, req) => {
     socket.on('close', () => {
       console.log('Connection closed:', id);
       remoteObj.DisconnectPlayer(id);
+    remoteObj.sendCurrentUsers();
     });
   }
   catch (error) {
@@ -186,10 +186,6 @@ const sock_con = async (socket, req) => {
   }
 }
 
-const pong_view = async (req, rep) => {
-  const data = fs.readFileSync(path.join(__dirname, '../views/pong.ejs'), 'utf-8');
-  rep.send(data);
-}
 
 const users = async (req, reply) => {
   try {
@@ -203,4 +199,4 @@ const users = async (req, reply) => {
   }
 };
 
-export default { sock_con, pong_view, login, register, users, avatar };
+export default { sock_con, login, register, users, avatar };
