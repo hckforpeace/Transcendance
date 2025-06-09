@@ -1,7 +1,6 @@
 "use strict";
 // // login.ts
 // const loginURL:string = "https://" + currentUrl + ':' + currentPort + '/api/login';
-var local_user;
 var username;
 function login() {
     const formElement = document.getElementById("login-form");

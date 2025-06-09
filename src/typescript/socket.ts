@@ -29,7 +29,7 @@ function wsEvent()
 }
 
 
-function parseIncommingSocketMsg(data: any)
+async function parseIncommingSocketMsg(data: any)
 {
   // const jsonData = JSON.parse(data);
   try {
@@ -40,7 +40,7 @@ function parseIncommingSocketMsg(data: any)
     else if (data.type == 'invite')
       IncomingInvitationAlert(data);
     else if (data.type == 'startgame')
-      launchPongRemote(data); 
+      await launchPongRemote(() => {load_script_remote()}, data); 
     else if (data.type == 'pressed' || data.type == 'released')
       moveOpponent(data); 
     else if (data.type == 'moveBall')

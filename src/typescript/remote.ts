@@ -1,33 +1,35 @@
 const currentRoot = currentUrl + ":" + currentPort;
 var playerSide:string;
 var gameId: number;
-var opponent: string;
 var truePong: boolean = false;
+var local_username: string;
+var opponent: string;
 
 function IncomingInvitationAlert(data: any)
 {
-  if (confirm('Player: ' + data.username + ' is inviting you to play !'))
+  if (confirm('PlayerRemote: ' + data.username + ' is inviting you to play !'))
     socket.send(JSON.stringify({type: 'accept', userId: data.userId}));
   else
     socket.send(JSON.stringify({type: 'refuse', userId: data.userId}));
 }
 
-function launchPongRemote(data:any)
-{
+async function launchPongRemote(callback: () => void, data: any): Promise<void> {
   gameId = data.gameid;
   playerSide = data.side;
   opponent = data.opponent;
+  local_username = data.username;
   if (data.truePong == 'true')
     truePong = true;
-  fetchPong();
+  await fetchPong();
+  setTimeout(callback, 0);;
 }
 
 function moveBall(data:any)
 {
-  game.ball.pos.x = Number(data.x);
-  game.ball.pos.y = Number(data.y); 
-  console.log("ball pos x: " + game.ball.pos.x);
-  console.log("ball pos y: " + game.ball.pos.y);
+  game_remote.ball.pos.x = Number(data.x);
+  game_remote.ball.pos.y = Number(data.y); 
+  // console.log("ball pos x: " + game.ball.pos.x);
+  // console.log("ball pos y: " + game.ball.pos.y);
 }
 
 function moveOpponent(data:any)
@@ -38,28 +40,28 @@ function moveOpponent(data:any)
   if (type == 'pressed') {
     if (dir == 'up') {
       if (playerSide == 'p1')
-        p2_upPressed = true;
+        p2_upPressed_remote = true;
       else
-        p1_upPressed = true;
+        p1_upPressed_remote = true;
     }
     else {
       if (playerSide == 'p1')
-        p2_downPressed = true;
+        p2_downPressed_remote = true;
       else
-        p1_downPressed = true;
+        p1_downPressed_remote = true;
     } 
   } else {
     if (dir == 'up') {
       if (playerSide == 'p1')
-        p2_upPressed = false;
+        p2_upPressed_remote = false;
       else
-        p1_upPressed = false;
+        p1_upPressed_remote = false;
     }
     else {
       if (playerSide == 'p1')
-        p2_downPressed = false;
+        p2_downPressed_remote = false;
       else
-        p1_downPressed = false;
+        p1_downPressed_remote = false;
     }
   }
 }
@@ -174,13 +176,9 @@ async function fetchPong() {
   await fetch("/html/pong.html")
     .then(response => response.text())
     .then(html => {
-      injectViewToContentDiv(html);
-      // var content = document.getElementById("content-div");
-      // if (!content)
-      //   throw new Error("Content div not found");
-      // content.className = "";
-      // content.innerHTML = html;
-      // changeRegion();
+    	injectViewToContentDiv(html);
+      // const contentDiv = document.getElementById('content-div') as HTMLDivElement;
+      // contentDiv.innerHTML = html;      // injectViewToContentDiv(html);
     })
     .catch((error) => {
       console.error("Error:", error);

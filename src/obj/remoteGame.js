@@ -123,6 +123,7 @@ function moveOpponent(data) {
   var game;
   try
   {
+    console.log(data)
     if (!gameid || !opponent)
       throw new Error("wrong parameters");
     console.log('gameid: ' + gameid);
@@ -131,11 +132,9 @@ function moveOpponent(data) {
     if (!game)
       throw new Error("wrong parameters");
     if (game.p1.username == opponent){
-      console.log('p1: ' + game.p1.username);
       game.p1.socket.send(JSON.stringify(data));
     }
     else if (game.p2.username == opponent) {
-      console.log('p2: ' + game.p2.username);
       game.p2.socket.send(JSON.stringify(data));
     }
     else
@@ -161,6 +160,8 @@ function startGame(data, id, gameId)
     // p2 = findPlayer(uname2);
     p1.pendingInvite = false; 
     p2.pendingInvite = false; 
+    uname1 = p1.username;
+    uname2 = p2.username;
 
     if (data.type == 'refuse')
     {
@@ -177,8 +178,8 @@ function startGame(data, id, gameId)
     Games.set(gameId, new Game(p1, p2));
 
     console.log('gameid: ' + gameId);
-    p1.socket.send(JSON.stringify({type: 'startgame', opponent: uname2, gameid: gameId, side: 'p1', truePong: p1.truePlayer}));
-    p2.socket.send(JSON.stringify({type: 'startgame', opponent: uname1, gameid: gameId, side : 'p2', truePong: p2.truePlayer}));
+    p1.socket.send(JSON.stringify({type: 'startgame',username: uname1, opponent: uname2, gameid: gameId, side: 'p1', truePong: p1.truePlayer}));
+    p2.socket.send(JSON.stringify({type: 'startgame',username: uname2,  opponent: uname1, gameid: gameId, side : 'p2', truePong: p2.truePlayer}));
 
   } catch (error){
     console.log(error);

@@ -1,6 +1,5 @@
 // // login.ts
 // const loginURL:string = "https://" + currentUrl + ':' + currentPort + '/api/login';
-var local_user: string;
 var username: any;
 
 function login() {
