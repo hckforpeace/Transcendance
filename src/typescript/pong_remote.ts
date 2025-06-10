@@ -94,7 +94,7 @@ class PongRemote {
 		this.player_2 = new PlayerRemote(player_2_name,
 						 { x: canvas.width - player_offset - PLAYER_HEIGHT, y: (canvas.height - PLAYER_WIDTH) / 2 });
 		this.ball = new BallRemote(center);
-		this.score_max = 30000;
+		this.score_max = 5;
 		this.new_round = true;
 	}
 }
@@ -439,6 +439,7 @@ function finish_game_remote() {
 function game_loop_remote() {
 	if (game_remote.player_1.score >= game_remote.score_max || game_remote.player_2.score >= game_remote.score_max) {
 		end_game_remote = true;
+    socket.send(JSON.stringify({type: 'endGame', scoreP1: game_remote.player_1.score, scoreP2: game_remote.player_2.score, gameid: gameId}));
 		clearInterval(game_interval_remote);
 		finish_game_remote();
 		return ;

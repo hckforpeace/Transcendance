@@ -6,12 +6,17 @@ class Player {
     this._Token = Token;
     this._truePlayer = 'false';
     this._username = username;
+    this._score = null;
     this._PlayerId = PlayerID;
     this._socket = socket;
     this._pendingInvite = false;
     this._inGame = null;
   }
 
+  get score() {
+    return this._score;
+  }
+  
   get PlayerId() {
     return this._PlayerId;
   }
@@ -47,6 +52,10 @@ class Player {
 
   set username(val) {
     this._username = val;
+  }
+
+  set score(val) {
+    this._score = val;
   }
 
   set Token(val) {
@@ -252,6 +261,36 @@ function DisconnectPlayer(id){
   }
 }
 
+function endGame(data, id) {
+  var gameid = data.gameid;
+  var game;
+
+  try
+  {
+    if (!gameid) 
+      throw new Error("wrong parameters");
+    game = Games.get(gameid);
+    if (!game)
+      throw new Error("wrong parameters");
+    if (game.p1.PlayerId == id) {
+      if (game.p2.score != null && game.p2.score != data.scoreP2)
+        throw new Error("error in score");
+      game.p1.score = data.scoreP1;
+    } 
+    if (game.p2.PlayerId == id) {
+      if (game.p1.score != null && game.p1.score != data.scoreP1)
+        throw new Error("error in score");
+      game.p2.score = data.scoreP2;
+    } 
+    if (game.p1.score != null && game.p2.score != null) {
+      // TODO
+      // record the score in the database
+    }
+    // if (game.) 
+  } catch (error) {
+    console.log(error);
+  } 
+}
 
 function getUsers(id){
  
@@ -286,4 +325,4 @@ function isValidGame(game){
   return true;
 }
 
-export default {addPlayer, getUsers, removePlayer, sendCurrentUsers, invitePlayer, startGame, moveOpponent, moveBall, DisconnectPlayer}; 
+export default {addPlayer, getUsers, removePlayer, sendCurrentUsers, invitePlayer, startGame, moveOpponent, moveBall, DisconnectPlayer, endGame}; 
