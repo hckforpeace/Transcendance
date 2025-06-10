@@ -24,22 +24,24 @@ const loginRedir = () => __awaiter(void 0, void 0, void 0, function* () {
         console.error('Error loading login view:', err);
     }
 });
-const registerRedir = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield fetch("/api/register")
-            .then(response => response.text())
-            .then(html => {
-            var content = document.getElementById("content-div");
-            if (!content)
-                throw new Error("Content div not found");
-            content.innerHTML = html;
-        });
-    }
-    catch (err) {
-        console.error('Error loading register view:', err);
-    }
-});
+// const registerRedir = async () => {
+//   try {
+//     await fetch("/api/register")
+//       .then(response => response.text())
+//       .then(html => {
+//         var content = document.getElementById("content-div");
+//         if (!content)
+//           throw new Error("Content div not found");
+//         content.innerHTML = html;
+//       })
+//   } catch (err) {
+//     console.error('Error loading register view:', err);
+//   }
+// }
 function injectViewToContentDiv(data) {
-    const contentDiv = document.getElementById('content-div');
-    contentDiv.innerHTML = data;
+    return new Promise((resolve) => {
+        const contentDiv = document.getElementById('content-div');
+        contentDiv.innerHTML = data;
+        resolve(); // Resolve after DOM update
+    });
 }

@@ -165,7 +165,8 @@ function UpdateActualFriends(data) {
         img.classList.add('w-7', 'h-7');
         div1.classList.add('flex', 'space-x-1');
         div.classList.add('flex', 'justify-between', 'py-2', 'border-b', 'cursor-pointer');
-        div.setAttribute("onclick", "displayFriendCard(this.id)");
+        // div.setAttribute("onclick", "displayFriendCard(this.id)")
+        div.setAttribute("onclick", "navigateTo('/friend/' + this.id)");
         div.id = id.toString();
         p.id = id.toString() + "-name";
         p.innerHTML = name;
@@ -310,11 +311,9 @@ const updateFieldsFriendsCard = (data) => {
     console.log(mail, username, avatar_file_name);
     mail_input.innerHTML = mail;
     username_input.innerHTML = username;
-    img_avatar.src = avatar_file_name;
+    img_avatar.src = '/' + avatar_file_name;
 };
 const displayFriendCard = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    getFriendCardView(() => {
-        getFriendInfo(id);
-        getFriendStats(id);
-    });
+    getFriendInfo(id);
+    getFriendStats(id);
 });

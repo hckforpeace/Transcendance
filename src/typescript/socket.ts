@@ -3,7 +3,6 @@ var socket: WebSocket;
 // TODO: do something with event parameter
 function wsEvent() 
 {
-  renderLobby();
   // listclick();
   socket = new WebSocket('wss://' + currentRoot  + '/api/remote');
   socket.onopen = function (event) {
@@ -40,7 +39,7 @@ async function parseIncommingSocketMsg(data: any)
     else if (data.type == 'invite')
       IncomingInvitationAlert(data);
     else if (data.type == 'startgame')
-      await launchPongRemote(() => {load_script_remote()}, data); 
+      await launchPongRemote(data); 
     else if (data.type == 'pressed' || data.type == 'released')
       moveOpponent(data); 
     else if (data.type == 'moveBall')

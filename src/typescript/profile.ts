@@ -31,6 +31,7 @@ const updateFields = (data: UserData) => {
   const username_input = document.getElementById('uname') as HTMLInputElement;
   const img_avatar = document.getElementById('avatar-preview') as HTMLImageElement;
 
+
   if (!mail || !username || !img_avatar){
     console.log("error while reading user data");
     return ;
@@ -183,7 +184,8 @@ function UpdateActualFriends(data: any) {
     img.classList.add('w-7', 'h-7')
     div1.classList.add('flex', 'space-x-1')
     div.classList.add('flex', 'justify-between', 'py-2', 'border-b', 'cursor-pointer') 
-    div.setAttribute("onclick", "displayFriendCard(this.id)")
+    // div.setAttribute("onclick", "displayFriendCard(this.id)")
+    div.setAttribute("onclick", "navigateTo('/friend/' + this.id)");
     div.id = id.toString();
     p.id = id.toString() + "-name";
     p.innerHTML = name;
@@ -355,13 +357,11 @@ const updateFieldsFriendsCard = (data: UserData) => {
 
   mail_input.innerHTML = mail;
   username_input.innerHTML = username;
-  img_avatar.src = avatar_file_name;
+  img_avatar.src = '/' + avatar_file_name;
 }
 
 const displayFriendCard = async (id: number) => {
-  getFriendCardView(() => {
     getFriendInfo(id);
     getFriendStats(id);
-  });
 };
 

@@ -49,8 +49,8 @@ function getProfileView(callback: () => void) {
     });
 }
 
-function loadProfileView() {
-  getProfileView( () => {
-    renderProfile();
-  });
-}
+// function loadProfileView() {
+//   getProfileView( () => {
+//     renderProfile();
+//   });
+// }

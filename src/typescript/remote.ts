@@ -13,23 +13,20 @@ function IncomingInvitationAlert(data: any)
     socket.send(JSON.stringify({type: 'refuse', userId: data.userId}));
 }
 
-async function launchPongRemote(callback: () => void, data: any): Promise<void> {
+async function launchPongRemote(data: any): Promise<void> {
+  navigateTo('/pong_remote');
   gameId = data.gameid;
   playerSide = data.side;
   opponent = data.opponent;
   local_username = data.username;
   if (data.truePong == 'true')
     truePong = true;
-  await fetchPong();
-  setTimeout(callback, 0);;
 }
 
 function moveBall(data:any)
 {
   game_remote.ball.pos.x = Number(data.x);
   game_remote.ball.pos.y = Number(data.y); 
-  // console.log("ball pos x: " + game.ball.pos.x);
-  // console.log("ball pos y: " + game.ball.pos.y);
 }
 
 function moveOpponent(data:any)
@@ -67,25 +64,6 @@ function moveOpponent(data:any)
 }
 
 
-// function listclick()
-// {
-//   document.getElementById('users_list')?.addEventListener('click', function (event) {
-//     try {
-//       const listItem = event.target as HTMLElement;
-//       if (!listItem)
-//         throw new Error('li not found');
-//       const user = listItem.closest('p');
-//       if (!user)
-//         throw new Error('usli value not defined not found');
-//       console.log(user.innerHTML);
-//       socket.send(JSON.stringify({ type: 'invite', user: user.innerHTML, src: local_user }));
-//     }
-//     catch (error) {
-//       console.log(error);
-//     }
-//   })
-
-// }
 
 
 function sendInvitation(id: any) {
@@ -94,27 +72,6 @@ function sendInvitation(id: any) {
   socket.send(JSON.stringify({ type: 'invite', userId: id}));
 }
 
-// function changeRegion()
-// {
-//     var tag = document.getElementById("dynamic-script") as HTMLScriptElement;
-//     if (!tag) {
-//       return
-//     }
-//     tag.remove(); // remove the old script tag
-//   
-//     var newTag = document.createElement("script");
-//     newTag.id = "dynamic-script";
-//     newTag.type = "text/javascript";
-//     newTag.src = 'js/pong.js';
-//     var footer = document.head;
-//     console.log(  "change region");
-//     if (!footer) {
-//       console.log(  "footer failed");
-//       return ;
-//     }
-//     footer.appendChild(newTag);
-//     console.log("script loaded");
-// }
 
 function updateLobbyUsers(data: any)
 {
@@ -142,33 +99,6 @@ function updateLobbyUsers(data: any)
   }
 }
 
-function renderLobby()
-{
-  try
-  {
-    var content_div = document.getElementById('content-div');
-    if (!content_div)
-      throw new Error('missing content_div ')
-    content_div.innerHTML = '';
-
-    fetch('/html/lobby.html')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch');
-        }
-        return response.text(); // ✅ return the parsed JSON
-      })
-      .then(data => {
-        injectViewToContentDiv(data);
-        // socket_connect();
-      })
-  }
-  catch (error)
-  {
-    console.log(error);
-  }
-}
-
 document.addEventListener("DOMContentLoaded", function () {
 });
 
@@ -185,7 +115,3 @@ async function fetchPong() {
     }); 
 }
 
-function loadRemoteLobby() {
-  // renderLobby();
-  wsEvent();
-}

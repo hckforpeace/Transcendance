@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var socket;
 // TODO: do something with event parameter
 function wsEvent() {
-    renderLobby();
     // listclick();
     socket = new WebSocket('wss://' + currentRoot + '/api/remote');
     socket.onopen = function (event) {
@@ -44,7 +43,7 @@ function parseIncommingSocketMsg(data) {
             else if (data.type == 'invite')
                 IncomingInvitationAlert(data);
             else if (data.type == 'startgame')
-                yield launchPongRemote(() => { load_script_remote(); }, data);
+                yield launchPongRemote(data);
             else if (data.type == 'pressed' || data.type == 'released')
                 moveOpponent(data);
             else if (data.type == 'moveBall')

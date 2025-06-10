@@ -633,8 +633,10 @@ function resizeCanvas() {
  *
  * This function should be called when the rigth html page is loaded
  */
-function load_script(p1_name: string, p2_name: string) {
+function load_script() {
 	try {
+    var p1_name = "username";
+    var p2_name = "Bot";
 		canvas = document.getElementById("pong_canvas") as HTMLCanvasElement;
 		if (!canvas)
 			throw new Error("Canvas not found");

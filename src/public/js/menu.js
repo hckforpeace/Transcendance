@@ -54,8 +54,8 @@ function getProfileView(callback) {
         setTimeout(callback, 0);
     });
 }
-function loadProfileView() {
-    getProfileView(() => {
-        renderProfile();
-    });
-}
+// function loadProfileView() {
+//   getProfileView( () => {
+//     renderProfile();
+//   });
+// }
