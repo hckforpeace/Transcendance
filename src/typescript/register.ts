@@ -28,10 +28,18 @@ function register() {
 					const response = JSON.parse(this.responseText);
 				 	errorMsg.textContent = response.error || "An error occurred.";
 				}
-				if (this.status === 200)
-				{
-					errorMsg.style.color = "green";
-					errorMsg.textContent = "User registered successfully!";
+				if (this.status === 200) {
+					try {
+						const response = JSON.parse(this.responseText);
+						if (response.redirectTo) {
+							window.location.href = response.redirectTo;
+						} else {
+							errorMsg.style.color = "green";
+							errorMsg.textContent = "User registered successfully!";
+						}
+					} catch (e) {
+						errorMsg.textContent = "Registration succeeded, but unexpected response.";
+					}
 				}
 			}
 			catch (e)
@@ -44,6 +52,7 @@ function register() {
 	xhttp.open("POST", "/api/register", true);
 	// console.log(formData);
 	xhttp.send(formData);
+
 }
 
 

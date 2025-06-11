@@ -24,8 +24,19 @@ function register() {
                     errorMsg.textContent = response.error || "An error occurred.";
                 }
                 if (this.status === 200) {
-                    errorMsg.style.color = "green";
-                    errorMsg.textContent = "User registered successfully!";
+                    try {
+                        const response = JSON.parse(this.responseText);
+                        if (response.redirectTo) {
+                            window.location.href = response.redirectTo;
+                        }
+                        else {
+                            errorMsg.style.color = "green";
+                            errorMsg.textContent = "User registered successfully!";
+                        }
+                    }
+                    catch (e) {
+                        errorMsg.textContent = "Registration succeeded, but unexpected response.";
+                    }
                 }
             }
             catch (e) {

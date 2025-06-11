@@ -39,10 +39,10 @@ const login = async (req, reply) => {
       return reply.status(400).send({ error: "Wrong password, try again" });
     }
 
-    const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name}, { expiresIn: "1h" });
+    const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name }, { expiresIn: "1h" });
 
     db.run("UPDATE users SET token_exp = ? WHERE id = ?", [Date.now(), user.id]);
-    
+
     reply.setCookie("token", token, {
       httpOnly: true,
       secure: true,
@@ -52,8 +52,8 @@ const login = async (req, reply) => {
 
   }
   catch (error) {
-     req.log.error(error);
-     return reply.status(500).send({ message: 'Internal server error' });
+    req.log.error(error);
+    return reply.status(500).send({ message: 'Internal server error' });
   }
 
 };
@@ -74,7 +74,7 @@ const avatar = async (req, reply) => {
       avatarUrl = data.avatarPath;
     }
 
-    reply.send({avatarUrl});
+    reply.send({ avatarUrl });
   } catch (err) {
     return reply.status(401).send({ error: 'Non authentifié: token invalide' });
   }
@@ -140,7 +140,9 @@ const register = async (req, reply) => {
   try {
     const hashed_password = await bcrypt.hash(password, 10);
     const result = await db.run(`INSERT INTO users (name, email, hashed_password, avatarPath) VALUES (?, ?, ?, ?)`, [name, email, hashed_password, avatarPath]);
-  } catch (error) {
+    reply.send({ success: true, redirectTo: "/home" });
+  }
+  catch (error) {
     console.error('Error registering user:', error); // Affiche l'erreur dans la console
     return reply.status(500).send({ error: 'Error registering user' });
   }
