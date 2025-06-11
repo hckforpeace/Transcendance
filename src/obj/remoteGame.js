@@ -1,16 +1,24 @@
 let Games = new Map();
 let Players = new Map();
-var PlayerId = 0;
 
 class Player {
   constructor(Token, PlayerID, username, socket) {
     this._Token = Token;
     this._truePlayer = 'false';
     this._username = username;
+    this._score = null;
     this._PlayerId = PlayerID;
     this._socket = socket;
     this._pendingInvite = false;
     this._inGame = null;
+  }
+
+  get score() {
+    return this._score;
+  }
+  
+  get PlayerId() {
+    return this._PlayerId;
   }
 
   get pendingInvite() {
@@ -44,6 +52,10 @@ class Player {
 
   set username(val) {
     this._username = val;
+  }
+
+  set score(val) {
+    this._score = val;
   }
 
   set Token(val) {
@@ -91,7 +103,6 @@ class Game {
 function addPlayer(uid, Token, username, socket){
   let npalyer = new Player(Token, uid, username, socket);
   Players.set(uid, npalyer);
-  PlayerId++;
 }
 
 function moveBall(data) {
@@ -121,6 +132,7 @@ function moveOpponent(data) {
   var game;
   try
   {
+    console.log(data)
     if (!gameid || !opponent)
       throw new Error("wrong parameters");
     console.log('gameid: ' + gameid);
@@ -129,11 +141,9 @@ function moveOpponent(data) {
     if (!game)
       throw new Error("wrong parameters");
     if (game.p1.username == opponent){
-      console.log('p1: ' + game.p1.username);
       game.p1.socket.send(JSON.stringify(data));
     }
     else if (game.p2.username == opponent) {
-      console.log('p2: ' + game.p2.username);
       game.p2.socket.send(JSON.stringify(data));
     }
     else
@@ -144,22 +154,23 @@ function moveOpponent(data) {
   }
 }
 
-function startGame(data, gameId)
+function startGame(data, id, gameId)
 {
   var p1, p2;
   var uname1, uname2;
   
   try {
-    uname1 = data.user; 
-    uname2 = data.src; 
-    if (!uname1 || !uname2)
-      throw new Error("wrong data format"); 
+
+    console.log('id : ' + id);
+    p1 = Players.get(id); 
+    p2 = Players.get(Number(data.userId));
        
-    console.log('p1: ' + uname1 + ', p2: ' + uname2)
-    p1 = findPlayer(uname1);
-    p2 = findPlayer(uname2);
+    // p1 = findPlayer(uname1);
+    // p2 = findPlayer(uname2);
     p1.pendingInvite = false; 
     p2.pendingInvite = false; 
+    uname1 = p1.username;
+    uname2 = p2.username;
 
     if (data.type == 'refuse')
     {
@@ -176,8 +187,8 @@ function startGame(data, gameId)
     Games.set(gameId, new Game(p1, p2));
 
     console.log('gameid: ' + gameId);
-    p1.socket.send(JSON.stringify({type: 'startgame', opponent: uname2, gameid: gameId, side: 'p1', truePong: p1.truePlayer}));
-    p2.socket.send(JSON.stringify({type: 'startgame', opponent: uname1, gameid: gameId, side : 'p2', truePong: p2.truePlayer}));
+    p1.socket.send(JSON.stringify({type: 'startgame',username: uname1, opponent: uname2, gameid: gameId, side: 'p1', truePong: p1.truePlayer}));
+    p2.socket.send(JSON.stringify({type: 'startgame',username: uname2,  opponent: uname1, gameid: gameId, side : 'p2', truePong: p2.truePlayer}));
 
   } catch (error){
     console.log(error);
@@ -199,19 +210,21 @@ function findPlayer(uname)
   return (p);
 }
 
-function invitePlayer(data, socket){
+function invitePlayer(data, InitId ){
   let invited_player;
   let src_player;
 
   try {
-    invited_player = findPlayer(data.user);
-    src_player = findPlayer(data.src);
    
+    invited_player = Players.get(Number(data.userId));
+    src_player = Players.get(InitId);
+
+
     if (!invited_player || !src_player)
       throw new Error("players not found")
 
     if (!invited_player.pendingInvite)
-      invited_player.socket.send(JSON.stringify(data));
+      invited_player.socket.send(JSON.stringify({type: 'invite', username: src_player.username, userId: InitId}));
     invited_player.pendingInvite = true;
   } catch (error) {
     console.log(error);
@@ -248,29 +261,62 @@ function DisconnectPlayer(id){
   }
 }
 
+function endGame(data, id) {
+  var gameid = data.gameid;
+  var game;
+
+  try
+  {
+    if (!gameid) 
+      throw new Error("wrong parameters");
+    game = Games.get(gameid);
+    if (!game)
+      throw new Error("wrong parameters");
+    if (game.p1.PlayerId == id) {
+      if (game.p2.score != null && game.p2.score != data.scoreP2)
+        throw new Error("error in score");
+      game.p1.score = data.scoreP1;
+    } 
+    if (game.p2.PlayerId == id) {
+      if (game.p1.score != null && game.p1.score != data.scoreP1)
+        throw new Error("error in score");
+      game.p2.score = data.scoreP2;
+    } 
+    if (game.p1.score != null && game.p2.score != null) {
+      // TODO
+      // record the score in the database
+    }
+    // if (game.) 
+  } catch (error) {
+    console.log(error);
+  } 
+}
+
 function getUsers(id){
-  
+ 
   var usersList = {};
   var key = 'users';
   usersList[key] = [];
 
   Players.forEach((values, keys) => {
     if (keys != id)
-      usersList[key].push(values.username);
+      usersList[key].push({id: values.PlayerId, username: values.username});
   })
+
   return (JSON.stringify(usersList));
 }
 
-function broadcast()
-{
-  Players.forEach((values, keys) => {
-      values.socket.send(getUsers(keys));
-  })
-}
+
 
 function sendCurrentUsers()
 {
-  broadcast();
+  var users;
+  Players.forEach((values, keys) => {
+    users = getUsers(keys);
+    console.log('the user ' + values.name + ' should receive: ' + users + ' his socket is: ' + values.socket)
+    values.socket.send(users);
+  })
+
 }
 
 function isValidGame(game){
@@ -279,4 +325,4 @@ function isValidGame(game){
   return true;
 }
 
-export default {addPlayer, getUsers, removePlayer, sendCurrentUsers, invitePlayer, startGame, moveOpponent, moveBall, DisconnectPlayer}; 
+export default {addPlayer, getUsers, removePlayer, sendCurrentUsers, invitePlayer, startGame, moveOpponent, moveBall, DisconnectPlayer, endGame}; 

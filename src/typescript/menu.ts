@@ -34,8 +34,8 @@ function updateUserAvatar(avatarUrl: string) {
 
 
 function getProfileView(callback: () => void) {
-    if (isLoggedIn === false)
-        return;
+    // if (isLoggedIn === false)
+    //     return;
     fetch('/html/profile.html')
         .then(response => {
         if (!response.ok) {
@@ -49,8 +49,8 @@ function getProfileView(callback: () => void) {
     });
 }
 
-function loadProfileView() {
-  getProfileView( () => {
-    renderProfile();
-  });
-}
+// function loadProfileView() {
+//   getProfileView( () => {
+//     renderProfile();
+//   });
+// }

@@ -20,6 +20,7 @@ let connections = new Map();
 const profileInfo = async (req, reply) => {
   const decoded = await req.jwtVerify()
   const userId = decoded.userId;
+  console.log("******************** this is the call to profileInfo *****************************************" + userId)
   const res = await requests.getProfileData(userId);
   if (!res)
     reply.code(500)

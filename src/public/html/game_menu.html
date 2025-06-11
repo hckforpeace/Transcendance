@@ -3,13 +3,16 @@
     id="playBot"
     type="button"
     value="Play with Bot"
-    onclick="pong_ia_redir()"
+    href='/pong_ia'
+    onclick="handleRouteClick(event)"
     class="w-64 py-8 bg-blue-600 text-white rounded-lg cursor-pointer text-xl font-semibold"
   />
 
   <input
     id="playFriends"
     type="button"
+    href='/lobby'
+    onclick="handleRouteClick(event)"
     value="Play with Friends"
     class="w-64 py-8 bg-purple-600 text-white rounded-lg cursor-pointer text-xl font-semibold"
   />

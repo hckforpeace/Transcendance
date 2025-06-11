@@ -40,8 +40,8 @@ function updateUserAvatar(avatarUrl) {
     profileImg.src = avatarUrl || '/images/avatar.jpg';
 }
 function getProfileView(callback) {
-    if (isLoggedIn === false)
-        return;
+    // if (isLoggedIn === false)
+    //     return;
     fetch('/html/profile.html')
         .then(response => {
         if (!response.ok) {
@@ -54,8 +54,8 @@ function getProfileView(callback) {
         setTimeout(callback, 0);
     });
 }
-function loadProfileView() {
-    getProfileView(() => {
-        renderProfile();
-    });
-}
+// function loadProfileView() {
+//   getProfileView( () => {
+//     renderProfile();
+//   });
+// }

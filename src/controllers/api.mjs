@@ -150,29 +150,24 @@ const register = async (req, reply) => {
 
 const sock_con = async (socket, req, fastify) => {
   try {
-    var token = req.headers['sec-websocket-protocol'];
+    var token = await req.jwtVerify()
     if (!token)
       throw new Error('No token provided');
 
-    var decodedToken = fastify.jwt.verify(token);
-    if (!decodedToken)
-      throw new Error('failed to decode token');
-
-    var username = decodedToken['username'];
-    var id = decodedToken['id']
-
-    remoteObj.addPlayer(id, token, username, socket);
-
-    remoteObj.sendCurrentUsers(id);
-    // remoteObj.getUsers();
+    var username = token.name;
+    var id = token.userId;
+    remoteObj.addPlayer(id, token, username, socket);    // DEBUG: Check socket state immediately after connection
+    remoteObj.sendCurrentUsers();
 
     socket.on('message', message => {
       try {
         message = JSON.parse(message);
         if (message != null && message.type == 'invite')
-          remoteObj.invitePlayer(message, socket);
+          remoteObj.invitePlayer(message, id);
         else if (message.type == 'accept' || message.type == 'refuse')
-          remoteObj.startGame(message, uuidv4());
+          remoteObj.startGame(message, id, uuidv4());
+        else if (message.type == 'endGame')
+          remoteObj.endGame(message, id);
         else if (message.type == 'pressed' || message.type == 'released')
           remoteObj.moveOpponent(message);
         else if (message.type == 'moveBall')
@@ -186,6 +181,7 @@ const sock_con = async (socket, req, fastify) => {
     socket.on('close', () => {
       console.log('Connection closed:', id);
       remoteObj.DisconnectPlayer(id);
+    remoteObj.sendCurrentUsers();
     });
   }
   catch (error) {
@@ -194,10 +190,6 @@ const sock_con = async (socket, req, fastify) => {
   }
 }
 
-const pong_view = async (req, rep) => {
-  const data = fs.readFileSync(path.join(__dirname, '../views/pong.ejs'), 'utf-8');
-  rep.send(data);
-}
 
 const users = async (req, reply) => {
   try {
@@ -211,4 +203,4 @@ const users = async (req, reply) => {
   }
 };
 
-export default { sock_con, pong_view, login, register, users, avatar };
+export default { sock_con, login, register, users, avatar };

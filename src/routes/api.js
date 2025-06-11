@@ -79,31 +79,27 @@ async function routes(fastify, options) {
     reply.send(data);
   });
 
-  fastify.get('/pong_ia', (req, reply) => {
-    const data = fs.readFileSync(path.join(__dirname, '../views/pong_ia.ejs'), 'utf-8');
-    reply.send(data);
-  });
+  // fastify.get('/pong_ia', (req, reply) => {
+  //   const data = fs.readFileSync(path.join(__dirname, '../views/pong_ia.ejs'), 'utf-8');
+  //   reply.send(data);
+  // });
 
-  fastify.get('/game_menu', (req, reply) => {
-    const data = fs.readFileSync(path.join(__dirname, '../views/game_menu.ejs'), 'utf-8');
-    reply.send(data);
-  });
 
-  fastify.get('/api/register', (req, reply) => {
-    const data = fs.readFileSync(path.join(__dirname, '../views/register.ejs'), 'utf-8');
-    reply.send(data);
-  });
+  // fastify.get('/api/register', (req, reply) => {
+  //   const data = fs.readFileSync(path.join(__dirname, '../views/register.ejs'), 'utf-8');
+  //   reply.send(data);
+  // });
 
-  fastify.get('/api/login', (req, reply) => {
-    const data = fs.readFileSync(path.join(__dirname, '../views/login.ejs'), 'utf-8');
-    reply.send(data);
-  });
+  // fastify.get('/api/login', (req, reply) => {
+  //   const data = fs.readFileSync(path.join(__dirname, '../views/login.ejs'), 'utf-8');
+  //   reply.send(data);
+  // });
 
   fastify.post('/api/login', api.login);
 
   fastify.post('/api/register', api.register);
 
-  fastify.get('/api/pong', { preHandler: [fastify.authenticate] }, api.pong_view);
+  // fastify.get('/api/pong', { preHandler: [fastify.authenticate] }, api.pong_view);
   // connect to the websocket server
   fastify.get('/api/remote', { preHandler: [fastify.authenticate], websocket: true }, (socket, req) => {
     api.sock_con(socket, req, fastify);

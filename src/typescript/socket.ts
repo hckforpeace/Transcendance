@@ -1,12 +1,11 @@
 var socket: WebSocket;
 
 // TODO: do something with event parameter
-function wsEvent(event: any) 
+function wsEvent() 
 {
-  socket = new WebSocket('wss://' + currentRoot + '/api/remote', localStorage.getItem("token")?.toString());
+  // listclick();
+  socket = new WebSocket('wss://' + currentRoot  + '/api/remote');
   socket.onopen = function (event) {
-    renderLobby();
-    listclick();
   };
 
   socket.onmessage = function(event) {
@@ -28,15 +27,8 @@ function wsEvent(event: any)
   };
 }
 
-// Creates socket connection n
-function socket_connect() {
-  const remote = document.getElementById("start") ;
-  if (!remote)
-    return;
-  remote.addEventListener("click", wsEvent);
-}
 
-function parseIncommingSocketMsg(data: any)
+async function parseIncommingSocketMsg(data: any)
 {
   // const jsonData = JSON.parse(data);
   try {
@@ -47,7 +39,7 @@ function parseIncommingSocketMsg(data: any)
     else if (data.type == 'invite')
       IncomingInvitationAlert(data);
     else if (data.type == 'startgame')
-      launchPongRemote(data); 
+      await launchPongRemote(data); 
     else if (data.type == 'pressed' || data.type == 'released')
       moveOpponent(data); 
     else if (data.type == 'moveBall')
