@@ -148,6 +148,19 @@ const register = async (req, reply) => {
   }
 };
 
+const logout = async (req, reply) => {
+	try {
+		reply.clearCookie("token", {
+			path: "/"
+		});
+		return reply.code(200).send({ message: "Logged out" });
+	} catch (err) {
+		req.log.error(err);
+		return reply.status(500).send({ error: "Logout failed" });
+	}
+};
+
+
 const sock_con = async (socket, req, fastify) => {
   try {
     var token = await req.jwtVerify()
@@ -203,4 +216,4 @@ const users = async (req, reply) => {
   }
 };
 
-export default { sock_con, login, register, users, avatar };
+export default { sock_con, login, register, users, avatar, logout };

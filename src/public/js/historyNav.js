@@ -17,17 +17,17 @@ const routes = [
     {
         path: '/',
         view: '/html/home.html',
-        title: 'welcome'
+        title: 'Welcome'
     },
     {
         path: '/login',
         view: '/html/login.html',
-        title: 'login'
+        title: 'Login'
     },
     {
         path: '/games',
         view: '/html/game_menu.html',
-        title: 'games'
+        title: 'Games'
     },
     {
         path: '/pong_remote',
@@ -44,7 +44,7 @@ const routes = [
     {
         path: '/lobby',
         view: '/html/lobby.html',
-        title: 'lobby',
+        title: 'Lobby',
         function: wsEvent
     },
     {
@@ -56,7 +56,7 @@ const routes = [
     {
         path: '/profile',
         view: '/html/profile.html',
-        title: 'register',
+        title: 'Profile',
         function: renderProfile
     },
     {
@@ -68,7 +68,12 @@ const routes = [
     {
         path: '/register',
         view: '/html/register.html',
-        title: 'register'
+        title: 'Register'
+    },
+    {
+        path: '/rgpd',
+        view: '/html/rgpd.html',
+        title: 'RGPD'
     },
 ];
 // Function to handle navigation

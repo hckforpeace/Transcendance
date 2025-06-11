@@ -65,6 +65,8 @@ async function routes(fastify, options) {
 
   fastify.get('/api/avatar', { preHandler: [fastify.authenticate] }, api.avatar)
 
+  fastify.get('/api/logout', { preHandler: [fastify.authenticate] }, api.logout);
+
   // fastify.get('/api/get_player', { preHandler: [fastify.authenticate] }, async (req, reply) => {
   //   const username = await get_player(req, reply);
   //   return { name: username };
@@ -72,10 +74,6 @@ async function routes(fastify, options) {
 
   fastify.get('/home', (req, reply) => {
     const data = fs.readFileSync(path.join(__dirname, '../views/home.ejs'), 'utf-8');
-    reply.send(data);
-  });
-  fastify.get('/rgpd', (req, reply) => {
-    const data = fs.readFileSync(path.join(__dirname, '../views/rgpd.ejs'), 'utf-8');
     reply.send(data);
   });
 

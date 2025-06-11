@@ -16,17 +16,17 @@ const routes: Route[] = [
   {
     path: '/',
     view: '/html/home.html', 
-    title: 'welcome'
+    title: 'Welcome'
   },
   {
     path: '/login',
     view: '/html/login.html', 
-    title: 'login'
+    title: 'Login'
   },
   {
     path: '/games',
     view: '/html/game_menu.html', 
-    title: 'games'
+    title: 'Games'
   },
   {
     path: '/pong_remote',
@@ -43,7 +43,7 @@ const routes: Route[] = [
   {
     path: '/lobby',
     view: '/html/lobby.html', 
-    title: 'lobby',
+    title: 'Lobby',
     function: wsEvent
   },
   {
@@ -55,7 +55,7 @@ const routes: Route[] = [
   {
     path: '/profile',
     view: '/html/profile.html', 
-    title: 'register',
+    title: 'Profile',
     function: renderProfile
   },
   {
@@ -67,7 +67,12 @@ const routes: Route[] = [
   {
     path: '/register',
     view: '/html/register.html', 
-    title: 'register'
+    title: 'Register'
+  },
+  {
+    path: '/rgpd',
+    view: '/html/rgpd.html', 
+    title: 'RGPD'
   },
 
 ];

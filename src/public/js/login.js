@@ -37,6 +37,7 @@ function login() {
                         .catch(err => {
                         console.error("Error fetching avatar:", err);
                     });
+                    navigateTo('/');
                 }
             }
             catch (e) {

@@ -9,13 +9,19 @@
       <!-- Your form here -->
       <form id="update-form" class="h-full flex flex-col lg:flex-row gap-4" enctype="multipart/form-data">
         
-        <!-- Avatar -->
+        <!-- Avatar & logout -->
         <div class="flex flex-col items-center justify-start lg:w-1/3 flex-shrink-0">
+          <!-- Avatar -->
           <img id="avatar-preview" class="h-24 w-24 md:h-32 md:w-32 object-cover rounded-full border-4 border-blue-200 mb-3" src="images/avatar.jpg" alt="Avatar">  
           <input name="avatar" class="block w-full max-w-xs p-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500" 
             onchange="previewAvatar(event)" id="file_input" type="file">
           <div id="form-error-msg" class="text-red-500 text-sm"></div>
+
+          <!-- Logout Button with extra spacing -->
+          <input type="button" value="Logout" onclick="logout()" 
+                class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors max-w-xs mt-10">
         </div>
+
 
         <!-- Fields -->
         <div class="flex-1 overflow-y-auto space-y-4">
