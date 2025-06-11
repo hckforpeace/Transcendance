@@ -24,24 +24,36 @@ const loginRedir = () => __awaiter(void 0, void 0, void 0, function* () {
         console.error('Error loading login view:', err);
     }
 });
-// const registerRedir = async () => {
-//   try {
-//     await fetch("/api/register")
-//       .then(response => response.text())
-//       .then(html => {
-//         var content = document.getElementById("content-div");
-//         if (!content)
-//           throw new Error("Content div not found");
-//         content.innerHTML = html;
-//       })
-//   } catch (err) {
-//     console.error('Error loading register view:', err);
-//   }
-// }
 function injectViewToContentDiv(data) {
     return new Promise((resolve) => {
         const contentDiv = document.getElementById('content-div');
         contentDiv.innerHTML = data;
         resolve(); // Resolve after DOM update
     });
+}
+function handleCredentialResponse(response) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log('ID Token:', response.credential);
+        const res = yield fetch('/auth/google', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ Token: response.credential }),
+        });
+        if (res.ok)
+            console.log('success');
+        // Send to backend for verification
+    });
+}
+function oauth2() {
+    var btn = document.getElementById("g_id_signin");
+    if (btn) {
+        google.accounts.id.initialize({
+            client_id: "998291091717-69t8ub79jvhdfq195vqtc93buajcgsaf.apps.googleusercontent.com",
+            callback: handleCredentialResponse,
+            auto_select: false,
+        });
+        google.accounts.id.renderButton(btn, { theme: "outline", size: "large", type: "standard" });
+    }
 }

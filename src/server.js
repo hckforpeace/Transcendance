@@ -1,11 +1,11 @@
 import fs from 'fs'
 import jwtPlugin from './plugins/jwtPlugin.js'
 import Fastify from 'fastify'
-import routesItems from './routes/items.js'
 import routesHome from './routes/home.js'
 import routesApi from './routes/api.js'
 import routesProfile from './routes/profile.js'
 import routesViews from './routes/menu.js'
+import routeAuth from './routes/auth.js'
 import view from '@fastify/view'
 import ejs from 'ejs'
 import { fileURLToPath } from 'url'
@@ -94,6 +94,7 @@ fastify.register(routesHome);
 fastify.register(routesApi);
 fastify.register(routesProfile);
 fastify.register(routesViews);
+fastify.register(routeAuth);
 
 // server is listening
 fastify.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {
