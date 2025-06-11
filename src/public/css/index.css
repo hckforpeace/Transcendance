@@ -23,6 +23,7 @@
     --color-gray-100: oklch(96.7% 0.003 264.542);
     --color-gray-200: oklch(92.8% 0.006 264.531);
     --color-gray-300: oklch(87.2% 0.01 258.338);
+    --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
     --breakpoint-xl: 80rem;
@@ -633,6 +634,9 @@
   .bg-white {
     background-color: var(--color-white);
   }
+  .bg-\[url\(\'\/images\/mondrian\.jpg\'\)\] {
+    background-image: url('/images/mondrian.jpg');
+  }
   .bg-\[url\(\'\/images\/space\.gif\'\)\] {
     background-image: url('/images/space.gif');
   }
@@ -771,6 +775,9 @@
   }
   .text-\[\#777\] {
     color: #777;
+  }
+  .text-black {
+    color: var(--color-black);
   }
   .text-blue-500 {
     color: var(--color-blue-500);
