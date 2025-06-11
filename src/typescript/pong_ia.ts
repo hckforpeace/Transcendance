@@ -1,4 +1,4 @@
-const TRAINING: boolean = true;
+const TRAINING: boolean = false;
 
 /* ************************************************************************** */
 /*                                GLOBAL VARIABLES                            */
@@ -111,7 +111,7 @@ class Pong {
 		if (TRAINING)
 			this.score_max = 150;
 		else
-			this.score_max = 10;
+			this.score_max = 1;
 		this.new_round = true;
 	}
 }
@@ -564,6 +564,23 @@ function saveQTableToFile() {
 	URL.revokeObjectURL(url);
 }
 
+async function update_user_stats(p1_score: number, p2_score: number): Promise<void> {
+  try {
+    console.log("COUCOUUUUUUU GUGGUGUUG");
+
+    const response = await fetch('/updateUserStats', {
+      method: 'POST',
+      body: JSON.stringify({ p1_score, p2_score }), // Send the scores to the backend
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update user stats');
+    }
+	} catch (error) {
+		console.error('Error updating user stats:', error);
+	}
+}
+
 /**
  * @brief Handler on game finish
  */
@@ -577,6 +594,7 @@ function finish_game() {
 function game_loop() {
 	if (game.player_1.score >= game.score_max || game.player_2.score >= game.score_max) {
 		end_game = true;
+		update_user_stats(game.player_1.score, game.player_2.score);
 		finish_game();
 		clearInterval(game_interval);
 		saveQTableToFile();
@@ -628,15 +646,28 @@ function resizeCanvas() {
 	FONT_SIZE = 0.08 * Math.min(canvas.width, canvas.height);
 }
 
+// Function to fetch and update profile data 
+const getUserName = async () => {
+  const response = await fetch('/api/profile/info');
+  if (!response.ok)
+    throw new Error('Failed to fetch');
+
+  return await response.json();  // ✅ returns resolved data
+};
+
 /**
  * @brief Load the different event for the pong game
  *
  * This function should be called when the rigth html page is loaded
  */
-function load_script() {
+async function load_script() {
 	try {
-    var p1_name = "username";
-    var p2_name = "Bot";
+		const data = await getUserName();
+		console.log("data = ", data);
+
+		const leftName = document.getElementById("left-player-name");
+    	if (leftName) 
+				leftName.innerHTML = username;
 		canvas = document.getElementById("pong_canvas") as HTMLCanvasElement;
 		if (!canvas)
 			throw new Error("Canvas not found");
@@ -647,7 +678,7 @@ function load_script() {
 		/* Start game */
 		if (!game)
 			game_interval = setInterval(game_loop, 8);
-		launch_game(p1_name, p2_name);
+		launch_game("test", "Bot");
 		/* Set events listeners */
 		document.addEventListener("keydown", pressedKeyHandler, false);
 		document.addEventListener("keyup", releasedKeyHandler, false);

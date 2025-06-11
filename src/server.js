@@ -16,7 +16,6 @@ import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 import { initDB } from './database/database.js'
 import { getDB } from './database/database.js'
-
 import populate from './database/populate.js'
 import fastifyCookie from '@fastify/cookie'
 import fastifyFormbody from '@fastify/formbody'
@@ -24,6 +23,7 @@ import fastifyMultipart from "@fastify/multipart"
 import dotenv from 'dotenv';
 import { rateLimiter, sql_xss_check } from './WAF.js';
 //import routesPong from './routes/pong.js';
+import pong_match from './routes/pong_match.js';
 import {check_token_validity} from './handle_account.js';
 
 dotenv.config();
@@ -52,7 +52,7 @@ fastify.register(fastifyCookie);
 
 fastify.register(websockets);
 
-
+fastify.register(pong_match);
 // jwt plugin
 fastify.register(jwtPlugin);
 

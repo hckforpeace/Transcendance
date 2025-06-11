@@ -1,5 +1,14 @@
 "use strict";
-const TRAINING = true;
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+const TRAINING = false;
 /* ************************************************************************** */
 /*                                GLOBAL VARIABLES                            */
 /* ************************************************************************** */
@@ -81,7 +90,7 @@ class Pong {
         if (TRAINING)
             this.score_max = 150;
         else
-            this.score_max = 10;
+            this.score_max = 1;
         this.new_round = true;
     }
 }
@@ -472,6 +481,23 @@ function saveQTableToFile() {
     // Revoke the object URL to free memory
     URL.revokeObjectURL(url);
 }
+function update_user_stats(p1_score, p2_score) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            console.log("COUCOUUUUUUU GUGGUGUUG");
+            const response = yield fetch('/updateUserStats', {
+                method: 'POST',
+                body: JSON.stringify({ p1_score, p2_score }), // Send the scores to the backend
+            });
+            if (!response.ok) {
+                throw new Error('Failed to update user stats');
+            }
+        }
+        catch (error) {
+            console.error('Error updating user stats:', error);
+        }
+    });
+}
 /**
  * @brief Handler on game finish
  */
@@ -484,6 +510,7 @@ function finish_game() {
 function game_loop() {
     if (game.player_1.score >= game.score_max || game.player_2.score >= game.score_max) {
         end_game = true;
+        update_user_stats(game.player_1.score, game.player_2.score);
         finish_game();
         clearInterval(game_interval);
         saveQTableToFile();
@@ -529,30 +556,42 @@ function resizeCanvas() {
     BALL_RADIUS = 0.01 * Math.min(canvas.width, canvas.height);
     FONT_SIZE = 0.08 * Math.min(canvas.width, canvas.height);
 }
+// Function to fetch and update profile data 
+const getUserName = () => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield fetch('/api/profile/info');
+    if (!response.ok)
+        throw new Error('Failed to fetch');
+    return yield response.json(); // ✅ returns resolved data
+});
 /**
  * @brief Load the different event for the pong game
  *
  * This function should be called when the rigth html page is loaded
  */
 function load_script() {
-    try {
-        var p1_name = "username";
-        var p2_name = "Bot";
-        canvas = document.getElementById("pong_canvas");
-        if (!canvas)
-            throw new Error("Canvas not found");
-        ctx = canvas.getContext("2d");
-        if (!ctx)
-            throw new Error("Context not found");
-        /* Start game */
-        if (!game)
-            game_interval = setInterval(game_loop, 8);
-        launch_game(p1_name, p2_name);
-        /* Set events listeners */
-        document.addEventListener("keydown", pressedKeyHandler, false);
-        document.addEventListener("keyup", releasedKeyHandler, false);
-    }
-    catch (err) {
-        console.log(err);
-    }
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const data = yield getUserName();
+            console.log("data = ", data);
+            const leftName = document.getElementById("left-player-name");
+            if (leftName)
+                leftName.innerHTML = username;
+            canvas = document.getElementById("pong_canvas");
+            if (!canvas)
+                throw new Error("Canvas not found");
+            ctx = canvas.getContext("2d");
+            if (!ctx)
+                throw new Error("Context not found");
+            /* Start game */
+            if (!game)
+                game_interval = setInterval(game_loop, 8);
+            launch_game("test", "Bot");
+            /* Set events listeners */
+            document.addEventListener("keydown", pressedKeyHandler, false);
+            document.addEventListener("keyup", releasedKeyHandler, false);
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
 }
