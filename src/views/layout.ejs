@@ -23,18 +23,20 @@
     <link rel="stylesheet" href="css/index.css">
     <script id='register-script' src="js/register.js"> </script>
     <script id='remote-script' src="js/historyNav.js"> </script>
+    <script id='logout-script' src="js/logout.js"> </script>
     <link rel="stylesheet" href="css/button.css">
 
   </head>
-  <body class="bg-[url('/images/mondrian.jpg')] bg-cover bg-center bg-no-repeat min-h-screen">
-    <div id="menu" class="grid grid-cols-3 items-center h-16 px-4  border-4  border-blue-500 " >
-      <%- include('./menu.ejs') %>
+  <body class=" bg-cover bg-center bg-no-repeat min-h-screen flex flex-col">
+    <div id="menu" class="grid grid-cols-3 items-center h-16 px-4 border-4 border-blue-500">
+     <%- include('./menu.ejs') %>
     </div>
-    <div id="content-div" class="flex items-center justify-center min-h-screen">  
-      <%- body %>
+    <div id="content-div" class="flex-grow flex items-center justify-center">
+     <%- body %>
     </div>
+    <footer id="footer" class="flex text-white items-center justify-center h-16">
+     <input id="RGPD" type="button" value="Privacy Policy" href="/rgpd" onclick="handleRouteClick(event)">
+    </footer>
   </body>
-  <footer id="footer" class="flex items-center justify-center">
-    <input id="RGPD" type="button" value="Privacy Policy">
-  </footer>
+
 </html>

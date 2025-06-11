@@ -23,7 +23,6 @@
     --color-gray-100: oklch(96.7% 0.003 264.542);
     --color-gray-200: oklch(92.8% 0.006 264.531);
     --color-gray-300: oklch(87.2% 0.01 258.338);
-    --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
     --breakpoint-xl: 80rem;
@@ -441,8 +440,14 @@
   .flex-1 {
     flex: 1;
   }
+  .flex-shrink {
+    flex-shrink: 1;
+  }
   .flex-shrink-0 {
     flex-shrink: 0;
+  }
+  .flex-grow {
+    flex-grow: 1;
   }
   .table-fixed {
     table-layout: fixed;
@@ -619,14 +624,17 @@
   .bg-purple-600 {
     background-color: var(--color-purple-600);
   }
+  .bg-red-500 {
+    background-color: var(--color-red-500);
+  }
   .bg-red-600 {
     background-color: var(--color-red-600);
   }
   .bg-white {
     background-color: var(--color-white);
   }
-  .bg-\[url\(\'\/images\/mondrian\.jpg\'\)\] {
-    background-image: url('/images/mondrian.jpg');
+  .bg-\[url\(\'\/images\/space\.gif\'\)\] {
+    background-image: url('/images/space.gif');
   }
   .bg-cover {
     background-size: cover;
@@ -761,8 +769,8 @@
   .text-\[\#444\] {
     color: #444;
   }
-  .text-black {
-    color: var(--color-black);
+  .text-\[\#777\] {
+    color: #777;
   }
   .text-blue-500 {
     color: var(--color-blue-500);
@@ -796,6 +804,9 @@
   }
   .italic {
     font-style: italic;
+  }
+  .underline {
+    text-decoration-line: underline;
   }
   .shadow-lg {
     --tw-shadow: 0 10px 15px -3px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 4px 6px -4px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
@@ -857,6 +868,13 @@
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-green-600);
+      }
+    }
+  }
+  .hover\:bg-red-700 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-red-700);
       }
     }
   }
