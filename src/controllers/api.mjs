@@ -83,6 +83,7 @@ const avatar = async (req, reply) => {
 
 const register = async (req, reply) => {
 
+  var uniqueId; 
   const formData = await req.formData();
   const email = formData.get("email");
   const name = formData.get("name");
@@ -139,10 +140,9 @@ const register = async (req, reply) => {
   }
   try {
     const hashed_password = await bcrypt.hash(password, 10);
-    const result = await db.run(`INSERT INTO users (name, email, hashed_password, avatarPath) VALUES (?, ?, ?, ?)`, [name, email, hashed_password, avatarPath]);
-    reply.send({ success: true, redirectTo: "/home" });
-  }
-  catch (error) {
+    uniqueId = uuidv4(); // Generate a unique ID for the user
+    const result = await db.run(`INSERT INTO users (id, name, email, hashed_password, avatarPath) VALUES (?, ?, ?, ?, ?)`, [uniqueId, name, email, hashed_password, avatarPath]);
+  } catch (error) {
     console.error('Error registering user:', error); // Affiche l'erreur dans la console
     return reply.status(500).send({ error: 'Error registering user' });
   }

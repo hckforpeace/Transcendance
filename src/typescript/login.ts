@@ -16,7 +16,7 @@ function login() {
 
 	xhttp.onreadystatechange = function () {
 		if (this.readyState === 4) {
-			try {
+			try  {
 				if (this.status === 400 || this.status === 500) {
 					const response = JSON.parse(this.responseText);
 					errorMsg.textContent = response.error || "An error occurred.";
@@ -64,3 +64,48 @@ const displayAvatarMenu = () => {
 							console.error("Error fetching avatar:", err);
 						});
 }
+
+
+// ***************************************************************************
+//                                   Google sign-in
+// ***************************************************************************
+
+async function handleCredentialResponse(response: any) {
+	const errorMsg = document.getElementById("form-error-msg");
+	if (!errorMsg)
+		return;
+  const res = await fetch('/auth/google', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ Token: response.credential }),
+  });
+  if (res.ok) {
+    console.log('success')
+    navigateTo('/')
+  }
+  else if (res.status === 400)
+  {
+    const response = await res.json();
+    console.log(response.error)
+    errorMsg.textContent = response.error;
+
+  }
+  // Send to backend for verification
+}
+
+function oauth2() {
+  var btn = document.getElementById("g_id_signin") as HTMLDivElement;
+  if (btn) {    google.accounts.id.initialize({
+      client_id: "998291091717-69t8ub79jvhdfq195vqtc93buajcgsaf.apps.googleusercontent.com",
+      callback: handleCredentialResponse,
+      auto_select: false,
+    });
+    google.accounts.id.renderButton(
+      btn,
+      { theme: "outline", size: "large", type: "standard"   })
+  }
+}
+
+

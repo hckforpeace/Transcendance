@@ -116,8 +116,8 @@ const addFriend = async (userId, friendId) => {
         return (id + 'not found')
       users.push({id: id, name: friendData.name, connected: friendData.connected, avatar: friendData.avatarPath})
       friends = JSON.parse(friendData.friendedMe || "[]");
-      if (!friends.includes(Number(userId))) {
-        friends.push(Number(userId));
+      if (!friends.includes(userId)) {
+        friends.push(userId);
         await db.run("UPDATE users SET friendedMe = ? WHERE id = ?", [JSON.stringify(friends), id]);
       }
     })
@@ -136,8 +136,8 @@ const addFriend = async (userId, friendId) => {
       //     await socket.connections.get(Number(userId)).send(JSON.stringify({id: user.id, name: user.name, connected: user.connected, avatar: user.avatar }))
       // })
     }
-      if (socket.connections.has(Number(userId)))
-        await socket.connections.get(Number(userId)).send(JSON.stringify(users));
+      if (socket.connections.has(userId))
+        await socket.connections.get(userId).send(JSON.stringify(users));
   } catch (error) {
     console.error("Error adding friend:", error);
     return (null);

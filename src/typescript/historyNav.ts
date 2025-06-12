@@ -21,7 +21,8 @@ const routes: Route[] = [
   {
     path: '/login',
     view: '/html/login.html', 
-    title: 'Login'
+    title: 'login',
+    function: oauth2
   },
   {
     path: '/games',

@@ -10,15 +10,15 @@ export const initDB = async () => {
 
     // TODO Change id to make it unique wihtout auto increment
     await db.exec(`CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT UNIQUE NOT NULL,
-        hashed_password TEXT NOT NULL,
+        id TEXT UNIQUE,
+        name TEXT UNIQUE, hashed_password TEXT ,
         email TEXT UNIQUE NOT NULL, 
         connected BOOLEAN DEFAULT 0, 
         avatarPath TEXT DEFAULT '/images/avatar.jpg',
         friends TEXT DEFAULT '[]',
         socketConnectionProfile BOOL DEFAULT 0,
         friendedMe TEXT DEFAULT '[]',
+        isGoogleAuth BOOL DEFAULT 0,
         token_exp INTEGER
     )`);
 
