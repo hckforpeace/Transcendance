@@ -495,9 +495,18 @@ function update_user_stats(p1_score, p2_score) {
     });
 }
 /**
- * @brief Handler on game finish
- */
-function finish_game() {
+ * @brief Handler on game finish and draw results at the screen
+ */ function finish_game() {
+    const resultMessage = document.getElementById("game-result-message");
+    const resultTitle = document.getElementById("result-title");
+    const resultScore = document.getElementById("result-score");
+    if (resultMessage && resultTitle && resultScore) {
+        resultMessage.classList.remove("hidden");
+        const p1Score = game.player_1.score;
+        const p2Score = game.player_2.score;
+        resultTitle.textContent = p1Score >= game.score_max ? "YOU WIN" : "YOU LOSE";
+        resultScore.textContent = `${p1Score} - ${p2Score}`;
+    }
     draw_finish();
 }
 /**

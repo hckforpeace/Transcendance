@@ -12,11 +12,11 @@ const updateUserStats = async (req, reply) => {
     const decoded = await req.jwtVerify();
     const userId = decoded.userId;
 
+
     const { p1_score, p2_score } = req.body;
 
-    console.log("p1 -> ", p1_score, " Bot -> ", p2_score);
-
-    const player1_alias = decoded.name
+    const player_1 = await db.get("SELECT * FROM users WHERE id = ?", userId);
+    const player1_alias = player_1.name;
     const player2_alias = "Bot"
     const player2_id = 2
 

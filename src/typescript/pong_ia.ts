@@ -57,7 +57,7 @@ const GAMMA: number = 0.7;
 let EPSILON: number = 1;
 let EPSILON_MIN: number = 0.2;
 const epsilon_decay_rate: number = 0.00001;
-let Q_table: number[][] = [[21.31108513974205,75.20125498633924,23.204609907685626],[-7.970433733155105,-7.631723162062445,-6.697510940912556],[-53.43026720319538,-29.41950667903459,-54.90903501468911]];
+let Q_table: number[][] = [[21.31108513974205, 75.20125498633924, 23.204609907685626], [-7.970433733155105, -7.631723162062445, -6.697510940912556], [-53.43026720319538, -29.41950667903459, -54.90903501468911]];
 let Q_table_training: number[][] = Array.from({ length: NUM_STATES }, () => new Array(NUM_ACTIONS).fill(0));
 /*                              CLASSES && INTERFACES                         */
 /* ************************************************************************** */
@@ -553,26 +553,38 @@ function saveQTableToFile() {
 }
 
 async function update_user_stats(p1_score: number, p2_score: number): Promise<void> {
-  try {
+	try {
 
-    const response = await fetch('/updateUserStats', {
-      method: 'POST',
-	  headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ p1_score, p2_score }) // Send the scores to the backend
-    });
+		const response = await fetch('/updateUserStats', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ p1_score, p2_score }) // Send the scores to the backend
+		});
 
-    if (!response.ok) {
-      throw new Error('Failed to update user stats');
-    }
+		if (!response.ok) {
+			throw new Error('Failed to update user stats');
+		}
 	} catch (error) {
 		console.error('Error updating user stats:', error);
 	}
 }
 
 /**
- * @brief Handler on game finish
- */
-function finish_game() {
+ * @brief Handler on game finish and draw results at the screen
+ */function finish_game() {
+	const resultMessage = document.getElementById("game-result-message");
+	const resultTitle = document.getElementById("result-title");
+	const resultScore = document.getElementById("result-score");
+
+	if (resultMessage && resultTitle && resultScore) {
+		resultMessage.classList.remove("hidden");
+
+		const p1Score = game.player_1.score;
+		const p2Score = game.player_2.score;
+
+		resultTitle.textContent = p1Score >= game.score_max ? "YOU WIN" : "YOU LOSE";
+		resultScore.textContent = `${p1Score} - ${p2Score}`;
+	}
 	draw_finish();
 }
 
@@ -583,7 +595,7 @@ function game_loop() {
 	if (game.player_1.score >= game.score_max || game.player_2.score >= game.score_max) {
 		end_game = true;
 		update_user_stats(game.player_1.score, game.player_2.score);
-		if(TRAINING == true)
+		if (TRAINING == true)
 			saveQTableToFile();
 		finish_game();
 		clearInterval(game_interval);
@@ -637,17 +649,17 @@ function resizeCanvas() {
 
 // Function to fetch and update profile data 
 const getUserName = async () => {
-  const response = await fetch('/api/profile/info', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+	const response = await fetch('/api/profile/info', {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
 
-  if (!response.ok)
-    throw new Error('Failed to fetch');
+	if (!response.ok)
+		throw new Error('Failed to fetch');
 
-  return await response.json();
+	return await response.json();
 };
 
 /**
@@ -660,7 +672,7 @@ async function load_script() {
 		const data = await getUserName();
 
 		const leftName = document.getElementById("left-player-name");
-    	if (leftName) 
+		if (leftName)
 			leftName.innerHTML = data.name;
 		canvas = document.getElementById("pong_canvas") as HTMLCanvasElement;
 		if (!canvas)
@@ -668,7 +680,7 @@ async function load_script() {
 		ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 		if (!ctx)
 			throw new Error("Context not found");
-		
+
 		/* Start game */
 		if (game_interval)
 			clearInterval(game_interval);

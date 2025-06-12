@@ -3,8 +3,15 @@
   <div class="relative w-[1400px] h-[1000px]">
 
     <!-- Affichage des noms des joueurs -->
-    <div class="absolute top-4 left-6 text-white text-2xl font-bold z-10" id="left-player-name"> left </div>
+    <div class="absolute top-4 left-6 text-white text-2xl font-bold z-10" id="left-player-name">left</div>
     <div class="absolute top-4 right-6 text-white text-2xl font-bold z-10 text-right" id="right-player-name">Bot</div>
+
+    <!-- End message -->
+    <div id="game-result-message"
+      class="absolute inset-0 flex flex-col items-center justify-center text-center text-red-600 z-20 hidden">
+      <div class="text-6xl font-bold" id="result-title">YOU WIN</div>
+      <div class="text-3xl mt-4" id="result-score">5 - 2</div>
+    </div>
 
     <!-- Canvas du jeu Pong -->
     <canvas id="pong_canvas" width="1200" height="1000" class="block"></canvas>
