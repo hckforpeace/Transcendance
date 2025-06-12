@@ -38,6 +38,7 @@
     "form-data": "^4.0.2",
     "google-auth-library": "^10.0.0",
     "jsonwebtoken": "^9.0.2",
+    "nanoid": "^5.1.5",
     "node-cron": "^4.1.0",
     "node-vault": "^0.10.2",
     "socket.io": "^4.8.1",

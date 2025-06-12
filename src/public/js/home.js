@@ -33,7 +33,9 @@ function injectViewToContentDiv(data) {
 }
 function handleCredentialResponse(response) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('ID Token:', response.credential);
+        const errorMsg = document.getElementById("form-error-msg");
+        if (!errorMsg)
+            return;
         const res = yield fetch('/auth/google', {
             method: 'POST',
             headers: {
@@ -43,6 +45,11 @@ function handleCredentialResponse(response) {
         });
         if (res.ok)
             console.log('success');
+        else if (res.status === 400) {
+            const response = yield res.json();
+            console.log(response.error);
+            errorMsg.textContent = response.error;
+        }
         // Send to backend for verification
     });
 }

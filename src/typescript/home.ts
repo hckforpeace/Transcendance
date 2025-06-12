@@ -23,8 +23,9 @@ function injectViewToContentDiv(data: string): Promise<void> {
 }
 
 async function handleCredentialResponse(response: any) {
-  console.log('ID Token:', response.credential);
- 
+	const errorMsg = document.getElementById("form-error-msg");
+	if (!errorMsg)
+		return;
   const res = await fetch('/auth/google', {
     method: 'POST',
     headers: {
@@ -34,6 +35,13 @@ async function handleCredentialResponse(response: any) {
   });
   if (res.ok)
     console.log('success')
+  else if (res.status === 400)
+  {
+    const response = await res.json();
+    console.log(response.error)
+    errorMsg.textContent = response.error;
+
+  }
   // Send to backend for verification
 }
 

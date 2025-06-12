@@ -59,7 +59,7 @@ async function routes(fastify, options) {
 
   xss_test_route(fastify)
 
-  fastify.get('/api/users', { preHandler: [fastify.authenticate] }, api.users);
+  fastify.get('/api/users', api.users);
 
   fastify.get('/ping', async () => { return { message: 'pong' }; });
 
