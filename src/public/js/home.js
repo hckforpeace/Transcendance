@@ -31,36 +31,3 @@ function injectViewToContentDiv(data) {
         resolve(); // Resolve after DOM update
     });
 }
-function handleCredentialResponse(response) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const errorMsg = document.getElementById("form-error-msg");
-        if (!errorMsg)
-            return;
-        const res = yield fetch('/auth/google', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ Token: response.credential }),
-        });
-        if (res.ok)
-            console.log('success');
-        else if (res.status === 400) {
-            const response = yield res.json();
-            console.log(response.error);
-            errorMsg.textContent = response.error;
-        }
-        // Send to backend for verification
-    });
-}
-function oauth2() {
-    var btn = document.getElementById("g_id_signin");
-    if (btn) {
-        google.accounts.id.initialize({
-            client_id: "998291091717-69t8ub79jvhdfq195vqtc93buajcgsaf.apps.googleusercontent.com",
-            callback: handleCredentialResponse,
-            auto_select: false,
-        });
-        google.accounts.id.renderButton(btn, { theme: "outline", size: "large", type: "standard" });
-    }
-}
