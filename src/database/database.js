@@ -63,9 +63,9 @@ export const initDB = async () => {
     await db.exec(`CREATE TABLE IF NOT EXISTS matches (
         match_id INTEGER PRIMARY KEY AUTOINCREMENT,
         player1_alias TEXT NOT NULL,
-        player2_alias TEXT NOT NULL,
+        player2_alias,
         player1_id INTEGER NOT NULL,
-        player2_id INTEGER NOT NULL,
+        player2_id,
         player1_score INTEGER DEFAULT 0,
         player2_score INTEGER DEFAULT 0,
         date DATETIME DEFAULT CURRENT_TIMESTAMP,

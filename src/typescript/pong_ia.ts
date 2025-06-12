@@ -57,8 +57,7 @@ const GAMMA: number = 0.7;
 let EPSILON: number = 1;
 let EPSILON_MIN: number = 0.2;
 const epsilon_decay_rate: number = 0.00001;
-let Q_table: number[][] = [[-22.34909697288755, -18.672088820879214, -22.681317665204006], [201.20160061283946, 200.97569260299449, 195.00441685755996], [-20.36312989626267, -17.431753761725425, -12.731436767743997]]
-// VERY STRONG [[21.31108513974205,75.20125498633924,23.204609907685626],[-7.970433733155105,-7.631723162062445,-6.697510940912556],[-53.43026720319538,-29.41950667903459,-54.90903501468911]];
+let Q_table: number[][] = [[21.31108513974205,75.20125498633924,23.204609907685626],[-7.970433733155105,-7.631723162062445,-6.697510940912556],[-53.43026720319538,-29.41950667903459,-54.90903501468911]];
 let Q_table_training: number[][] = Array.from({ length: NUM_STATES }, () => new Array(NUM_ACTIONS).fill(0));
 /*                              CLASSES && INTERFACES                         */
 /* ************************************************************************** */
@@ -332,7 +331,6 @@ function update_ia_pos() {
 	if (action == 2)
 		p2.pos.y += p2.speed;
 
-
 	// Limit of the screen for the player
 	if (p2.pos.y < 0)
 		p2.pos.y = 0;
@@ -345,7 +343,6 @@ function update_ia_pos() {
 		updateTable(state, action, instant_reward, next_state);
 	}
 }
-
 
 function update_player_pos() {
 	let p1 = game.player_1;
@@ -457,12 +454,13 @@ function draw_finish() {
 	draw_ball(game.ball);
 	draw_score();
 	resizeCanvas();
-
 	ctx.font = `${FONT_SIZE}px ${FONT_NAME}`;
 	if (game.player_1.score >= game.score_max)
 		ctx.fillText("YOU WIN", msg_pos.x - msg_len, msg_pos.y);
 	else
 		ctx.fillText("YOU WIN", canvas.width - msg_pos.x, msg_pos.y);
+	game.player_1.score = 0;
+	game.player_2.score = 0;
 	ctx.closePath();
 }
 
@@ -535,42 +533,32 @@ function reset_player_pos() {
  */
 function start_round() {
 	game.ball.speed = BALL_INIT_SPEED;
-	if (round_winner = PLAYER_ONE)
-		game.ball.direction = { x: 0.45, y: 0.55 };
-	else
+	if (round_winner === PLAYER_ONE)
 		game.ball.direction = { x: -0.45, y: 0.55 };
+	else
+		game.ball.direction = { x: 0.45, y: 0.55 };
 }
 
 
 function saveQTableToFile() {
-	// Convert the Q_table to a JSON string
 	const qTableJson = JSON.stringify(Q_table_training);
-
-	// Create a Blob from the JSON string
 	const blob = new Blob([qTableJson], { type: "application/json" });
-
-	// Create an object URL for the Blob
 	const url = URL.createObjectURL(blob);
-
-	// Create a temporary anchor element
 	const a = document.createElement("a");
 	a.href = url;
 	a.download = `q_table_${new Date().toISOString()}.json`; // Generate file name with timestamp
-
-	// Trigger the download
 	a.click();
-
 	// Revoke the object URL to free memory
 	URL.revokeObjectURL(url);
 }
 
 async function update_user_stats(p1_score: number, p2_score: number): Promise<void> {
   try {
-    console.log("COUCOUUUUUUU GUGGUGUUG");
 
     const response = await fetch('/updateUserStats', {
       method: 'POST',
-      body: JSON.stringify({ p1_score, p2_score }), // Send the scores to the backend
+	  headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p1_score, p2_score }) // Send the scores to the backend
     });
 
     if (!response.ok) {
@@ -595,9 +583,10 @@ function game_loop() {
 	if (game.player_1.score >= game.score_max || game.player_2.score >= game.score_max) {
 		end_game = true;
 		update_user_stats(game.player_1.score, game.player_2.score);
+		if(TRAINING == true)
+			saveQTableToFile();
 		finish_game();
 		clearInterval(game_interval);
-		saveQTableToFile();
 		return;
 	}
 	if (game.new_round) {
@@ -648,11 +637,17 @@ function resizeCanvas() {
 
 // Function to fetch and update profile data 
 const getUserName = async () => {
-  const response = await fetch('/api/profile/info');
+  const response = await fetch('/api/profile/info', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
   if (!response.ok)
     throw new Error('Failed to fetch');
 
-  return await response.json();  // ✅ returns resolved data
+  return await response.json();
 };
 
 /**
@@ -663,22 +658,23 @@ const getUserName = async () => {
 async function load_script() {
 	try {
 		const data = await getUserName();
-		console.log("data = ", data);
 
 		const leftName = document.getElementById("left-player-name");
     	if (leftName) 
-				leftName.innerHTML = username;
+			leftName.innerHTML = data.name;
 		canvas = document.getElementById("pong_canvas") as HTMLCanvasElement;
 		if (!canvas)
 			throw new Error("Canvas not found");
 		ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 		if (!ctx)
 			throw new Error("Context not found");
-
+		
 		/* Start game */
-		if (!game)
-			game_interval = setInterval(game_loop, 8);
-		launch_game("test", "Bot");
+		if (game_interval)
+			clearInterval(game_interval);
+		game_interval = setInterval(game_loop, 8);
+		console.log("JE LANCE LE SCRIPT ! ",);
+		launch_game(data.name, "Bot");
 		/* Set events listeners */
 		document.addEventListener("keydown", pressedKeyHandler, false);
 		document.addEventListener("keyup", releasedKeyHandler, false);
