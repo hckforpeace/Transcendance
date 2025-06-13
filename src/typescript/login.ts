@@ -1,6 +1,5 @@
 // // login.ts
 // const loginURL:string = "https://" + currentUrl + ':' + currentPort + '/api/login';
-var username: any;
 
 function login() {
 	const formElement = document.getElementById("login-form") as HTMLFormElement;
@@ -25,8 +24,6 @@ function login() {
           			isLoggedIn = true;
 					errorMsg.style.color = "green";
 					errorMsg.textContent = "Welcome!";
-					if (formData.get("name"))
-						username = formData.get("name");
 					// Corrected: fetch avatar and update it
 					fetch("/api/avatar")
 						.then(response => response.json())

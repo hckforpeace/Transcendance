@@ -5,48 +5,44 @@ const updateUserStats = async (req, reply) => {
     const db = getDB();
 
     if (!db) {
-      reply.code(500).send({ error: "Database not initialized" });
+      reply.code(500).send({ error: "Database not initialized"});
       return;
     }
 
-    // Récupérer l'user connecté via JWT
     const decoded = await req.jwtVerify();
     const userId = decoded.userId;
 
-    // Récupérer les données reçues (player2 info + scores)
-    const {
-      player1_score,
-      player2_score
-    } = req.body;
 
-    // Insertion du match avec player1 = user connecté
+    const { p1_score, p2_score, player2_id} = req.body;
+
+    const player_1 = await db.get("SELECT * FROM users WHERE id = ?", userId);
+    const player1_alias = player_1.name;
+    const player_2 = await db.get("SELECT * FROM users WHERE id = ?", player2_id);
+    const player2_alias = player_2.name;
+
     await db.run(
-      `INSERT INTO matches 
-       (player1_alias, player2_alias, player1_id, player2_id, player1_score, player2_score)
+      `INSERT INTO matches
+       (player1_alias, player1_id, player1_score, player2_score, player2_alias, player2_id)
        VALUES (?, ?, ?, ?, ?, ?)`,
-      [player1_alias, player2_alias, userId, player2_id, player1_score, player2_score]
+      [player1_alias, userId, p1_score, p2_score, player2_alias, player2_id]
     );
 
-    // Récupérer stats existantes pour user connecté (player1)
     const stats = await db.get(`SELECT * FROM stats WHERE playerId = ?`, [userId]);
 
-    // Calculer victoires/défaites
-    const won = player1_score > player2_score ? 1 : 0;
-    const lost = player2_score > player1_score ? 1 : 0;
+    const won = p1_score > p2_score ? 1 : 0;
+    const lost = p2_score > p1_score ? 1 : 0;
 
     if (!stats) {
-      // Si pas de stats, créer une ligne
       await db.run(
         `INSERT INTO stats (playerId, matchesWon, matchesLost, matchesPlayed)
          VALUES (?, ?, ?, ?)`,
         [userId, won, lost, 1]
       );
     } else {
-      // Sinon mettre à jour
       await db.run(
-        `UPDATE stats SET 
-           matchesWon = matchesWon + ?, 
-           matchesLost = matchesLost + ?, 
+        `UPDATE stats SET
+           matchesWon = matchesWon + ?,
+           matchesLost = matchesLost + ?,
            matchesPlayed = matchesPlayed + 1
          WHERE playerId = ?`,
         [won, lost, userId]

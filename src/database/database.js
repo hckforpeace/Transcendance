@@ -11,7 +11,8 @@ export const initDB = async () => {
     // TODO Change id to make it unique wihtout auto increment
     await db.exec(`CREATE TABLE IF NOT EXISTS users (
         id TEXT UNIQUE,
-        name TEXT UNIQUE, hashed_password TEXT ,
+        name TEXT UNIQUE, 
+        hashed_password TEXT,
         email TEXT UNIQUE NOT NULL, 
         connected BOOLEAN DEFAULT 0, 
         avatarPath TEXT DEFAULT '/images/avatar.jpg',

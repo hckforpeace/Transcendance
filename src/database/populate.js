@@ -2,9 +2,11 @@ const sql_add_user = "INSERT INTO users (id, name, hashed_password, email, conne
 const sql_add_stats = "INSERT INTO stats (matchesWon, matchesLost, tournamentsWon, tournamentsPlayed, matchesPlayed, playerId) VALUES (?, ?, ?, ?, ?, ?)";
 const sql_add_match = "INSERT INTO matches (player1_alias , player2_alias, player1_id, player2_id, player1_score, player2_score) VALUES (?, ?, ?, ?, ?, ?)"
 
-const populateDB = async (db) => 
-{
+const populateDB = async (db) => {
 
+   await db.run(sql_add_user,
+    ['0', 'Bot', 'bot_password_hash', 'bot@example.com']
+  );
   await db.run(sql_add_user, ['hjgfkhjsdfgsdjhkfhg', 'sob', "password", "pomemo@gmail.com", 0, "images/avatar.jpg", '[]'], function(err) {
     if (err) {
       console.error('Error inserting admin user:', err);
@@ -144,4 +146,4 @@ const populateDB = async (db) =>
   // })
 }
 
-export default {populateDB}
+export default { populateDB }
