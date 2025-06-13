@@ -483,7 +483,7 @@ function update_user_stats(p1_score, p2_score) {
             const response = yield fetch('/updateUserStats', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ p1_score, p2_score }) // Send the scores to the backend
+                body: JSON.stringify({ p1_score, p2_score, player2_id: 0 }) // Send the scores to the backend
             });
             if (!response.ok) {
                 throw new Error('Failed to update user stats');
@@ -596,7 +596,6 @@ function load_script() {
             if (game_interval)
                 clearInterval(game_interval);
             game_interval = setInterval(game_loop, 8);
-            console.log("JE LANCE LE SCRIPT ! ");
             launch_game(data.name, "Bot");
             /* Set events listeners */
             document.addEventListener("keydown", pressedKeyHandler, false);

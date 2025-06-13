@@ -558,7 +558,7 @@ async function update_user_stats(p1_score: number, p2_score: number): Promise<vo
 		const response = await fetch('/updateUserStats', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ p1_score, p2_score }) // Send the scores to the backend
+			body: JSON.stringify({ p1_score, p2_score, player2_id: 0}) // Send the scores to the backend
 		});
 
 		if (!response.ok) {
@@ -685,7 +685,6 @@ async function load_script() {
 		if (game_interval)
 			clearInterval(game_interval);
 		game_interval = setInterval(game_loop, 8);
-		console.log("JE LANCE LE SCRIPT ! ",);
 		launch_game(data.name, "Bot");
 		/* Set events listeners */
 		document.addEventListener("keydown", pressedKeyHandler, false);

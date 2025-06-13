@@ -5,7 +5,7 @@ const updateUserStats = async (req, reply) => {
     const db = getDB();
 
     if (!db) {
-      reply.code(500).send({ error: "Database not initialized" });
+      reply.code(500).send({ error: "Database not initialized"});
       return;
     }
 
@@ -13,12 +13,12 @@ const updateUserStats = async (req, reply) => {
     const userId = decoded.userId;
 
 
-    const { p1_score, p2_score } = req.body;
+    const { p1_score, p2_score, player2_id} = req.body;
 
     const player_1 = await db.get("SELECT * FROM users WHERE id = ?", userId);
     const player1_alias = player_1.name;
-    const player2_alias = "Bot"
-    const player2_id = 2
+    const player_2 = await db.get("SELECT * FROM users WHERE id = ?", player2_id);
+    const player2_alias = player_2.name;
 
     await db.run(
       `INSERT INTO matches
