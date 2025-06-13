@@ -153,6 +153,7 @@ const logout = async (req, reply) => {
 		reply.clearCookie("token", {
 			path: "/"
 		});
+    
 		return reply.code(200).send({ message: "Logged out" });
 	} catch (err) {
 		req.log.error(err);

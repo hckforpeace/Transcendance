@@ -17,3 +17,9 @@ function logout() {
 		console.error("Logout error:", err);
 	});
 }
+
+window.addEventListener("beforeunload", function(e){
+   // Do something
+    logout();
+
+});

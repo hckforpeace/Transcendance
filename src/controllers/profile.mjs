@@ -123,6 +123,12 @@ const  updateProfileData = async (req, reply) => {
 
   const userInfo = await db.get("SELECT * FROM users WHERE id = ?", [userId])
 
+  if (!userInfo)
+    reply.code(404).send({error: 'User not found'})
+
+  if (userInfo.isGoogleAuth)
+    reply.code(400).send({error: 'Google authenticated users cannot update profile information'})
+
   console.log("******************** this is the call to update profile *****************************************")
 
   if (name && name != userInfo.name) { 

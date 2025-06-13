@@ -84,6 +84,7 @@ function navigateTo(path: string): void {
   window.history.pushState({}, '', path);
   appState.currentPath = path;
   updateView();
+  socket?.close(); // Close socket connection if it exists
 }
 
 // Function to update the view based on current route

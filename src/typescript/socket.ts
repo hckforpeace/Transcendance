@@ -54,7 +54,7 @@ async function parseIncommingSocketMsg(data: any)
 }
 
 function ProfileSocketConnection() {
-  const socket = new WebSocket('wss://' + currentRoot + '/api/profile/socket');
+  socket = new WebSocket('wss://' + currentRoot + '/api/profile/socket');
 
   socket.onopen = () => {
     console.log('WebSocket connected');
