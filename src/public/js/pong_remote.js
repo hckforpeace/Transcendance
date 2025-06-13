@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 /* ************************************************************************** */
 /*                                GLOBAL VARIABLES                            */
 /* ************************************************************************** */
@@ -91,24 +100,37 @@ function draw_score_remote() {
  * @brief Draw basic pong terrain
  */
 function draw_terrain_remote() {
+    // if (!canvas)
+    // 	throw new Error("Canvas not found");
+    // if (!ctx)
+    // 	throw new Error("Context not found");
+    // // if (window.innerWidth > window.innerHeight) {
+    // // 	ctx.rect(0, 0, canvas.width, TERRAIN_LINE_FAT); // Top line
+    // // 	ctx.rect(0, 0, TERRAIN_LINE_FAT, canvas.height); // Left line
+    // // 	ctx.rect(0, canvas.height - TERRAIN_LINE_FAT, canvas.width, TERRAIN_LINE_FAT); // Bottom line
+    // // 	ctx.rect(canvas.width - TERRAIN_LINE_FAT, 0, TERRAIN_LINE_FAT, canvas.height); // Right line
+    // // }
+    // // else {
+    // // 	ctx.rect(0, 0, canvas.height, TERRAIN_LINE_FAT); // Top line
+    // // 	ctx.rect(0, 0, TERRAIN_LINE_FAT, canvas.width); // Left line
+    // // 	ctx.rect(0, canvas.width - TERRAIN_LINE_FAT, canvas.height, TERRAIN_LINE_FAT); // Bottom line
+    // // 	ctx.rect(canvas.height - TERRAIN_LINE_FAT, 0, TERRAIN_LINE_FAT, canvas.width); // Right line
+    // // }
+    // ctx.rect((canvas.width - TERRAIN_LINE_FAT) / 2, 0, TERRAIN_LINE_FAT, canvas.height);
+    // ctx.fillStyle = TERRAIN_COLOR_REMOTE;
+    // ctx.fill();
     if (!canvas)
         throw new Error("Canvas not found");
     if (!ctx)
         throw new Error("Context not found");
-    // if (window.innerWidth > window.innerHeight) {
-    // 	ctx.rect(0, 0, canvas.width, TERRAIN_LINE_FAT); // Top line
-    // 	ctx.rect(0, 0, TERRAIN_LINE_FAT, canvas.height); // Left line
-    // 	ctx.rect(0, canvas.height - TERRAIN_LINE_FAT, canvas.width, TERRAIN_LINE_FAT); // Bottom line
-    // 	ctx.rect(canvas.width - TERRAIN_LINE_FAT, 0, TERRAIN_LINE_FAT, canvas.height); // Right line
-    // }
-    // else {
-    // 	ctx.rect(0, 0, canvas.height, TERRAIN_LINE_FAT); // Top line
-    // 	ctx.rect(0, 0, TERRAIN_LINE_FAT, canvas.width); // Left line
-    // 	ctx.rect(0, canvas.width - TERRAIN_LINE_FAT, canvas.height, TERRAIN_LINE_FAT); // Bottom line
-    // 	ctx.rect(canvas.height - TERRAIN_LINE_FAT, 0, TERRAIN_LINE_FAT, canvas.width); // Right line
-    // }
+    // Épaisseur de la ligne horizontale
+    const LINE_THICKNESS = 4;
+    // Position verticale (milieu de l'écran)
+    const y = (canvas.height - LINE_THICKNESS) / 2;
+    ctx.beginPath();
     ctx.rect((canvas.width - TERRAIN_LINE_FAT) / 2, 0, TERRAIN_LINE_FAT, canvas.height);
-    ctx.fillStyle = TERRAIN_COLOR_REMOTE;
+    ctx.rect(0, y, canvas.width, LINE_THICKNESS); // Ligne horizontale
+    ctx.fillStyle = "#FFFFFF"; // Blanc
     ctx.fill();
 }
 /**
@@ -407,6 +429,7 @@ function launch_game_remote(p1_name, p2_name) {
         throw new Error("Canvas not found");
     if (!p1_name || !p2_name)
         throw new Error("Invalid player name");
+    resizeCanvas_remote();
     game_remote = new PongRemote(p1_name, p2_name, { x: canvas.width / 2, y: canvas.height / 2 });
     game_remote.ball.direction = { x: 0.5, y: 0.5 };
     end_game_remote = false;
@@ -423,23 +446,11 @@ function resizeCanvas_remote() {
         throw new Error("Context not found");
     if (!canvas)
         throw new Error("Canvas not found");
-    /* Rotate canvas if needed */
-    if (window.innerHeight > window.innerWidth) {
-        canvas.height = window.innerHeight * 0.8;
-        canvas.width = canvas.height / GOLDEN_NUMBER_REMOTE;
-        /* Rotate */
-        ctx.translate(canvas.width / 2, canvas.height / 2); // Move to center
-        ctx.rotate(Math.PI / 2); // Rotate 90 degrees
-        ctx.translate(-canvas.height / 2, -canvas.width / 2); // Move back
-    }
-    else {
-        canvas.width = window.innerWidth * 0.8;
-        canvas.height = canvas.width / GOLDEN_NUMBER_REMOTE;
-        /* Rotate */
-        ctx.rotate(0); // No rotation needed for portrait
-    }
-    PLAYER_WIDTH = canvas.width * PLAYER_WIDTH_RATIO_REMOTE;
-    PLAYER_HEIGHT = PLAYER_WIDTH / PLAYER_WIDTH_HEIGHT_RATIO_REMOTE;
+    // Fixe une taille constante au canvas
+    canvas.width = screen.width * 0.73;
+    canvas.height = screen.height * 0.73;
+    PLAYER_WIDTH = canvas.width * PLAYER_WIDTH_RATIO;
+    PLAYER_HEIGHT = PLAYER_WIDTH * PLAYER_WIDTH_HEIGHT_RATIO;
     TERRAIN_LINE_FAT = 0.01 * Math.max(canvas.width, canvas.height);
     BALL_RADIUS = 0.01 * Math.min(canvas.width, canvas.height);
     FONT_SIZE = 0.08 * Math.min(canvas.width, canvas.height);
@@ -450,21 +461,29 @@ function resizeCanvas_remote() {
  * This function should be called when the rigth html page is loaded
  */
 function load_script_remote() {
-    try {
-        canvas = document.getElementById("pong_canvas");
-        if (!canvas)
-            throw new Error("Canvas not found");
-        ctx = canvas.getContext("2d");
-        if (!ctx)
-            throw new Error("Context not found");
-        canvas.style.display = 'block';
-        resizeCanvas_remote();
-        launch_game_remote(local_username, opponent);
-        document.addEventListener("keydown", pressedKeyHandler_remote, false);
-        document.addEventListener("keyup", releasedKeyHandler_remote, false);
-        window.addEventListener("resize", resizeCanvas_remote);
-    }
-    catch (err) {
-        console.log(err);
-    }
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const data = yield getUserName();
+            const leftName = document.getElementById("left-player-name");
+            if (leftName)
+                leftName.innerHTML = data.name;
+            canvas = document.getElementById("pong_canvas");
+            if (!canvas)
+                throw new Error("Canvas not found");
+            ctx = canvas.getContext("2d");
+            if (!ctx)
+                throw new Error("Context not found");
+            canvas.style.display = 'block';
+            if (game_interval)
+                clearInterval(game_interval);
+            game_interval = setInterval(game_loop, 8);
+            launch_game_remote(data.name, opponent);
+            document.addEventListener("keydown", pressedKeyHandler_remote, false);
+            document.addEventListener("keyup", releasedKeyHandler_remote, false);
+            // window.addEventListener("resize", resizeCanvas_remote);	
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
 }

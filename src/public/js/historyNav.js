@@ -32,7 +32,7 @@ const routes = [
     },
     {
         path: '/pong_remote',
-        view: '/html/pong.html',
+        view: '/html/pong_ia.html',
         title: 'Pong Remote',
         function: load_script_remote
     },

@@ -497,13 +497,13 @@ function update_user_stats(p1_score, p2_score) {
 /**
  * @brief Handler on game finish and draw results at the screen
  */ function finish_game() {
-    const resultMessage = document.getElementById("game-result-message");
     const resultTitle = document.getElementById("result-title");
     const resultScore = document.getElementById("result-score");
-    if (resultMessage && resultTitle && resultScore) {
-        resultMessage.classList.remove("hidden");
+    if (resultTitle && resultScore) {
+        console.log('anti fa');
         const p1Score = game.player_1.score;
         const p2Score = game.player_2.score;
+        console.log('end of the game : ', p1Score, p2Score);
         resultTitle.textContent = p1Score >= game.score_max ? "YOU WIN" : "YOU LOSE";
         resultScore.textContent = `${p1Score} - ${p2Score}`;
     }
@@ -514,6 +514,7 @@ function update_user_stats(p1_score, p2_score) {
  */
 function game_loop() {
     if (game.player_1.score >= game.score_max || game.player_2.score >= game.score_max) {
+        console.log('end of game');
         end_game = true;
         update_user_stats(game.player_1.score, game.player_2.score);
         if (TRAINING == true)
