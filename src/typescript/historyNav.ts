@@ -78,9 +78,20 @@ const routes: Route[] = [
 
 ];
 
+
+
 // Function to handle navigation
 function navigateTo(path: string): void {
   // Update browser history without reload
+  if ((path == '/games' || path == '/profile') && !isLoggedIn)
+  {
+    const errorMsg = document.getElementById("not-logged-in-msg");
+    if (!errorMsg)
+      return ;
+    errorMsg.style.color = "red";
+		errorMsg.textContent = "You are not logged in";
+    return ;
+  }
   window.history.pushState({}, '', path);
   appState.currentPath = path;
   updateView();
@@ -141,7 +152,7 @@ async function loadView(route: string): Promise<void> {
 function handleRouteClick(event: MouseEvent): void {
   const target = event.target as HTMLAnchorElement;
   event.preventDefault();
-  const href = target.getAttribute('href');
+  const href = target.getAttribute('href'); 
   if (href) {
     navigateTo(href);
   }

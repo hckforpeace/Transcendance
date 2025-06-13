@@ -67,15 +67,9 @@ async function routes(fastify, options) {
 
   fastify.get('/api/logout', { preHandler: [fastify.authenticate] }, api.logout);
 
-  fastify.get('/home', (req, reply) => {
-    const data = fs.readFileSync(path.join(__dirname, '../views/home.ejs'), 'utf-8');
-    reply.send(data);
-  });
-
   fastify.post('/api/login', api.login);
 
   fastify.post('/api/register', api.register);
-
 
   // connect to the websocket server
   fastify.get('/api/remote', { preHandler: [fastify.authenticate], websocket: true }, (socket, req) => {

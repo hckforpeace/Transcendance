@@ -80,6 +80,14 @@ const routes = [
 // Function to handle navigation
 function navigateTo(path) {
     // Update browser history without reload
+    if ((path == '/games' || path == '/profile') && !isLoggedIn) {
+        const errorMsg = document.getElementById("not-logged-in-msg");
+        if (!errorMsg)
+            return;
+        errorMsg.style.color = "red";
+        errorMsg.textContent = "You are not logged in";
+        return;
+    }
     window.history.pushState({}, '', path);
     appState.currentPath = path;
     updateView();

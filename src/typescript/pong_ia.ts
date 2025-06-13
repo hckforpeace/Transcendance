@@ -18,7 +18,7 @@ const PLAYER_WIDTH_HEIGHT_RATIO: number = 10;
 var PLAYER_HEIGHT: number;
 var PLAYER_WIDTH: number;
 const PLAYER_COLOR: string = "#FFFFFF";
-const PLAYER_SPEED: number = 10;
+const PLAYER_SPEED: number = 5;
 
 /* Score + Text */
 const FONT_NAME: string = "sans-serif";

@@ -5,9 +5,8 @@ function logout() {
 	})
 	.then(response => {
 		if (response.ok) {
-			isLoggedIn = false;
-			//username = null;
 			updateUserAvatar('/images/avatar.jpg'); // Optionally clear avatar
+			isLoggedIn = false;
 			navigateTo('/');
 		} else {
 			console.error("Logout failed");

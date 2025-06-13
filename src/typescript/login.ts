@@ -21,7 +21,7 @@ function login() {
 					errorMsg.textContent = response.error || "An error occurred.";
 				}
 				if (this.status === 200) {
-          			isLoggedIn = true;
+					isLoggedIn = true;
 					errorMsg.style.color = "green";
 					errorMsg.textContent = "Welcome!";
 					// Corrected: fetch avatar and update it
