@@ -4,8 +4,7 @@ const sql_add_match = "INSERT INTO matches (player1_alias , player2_alias, playe
 
 const populateDB = async (db) => {
 
-  await db.run(
-    "INSERT INTO users (id, name, hashed_password, email) VALUES (?, ?, ?, ?)",
+  await db.run(sql_add_user,
     [0, 'Bot', 'bot_password_hash', 'bot@example.com']
   );
   await db.run(sql_add_user, ['sob', "password", "pomemo@gmail.com", 0, "images/avatar.jpg", '[]'], function (err) {
