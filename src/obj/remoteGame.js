@@ -163,7 +163,7 @@ function startGame(data, id, gameId)
 
     console.log('id : ' + id);
     p1 = Players.get(id); 
-    p2 = Players.get(Number(data.userId));
+    p2 = Players.get(data.userId);
        
     // p1 = findPlayer(uname1);
     // p2 = findPlayer(uname2);
@@ -216,7 +216,7 @@ function invitePlayer(data, InitId ){
 
   try {
    
-    invited_player = Players.get(Number(data.userId));
+    invited_player = Players.get(data.userId);
     src_player = Players.get(InitId);
 
 
