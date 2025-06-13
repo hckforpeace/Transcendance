@@ -41,7 +41,8 @@ const login = async (req, reply) => {
 
     const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name }, { expiresIn: "1h" });
 
-    db.run("UPDATE users SET token_exp = ? WHERE id = ?", [Date.now(), user.id]);
+    await db.run("UPDATE users SET connected = 1 WHERE name = ?", name);
+    await db.run("UPDATE users SET token_exp = ? WHERE id = ?", [Date.now(), user.id]);
 
     reply.setCookie("token", token, {
       httpOnly: true,
@@ -149,8 +150,16 @@ const register = async (req, reply) => {
 };
 
 const logout = async (req, reply) => {
-	try {
-		reply.clearCookie("token", {
+	
+  const db = getDB();
+
+  try {
+    const decoded = await req.jwtVerify()
+    const userId = decoded.userId;
+    const data = await db.get('SELECT name FROM users WHERE id = ?', [userId]);
+    await db.run("UPDATE users SET connected = 0 WHERE name = ?", data.name);
+
+    reply.clearCookie("token", {
 			path: "/"
 		});
 		return reply.code(200).send({ message: "Logged out" });
