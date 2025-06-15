@@ -35,7 +35,8 @@ async function routes (fastify, options) {
 
   fastify.get('/api/login', (req, reply) => { 
     const data = fs.readFileSync(path.join(__dirname, '../views/login.ejs'), 'utf-8');
-    reply.send(data);});
+    reply.send(data);
+  });
 
   fastify.post('/api/login', api.login);
 
@@ -46,6 +47,7 @@ async function routes (fastify, options) {
   fastify.get('/api/remote', {preHandler: [fastify.authenticate], websocket: true}, (socket, req) => {
     api.sock_con(socket, req, fastify);})
 
+  fastify.get('/api/tournament', { preHandler: [fastify.authenticate] } , api.tournament_view);
 
 
 }

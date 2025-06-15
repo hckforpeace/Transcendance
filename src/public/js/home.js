@@ -76,7 +76,6 @@ const registerRedir = () => __awaiter(void 0, void 0, void 0, function* () {
         console.error('Error loading register view:', err);
     }
 });
-
 const loginRedir = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // //         // const res = await fetch('/api/register', {});

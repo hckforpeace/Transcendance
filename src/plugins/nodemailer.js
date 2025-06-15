@@ -4,9 +4,12 @@ import fp from 'fastify-plugin';
 async function mailConnector(fastify, options) {
   const transporter = nodemailer.createTransport({
 		service: 'gmail',
+	    host: "smtp.gmail.com",
+	    poort: 465,
+	    secure: true,
 		auth: {
 			user: "mppd.42.transcendence@gmail.com",
-			pass: "leCCmieux"
+			pass: "txcj prjh exya uuop"
 			// user: process.env.GMAIL_USER,
 			// pass: process.env.GMAIL_PASS,
 		},

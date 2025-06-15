@@ -119,6 +119,80 @@ function load2faView(): void {
 	const	elem2fa = template2fa.content.cloneNode(true) as DocumentFragment;
 	form.innerHTML = '';
 	form.appendChild(elem2fa);
+    const inputElement = document.getElementById('2fa-input') as HTMLInputElement;
+
+    if (!inputElement) {
+        console.error('2FA input element not found');
+        return;
+    }
+
+    inputElement.addEventListener('input', () => {
+        if (inputElement.value.length === 6) {
+            console.log('6 characters entered:', inputElement.value);
+			send2faCode();
+            // Proceed with further logic
+        }
+	});
+};
+
+function send2faCode() {
+	const formElement = document.getElementById("login-form") as HTMLFormElement;
+	if (!formElement)
+		return;
+	const errorMsg = document.getElementById("form-error-msg");
+	if (!errorMsg)
+		return;
+	errorMsg.textContent = ""; // Reset previous error
+	errorMsg.style.color = "red";
+	const formData = new FormData(formElement);
+	const xhttp = new XMLHttpRequest();
+
+	xhttp.onreadystatechange = function ()
+	{
+		if (this.readyState === 4)
+		{
+			try
+			{
+				if (this.status === 400 || this.status === 500)
+				{
+					const response = JSON.parse(this.responseText);
+				 	errorMsg.textContent = response.error || "An error occurred.";
+				}
+				if (this.status === 200)
+				{
+                    // errorMsg.style.color = "green";
+                    // errorMsg.textContent = "Welcome!";
+					console.log("Valid 2fa Code");
+				}
+			}
+			catch (e)
+			{
+				errorMsg.textContent = "Unexpected error";
+			}
+		}
+
+	};
+
+	xhttp.open("POST", "/api/2fa", true);
+	console.log(formData);
+	xhttp.send(formData);
+}
+
+function check2faInput() {
+    const inputElement = document.getElementById('2fa-input') as HTMLInputElement;
+
+    if (!inputElement) {
+        console.error('2FA input element not found');
+        return;
+    }
+
+    inputElement.addEventListener('input', () => {
+        if (inputElement.value.length === 6) {
+            console.log('6 characters entered:', inputElement.value);
+
+            // Proceed with further logic
+        }
+    });
 }
 
 function login() {

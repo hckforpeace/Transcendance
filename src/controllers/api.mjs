@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import bcrypt from 'bcryptjs';
 import { getDB } from "../database/database.js"
 import { pipeline } from 'stream/promises';
+import { randomInt } from "crypto"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -56,28 +57,96 @@ const login = async (req, reply) => {
       return reply.status(400).send({ error: "Wrong password, try again" });
     }
 
-    const token = await reply.jwtSign({ userId: user.id, email: user.email }, { expiresIn: "1m" });
+	  // ADDED
 
-    reply.setCookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "lax",
-      path: "/"
-    });
+	  const code = randomInt(0, 999999);
+	  console.log(code);
+	  
+	  /* Storing it in db */
+	  console.log(user);
+	  db.run(`
+	  	INSERT INTO twofa (user_id, code, created_at, expired_at) VALUES (?, ?, ?, ?)
+	  	`, [user.id, code, Date.now(), Date.now() + 5 * 60 * 1000]);
+	  // db.prepare(`
+	  // 	INSERT INTO twofa (user_id, code, created_at, expired_at) VALUES (?, ?, ?, ?)
+	  // 	`).run(user.id, code, Date.now(), Date.now() + 5 * 60 * 1000);
+	  console.log("Inserted into db");
 
-    reply.setCookie("userId", String(user.id), {
-      httpOnly: true,
-      secure: true,
-      sameSite: "lax",
-      path: "/"
-    });
+	  console.log("Checking insertion");
+	  const tmp = db.prepare(`
+	  			SELECT * FROM twofa WHERE user_id = ? AND code = ?
+	  		`).all(user.id, code);
+	  console.log(tmp);
+
+	  /* Sending it to user */
+	  const mailOptions = {
+	  	from: 'youremail@gmail.com',
+	  	to: user.email,
+	  	subject: '2fa code',
+	  	text: code.toString().padStart(6, '0')
+	  };
+	  mailer.sendMail(mailOptions, function(err, info) {
+	  	if (err) {
+	  		console.log(err);
+	  	} else {
+	  		console.log('Email sent: ' + info.response);
+	  	}
+	  });
+	  console.log("Email sent");
 
 
-  }
-  catch (error) {
-     req.log.error(error);
-     return reply.status(500).send({ message: 'Internal server error' });
-  }
+		/* Fetch token from JWT */
+		// const	response = await fetch('http://jwt:3003/login', {
+		// 	method: 'post',
+		// 	body: JSON.stringify({ email: dbUser.email, username: dbUser.username }),
+		// 	headers: { 'Content-Type': 'application/json' }
+		// });
+		// if (!response.ok) {
+		// 	throw new Error(`HTTP error! status: ${response.status}`);
+		// }
+		//
+		// const data = await response.json();
+		// console.log(data);
+		// const	token = data.token;
+		// console.log(token);
+		//
+		// // Prepare response
+		return reply
+		// .setCookie("access_token", token, {
+		// 	path: "/",
+		// 	secure: true,
+		// 	httpOnly: true,
+		// 	sameSite: true
+		// })
+		.code(200).send();
+	} catch(err) {
+		console.log(err);
+		return reply.status(500).send("Internal server error");
+	}
+	
+	  // ORIGIN
+  //   const token = await reply.jwtSign({ userId: user.id, email: user.email }, { expiresIn: "1m" });
+  //
+  //   reply.setCookie("token", token, {
+  //     httpOnly: true,
+  //     secure: true,
+  //     sameSite: "lax",
+  //     path: "/"
+  //   });
+  //
+  //   reply.setCookie("userId", String(user.id), {
+  //     httpOnly: true,
+  //     secure: true,
+  //     sameSite: "lax",
+  //     path: "/"
+  //   });
+  //
+  //
+  // }
+  // catch (error) {
+  //    req.log.error(error);
+  //    return reply.status(500).send({ message: 'Internal server error' });
+  // }
 
 };
 
@@ -206,6 +275,11 @@ const pong_view = async (req, rep) => {
   rep.send(data);
 }
 
+const	tournament_view = async (req, rep) => {
+  const data = fs.readFileSync(path.join(__dirname, '../views/tournament.ejs'), 'utf-8');
+  rep.send(data);
+}
+
 const users = async (req, reply) => {
   try {
     const db = getDB();
@@ -217,4 +291,4 @@ const users = async (req, reply) => {
   }
 };
 
-export default { auth, sock_con, pong_view, login, register, users };
+export default { auth, sock_con, pong_view, tournament_view, login, register, users };

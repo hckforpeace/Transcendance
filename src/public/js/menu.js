@@ -33,11 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     }
 });
-
 document.addEventListener('DOMContentLoaded', () => {
-    const tournamentBtn = document.getElementById('tournament');
-    if (tournamentBtn) {
-        tournamentBtn.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
+    const registerBtn = document.getElementById('tournament');
+    if (registerBtn) {
+        registerBtn.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 // const res = await fetch('/api/register', {});
                 // .then
@@ -54,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 //import('./public/js/register.js');
             }
             catch (err) {
-                console.error('Error loading register view:', err);
+                console.error('Error loading tournament view:', err);
             }
         }));
     }
