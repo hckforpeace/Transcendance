@@ -1,20 +1,22 @@
 {
   "main": {
-    "id": "586dafeceb2edf3a",
+    "id": "ffebbe9f08b1c621",
     "type": "split",
     "children": [
       {
-        "id": "a2a5ef8d3cd62dfa",
+        "id": "cdb28819934dfcb3",
         "type": "tabs",
         "children": [
           {
-            "id": "d11effe2653c9287",
+            "id": "3a8fe22a4e9d3f1a",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
-              "icon": "lucide-file",
-              "title": "New tab"
+              "type": "excalidraw",
+              "state": {
+                "file": "Transcendance/Excalidraw/UI design.md"
+              },
+              "icon": "excalidraw-icon",
+              "title": "UI design"
             }
           }
         ]
@@ -23,15 +25,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "9e36a2eceddb5ab6",
+    "id": "b443a8814a6066a5",
     "type": "split",
     "children": [
       {
-        "id": "539b43dea5563a2e",
+        "id": "09fd8c98eba7c057",
         "type": "tabs",
         "children": [
           {
-            "id": "11c53b9262add7e7",
+            "id": "4eb73efb99c2bfee",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -44,7 +46,7 @@
             }
           },
           {
-            "id": "4e9c4274deb43f0d",
+            "id": "1b6148a4eced2ead",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -61,7 +63,7 @@
             }
           },
           {
-            "id": "729c4c7d2bdc7321",
+            "id": "2312d4ec3ac1a056",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -74,18 +76,19 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
-    "id": "c4f3af363e2e0799",
+    "id": "e7f5ce3fa4586d54",
     "type": "split",
     "children": [
       {
-        "id": "439fa3338d00e15e",
+        "id": "d5a951f4c935c389",
         "type": "tabs",
         "children": [
           {
-            "id": "c7d4933e92f9a648",
+            "id": "bbd3e7785143cea8",
             "type": "leaf",
             "state": {
               "type": "backlink",
@@ -103,7 +106,7 @@
             }
           },
           {
-            "id": "bb9db07f7269a28e",
+            "id": "a03c6afde938dd48",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
@@ -116,7 +119,7 @@
             }
           },
           {
-            "id": "9d12812d9db65426",
+            "id": "6b2961745390160f",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -131,7 +134,7 @@
             }
           },
           {
-            "id": "b0da781f34a4804c",
+            "id": "94e035bca3196414",
             "type": "leaf",
             "state": {
               "type": "outline",
@@ -158,9 +161,12 @@
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
-      "command-palette:Open command palette": false
+      "command-palette:Open command palette": false,
+      "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "d11effe2653c9287",
-  "lastOpenFiles": []
+  "active": "4a40e36b3c153996",
+  "lastOpenFiles": [
+    "Transcendance/Excalidraw/UI design.md"
+  ]
 }

@@ -1,0 +1,19 @@
+<!-- Conteneur principal centré -->
+<div class="flex justify-center mt-10">
+  <div class="relative w-[1400px] h-[1000px]">
+
+    <!-- Canvas du jeu Pong -->
+    <canvas id="pong_canvas" width="1200" height="1000" class="block"></canvas>
+
+    <!-- End message centré sur le canvas -->
+    <div id="game-result-message"
+      class="absolute top-0 left-0 w-[1300px] h-[800px] flex flex-col items-center justify-center text-center text-red-600 z-20 hidden">
+      <div class="text-6xl font-bold" id="result-title">YOU WIN</div>
+      <div class="text-3xl mt-4" id="result-score">5 - 2</div>
+    </div>
+
+    <!-- Noms des joueurs -->
+    <div class="absolute top-4 left-6 text-white text-2xl font-bold z-30" id="left-player-name">left</div>
+    <div class="absolute top-4 right-6 text-white text-2xl font-bold z-30 text-right" id="right-player-name">Bot</div>
+  </div>
+</div>

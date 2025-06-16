@@ -24,6 +24,7 @@ function register() {
                     errorMsg.textContent = response.error || "An error occurred.";
                 }
                 if (this.status === 200) {
+                    navigateTo('/login');
                     errorMsg.style.color = "green";
                     errorMsg.textContent = "User registered successfully!";
                 }

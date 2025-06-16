@@ -8,31 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-document.addEventListener('DOMContentLoaded', () => {
-    const registerBtn = document.getElementById('home');
-    if (registerBtn) {
-        registerBtn.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
-            try {
-                // const res = await fetch('/api/register', {});
-                // .then
-                // const html = await res.text();
-                yield fetch("/home")
-                    .then(response => response.text())
-                    .then(html => {
-                    var content = document.getElementById("content-div");
-                    if (!content)
-                        throw new Error("Content div not found");
-                    content.innerHTML = html;
-                });
-                // Optionally load related JS (like form handling)
-                //import('./public/js/register.js');
-            }
-            catch (err) {
-                console.error('Error loading register view:', err);
-            }
-        }));
-    }
-});
+function updateUserAvatar(avatarUrl) {
+    const profileImg = document.getElementById('profile');
+    if (!profileImg)
+        return;
+    profileImg.src = avatarUrl || '/images/avatar.jpg';
+}
 document.addEventListener('DOMContentLoaded', () => {
     const registerBtn = document.getElementById('tournament');
     if (registerBtn) {
@@ -60,34 +41,21 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 // document.addEventListener('DOMContentLoaded', () => {
 //   const loginBtn = document.getElementById('profile');
-//   if (loginBtn) {
-//     loginBtn.addEventListener('click', async () => {
-//       try {
-//         // const res = await fetch('/api/register', {});
-//         // .then
-//         // const html = await res.text();
-//         await fetch("/api/stats")
-//           .then(response => response.text())
-//           .then(html => {
-//       var content = document.getElementById("content-div");
-//       if (!content)
-//         throw new Error("Content div not found");
-//       content.innerHTML = html;
-//       })
-//         // Optionally load related JS (like form handling)
-//         //import('./public/js/register.js');
-//       } catch (err) {
-//         console.error('Error loading login view:', err);
-//       }
-//     });
-//   }
-// });
-// export function updateUserAvatar(userName: string) {
-//   const profileImg = document.getElementById('profile') as HTMLImageElement | null;
-//   if (!profileImg) return;
-//   const avatarUrl = `/images/${userName}.jpg`;
-//   profileImg.src = avatarUrl;
-//   profileImg.onerror = () => {
-//     profileImg.src = '/images/avatar.jpg';
-//   };
+function getProfileView(callback) {
+    fetch('/html/profile.html')
+        .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch');
+        }
+        return response.text(); // ✅ return the parsed JSON
+    })
+        .then(data => {
+        injectViewToContentDiv(data);
+        setTimeout(callback, 0);
+    });
+}
+// function loadProfileView() {
+//   getProfileView( () => {
+//     renderProfile();
+//   });
 // }

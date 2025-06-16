@@ -28,8 +28,8 @@ function register() {
 					const response = JSON.parse(this.responseText);
 				 	errorMsg.textContent = response.error || "An error occurred.";
 				}
-				if (this.status === 200)
-				{
+				if (this.status === 200) {
+					navigateTo('/login');
 					errorMsg.style.color = "green";
 					errorMsg.textContent = "User registered successfully!";
 				}
@@ -44,6 +44,7 @@ function register() {
 	xhttp.open("POST", "/api/register", true);
 	// console.log(formData);
 	xhttp.send(formData);
+
 }
 
 
@@ -69,4 +70,3 @@ function previewAvatar(event: Event): void {
 
   reader.readAsDataURL(file);
 }
-

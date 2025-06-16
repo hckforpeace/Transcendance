@@ -1,0 +1,20 @@
+<div style="position: relative; height: 200px;">
+  <!-- Title -->
+  <h1 class="text-[40px] text-white font-bold text-center mb-6">Welcome to ft_transcendence!</h1>
+
+  <!-- Background applied via JS -->
+  <script>
+    document.body.classList.add("bg-[url('/images/space.gif')]","bg-cover","bg-center","bg-no-repeat","min-h-screen");
+  </script>
+
+  <!-- Button centered -->
+  <div class="flex justify-center">
+    <button href="/games" onclick="handleRouteClick(event)" id="matchBtn" class="bg-purple-500 hover:bg-purple-600 text-white font-bold px-4 py-2 rounded-lg w-60">
+      Play
+    </button>
+  </div>
+  
+  <div>
+    <p id="not-logged-in-msg" class="text-red-600 text-sm text-center mt-2"></p>
+  </div>
+</div>

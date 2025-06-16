@@ -1,0 +1,64 @@
+<div class="w-full max-w-xl  mx-auto grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 grid-rows-2 gap-4 p-4">
+
+
+  <!-- Profile Section (Top-Left) -->
+  <div class="bg-white border-4 rounded-xl border-blue-500 flex flex-col justify-center  items-center h-[500px]">
+    <h1 class="text-center text-blue-500 text-2xl md:text-3xl lg:text-4xl mb-2 font-bold">Profile</h1>
+    <!-- Avatar -->
+    <img id="avatar-preview" class="h-24 w-24 md:h-32 md:w-32 object-cover rounded-full border-4 border-blue-200 m-3" src="../images/avatar.jpg" >  
+
+    <!-- NAME AND MAIL -->
+    <div id='friendsName'  class="text-4xl m-5">  </div>
+    <div id='friendsEmail' class="text-4xl m-5"> </div>
+
+</div>
+  <div class="bg-white border-4 rounded-xl border-blue-500 flex flex-col   items-center h-[500px]">
+    <h1 class="text-center text-blue-500 text-2xl md:text-3xl lg:text-4xl mb-2 font-bold">stats</h1>
+    <h1 class="text-center text-blue-500 text-2xl md:text-3xl lg:text-4xl mb-2 font-bold"></h1>
+    <div class="grid grid-cols-2 gap-4 mx-4 mb-4">
+      <!-- Left Column: Wins -->
+      <div class="text-center space-y-2">
+        <div>
+          <h3 class="text-green-700 text-lg font-bold">Wins</h3>
+          <p class="text-green-700 text-xl font-bold" id="wins">4</p>
+        </div>
+        <div>
+          <p class="text-green-700 text-sm font-bold">Avg Won</p> 
+          <p class="text-green-700 text-lg font-bold" id="avg-wins">2%</p>
+        </div>
+      </div>
+
+      <!-- Right Column: Losses -->
+      <div class="text-center space-y-2">
+        <div>
+          <h3 class="text-red-700 text-lg font-bold">Losses</h3>
+          <p class="text-red-700 text-xl font-bold" id="loses">4</p>
+        </div>
+        <div>
+          <p class="text-red-700 text-sm font-bold">Avg Lost</p>
+          <p class="text-red-700 text-lg font-bold" id="avg-loses">98%</p>
+        </div>
+      </div>
+
+
+    </div>
+    <div class="flex-1 px-4 pb-4 overflow-auto h-full w-full">
+      <div class="border rounded overflow-auto max-h-full w-full">
+        <table class="min-w-full table-fixed border-collapse">
+          <thead class="bg-gray-200 sticky top-0">
+            <tr>
+              <th class="p-2 text-xs">P1</th>
+              <th class="p-2 text-xs">P2</th>
+              <th class="p-2 text-xs">Score P1</th>
+              <th class="p-2 text-xs">Score P2</th>
+              <th class="p-2 text-xs">Date</th>
+            </tr>
+          </thead>
+          <tbody id="statsTable" class="bg-white">
+            <!-- Stats rows here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
