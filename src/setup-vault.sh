@@ -10,7 +10,6 @@ VAULT_ZIP="vault_${VAULT_VERSION}_linux_amd64.zip"
 VAULT_URL="https://releases.hashicorp.com/vault/${VAULT_VERSION}/${VAULT_ZIP}"
 BIN_DIR="./bin"
 VAULT_BIN="${BIN_DIR}/vault"
-VAULT_LOG="./vault.log"
 
 export VAULT_ADDR
 
@@ -30,7 +29,7 @@ fi
 
 # === 1. Lancer Vault en tâche de fond (mode dev) ===
 echo "[vault.sh] Lancement de Vault (mode dev) en tâche de fond..."
-"$VAULT_BIN" server -dev > "$VAULT_LOG" 2>&1 &
+"$VAULT_BIN" server -dev 2>&1 &
 VAULT_PID=$!
 
 # === 2. Attendre que Vault soit prêt ===
@@ -54,11 +53,6 @@ echo "[vault.sh] Stockage dans Vault..."
   server.crt=@"$CRT_FILE" \
   server.key=@"$KEY_FILE"
 
-# === 5. Lire pour vérification ===
-echo "[vault.sh] Lecture pour vérification..."
-"$VAULT_BIN" kv get secret/certs
-
-echo "[vault.sh] 🚀 Tout est prêt."
 echo "[vault.sh] 🔄 Vault tourne en arrière-plan avec le PID $VAULT_PID"
 
 # Optionnel : kill Vault à la fin du script
