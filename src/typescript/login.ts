@@ -1,6 +1,19 @@
 // // login.ts
 // const loginURL:string = "https://" + currentUrl + ':' + currentPort + '/api/login';
 
+function renderAvatar() {
+  fetch("/api/avatar")
+    .then(response => response.json())
+    .then(data => {
+      if (data.avatarUrl) {
+        updateUserAvatar(data.avatarUrl);
+      }
+    })
+    .catch(err => {
+      console.error("Error fetching avatar:", err);
+  });
+}
+
 function login() {
 	const formElement = document.getElementById("login-form") as HTMLFormElement;
 	if (!formElement)
@@ -12,6 +25,7 @@ function login() {
 	errorMsg.style.color = "red";
 	const formData = new FormData(formElement);
 	const xhttp = new XMLHttpRequest();
+
 
 	xhttp.onreadystatechange = function () {
 		if (this.readyState === 4) {
@@ -25,16 +39,7 @@ function login() {
 					errorMsg.style.color = "green";
 					errorMsg.textContent = "Welcome!";
 					// Corrected: fetch avatar and update it
-					fetch("/api/avatar")
-						.then(response => response.json())
-						.then(data => {
-							if (data.avatarUrl) {
-								updateUserAvatar(data.avatarUrl);
-							}
-						})
-						.catch(err => {
-							console.error("Error fetching avatar:", err);
-						});
+          renderAvatar();
 					navigateTo('/');
 				}
 			}
@@ -80,15 +85,14 @@ async function handleCredentialResponse(response: any) {
   });
   if (res.ok) {
     console.log('success')
+    renderAvatar();
     isLoggedIn = true;
     navigateTo('/')
   }
-  else if (res.status === 400)
-{
+  else if (res.status === 400){
     const response = await res.json();
     console.log(response.error)
     errorMsg.textContent = response.error;
-
   }
   // Send to backend for verification
 }
@@ -105,5 +109,4 @@ function oauth2() {
       { theme: "outline", size: "large", type: "standard"   })
   }
 }
-
 

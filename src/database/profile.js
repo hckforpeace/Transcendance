@@ -62,13 +62,13 @@ const getNonFriends = async (id) => {
         friends = JSON.parse(res.friends);
         
         // Get all users
-        const allUsersRes = await db.all("SELECT id, name FROM users"); // assuming you want name too
+        const allUsersRes = await db.all("SELECT id, name FROM users WHERE id != ?", ["0"]); // assuming you want name too
         if (!allUsersRes) return null;
         
         // Filter out users who are in the friends list
         const nonFriends = allUsersRes.filter(user => 
             !friends.includes(user.id) && user.id !== id // exclude self too
-        );
+       );
         
         return nonFriends;
         
@@ -111,14 +111,16 @@ const addFriend = async (userId, friendId) => {
 
   try {
     friendId.forEach (async id => {
-      friendData = await db.get("SELECT friendedMe, connected, name, avatarPath from users WHERE id = ?", [id])
-      if (!friendData)
+      if (id != "0") {
+        friendData = await db.get("SELECT friendedMe, connected, name, avatarPath from users WHERE id = ?", [id])
+        if (!friendData)
         return (id + 'not found')
-      users.push({id: id, name: friendData.name, connected: friendData.connected, avatar: friendData.avatarPath})
-      friends = JSON.parse(friendData.friendedMe || "[]");
-      if (!friends.includes(userId)) {
-        friends.push(userId);
-        await db.run("UPDATE users SET friendedMe = ? WHERE id = ?", [JSON.stringify(friends), id]);
+        users.push({id: id, name: friendData.name, connected: friendData.connected, avatar: friendData.avatarPath})
+        friends = JSON.parse(friendData.friendedMe || "[]");
+        if (!friends.includes(userId)) {
+          friends.push(userId);
+          await db.run("UPDATE users SET friendedMe = ? WHERE id = ?", [JSON.stringify(friends), id]);
+        }
       }
     })
 

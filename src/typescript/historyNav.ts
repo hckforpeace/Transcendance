@@ -82,6 +82,7 @@ const routes: Route[] = [
 
 // Function to handle navigation
 function navigateTo(path: string): void {
+  socket?.close(); // Close socket connection if it exists
   // Update browser history without reload
   if ((path == '/games' || path == '/profile') && !isLoggedIn)
   {
@@ -95,7 +96,6 @@ function navigateTo(path: string): void {
   window.history.pushState({}, '', path);
   appState.currentPath = path;
   updateView();
-  socket?.close(); // Close socket connection if it exists
 }
 
 // Function to update the view based on current route

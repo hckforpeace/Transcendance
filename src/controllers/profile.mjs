@@ -126,8 +126,8 @@ const  updateProfileData = async (req, reply) => {
   if (!userInfo)
     reply.code(404).send({error: 'User not found'})
 
-  if (userInfo.isGoogleAuth)
-    reply.code(400).send({error: 'Google authenticated users cannot update profile information'})
+  // if (userInfo.isGoogleAuth)
+  //   reply.code(400).send({error: 'Google authenticated users cannot update profile information'})
 
   console.log("******************** this is the call to update profile *****************************************")
 
@@ -138,17 +138,31 @@ const  updateProfileData = async (req, reply) => {
     }
   }
 
-  if (email && email != userInfo.email) { 
+  else if (email && email != userInfo.email) { 
+    if (userInfo.isGoogleAuth){
+      reply.code(400).send({error: 'Google authenticated users cannot change there email information'})
+      return ;
+    }
     dbreq = await db.get("SELECT *  FROM users WHERE email = ?", email)
-    if (dbreq)
+    if (dbreq) {
       reply.code(400).send({error: 'email already in use'})
-    if (!email.includes("@"))
+      return;
+    }
+    if (!email.includes("@")) {
       reply.code(400).send({error: 'Invalid email address'})
+      return ;
+    }
   }
 
-  if (password || confirm_password) {
-    if (password != confirm_password)
+  else if (password || confirm_password) {
+    if (userInfo.isGoogleAuth) {
+      reply.code(400).send({error: 'Google authenticated users cannot change their password'})
+      return ;
+    }
+    if (password != confirm_password) {
       reply.code(400).send({error: 'Passwords does not match'})
+      return;
+    }
   }
 
   if (name && name != userInfo.name) {

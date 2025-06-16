@@ -5,9 +5,16 @@ const sql_add_match = "INSERT INTO matches (player1_alias , player2_alias, playe
 const populateDB = async (db) => {
 
    await db.run(sql_add_user,
-    ['0', 'Bot', 'bot_password_hash', 'bot@example.com']
+    ['0', 'Bot', 'bot_password_hash', 'bot@example.com', 0, 'images/avatar.jpg', '[]'],
   );
   await db.run(sql_add_user, ['hjgfkhjsdfgsdjhkfhg', 'sob', "password", "pomemo@gmail.com", 0, "images/avatar.jpg", '[]'], function(err) {
+    if (err) {
+      console.error('Error inserting admin user:', err);
+    } else {
+      console.log("user added");
+    }
+  })
+  await db.run(sql_add_user, ['hjgfkhjsdfgsdjhkfhgsjf', 'zob', "password", "lama@gmail.com", 0, "images/avatar.jpg", '[]'], function(err) {
     if (err) {
       console.error('Error inserting admin user:', err);
     } else {
