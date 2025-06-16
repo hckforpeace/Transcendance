@@ -75,7 +75,7 @@ const routes = [
         path: '/rgpd',
         view: '/html/rgpd.html',
         title: 'RGPD'
-    },
+    }
 ];
 // Function to handle navigation
 function navigateTo(path) {

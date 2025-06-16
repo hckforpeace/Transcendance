@@ -43,7 +43,7 @@ const fastify = Fastify({
       key: fs.readFileSync(__dirname + '/secret/certs/server.key'),
       cert: fs.readFileSync(__dirname + '/secret/certs/server.crt')
   },
-  logger: true,
+  logger: false,
 });
 
 

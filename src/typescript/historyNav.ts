@@ -74,8 +74,7 @@ const routes: Route[] = [
     path: '/rgpd',
     view: '/html/rgpd.html', 
     title: 'RGPD'
-  },
-
+  }
 ];
 
 

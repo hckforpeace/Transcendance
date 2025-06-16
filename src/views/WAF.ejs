@@ -1,52 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Suspicious Request Blocked</title>
-  <style>
-    body {
-      background-color: #f8f9fa;
-      font-family: Arial, sans-serif;
-      color: #333;
-      margin: 0;
-      padding: 0;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: 100px auto;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-left: 5px solid #dc3545;
-      padding: 30px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.05);
-    }
-
-    h1 {
-      color: #dc3545;
-      font-size: 24px;
-      margin-bottom: 15px;
-    }
-
-    p {
-      font-size: 16px;
-      line-height: 1.5;
-    }
-
-    .firewall-icon {
-      font-size: 50px;
-      color: #dc3545;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="container">
-    <div class="firewall-icon">🛡️</div>
-    <h1>Suspicious Request Detected</h1>
-    <p>Your request was identified as suspicious and has been blocked by our firewall for security reasons.</p>
-    <p>If you believe this was an error, please contact the administrator.</p>
+<body class="bg-gray-100 text-gray-800 font-sans">
+  <div class="max-w-xl mx-auto mt-24 bg-white border border-gray-300 border-l-8 border-l-red-600 p-8 shadow-md">
+    <div class="text-center text-5xl mb-6 text-red-600">🛡️</div>
+    <h1 class="text-2xl font-bold text-red-600 mb-4">Suspicious Request Detected</h1>
+    <p class="text-base leading-relaxed mb-2">
+      Your request was identified as suspicious and has been blocked by our firewall for security reasons.
+    </p>
+    <p class="text-base leading-relaxed">
+      If you believe this was an error, please contact the administrator.
+    </p>
   </div>
 </body>
 </html>

@@ -111,7 +111,7 @@ async function sql_xss_check(request, reply) {
   }
 
   if (
-    ['POST', 'PUT', 'PATCH'].includes(method) &&
+    ['GET','POST', 'PUT', 'PATCH'].includes(method) &&
     body &&
     typeof body === 'object' &&
     !Array.isArray(body)
