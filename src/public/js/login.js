@@ -10,6 +10,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+function renderAvatar() {
+    fetch("/api/avatar")
+        .then(response => response.json())
+        .then(data => {
+        if (data.avatarUrl) {
+            updateUserAvatar(data.avatarUrl);
+        }
+    })
+        .catch(err => {
+        console.error("Error fetching avatar:", err);
+    });
+}
 function login() {
     const formElement = document.getElementById("login-form");
     if (!formElement)
@@ -33,16 +45,7 @@ function login() {
                     errorMsg.style.color = "green";
                     errorMsg.textContent = "Welcome!";
                     // Corrected: fetch avatar and update it
-                    fetch("/api/avatar")
-                        .then(response => response.json())
-                        .then(data => {
-                        if (data.avatarUrl) {
-                            updateUserAvatar(data.avatarUrl);
-                        }
-                    })
-                        .catch(err => {
-                        console.error("Error fetching avatar:", err);
-                    });
+                    renderAvatar();
                     navigateTo('/');
                 }
             }
@@ -85,6 +88,7 @@ function handleCredentialResponse(response) {
         });
         if (res.ok) {
             console.log('success');
+            renderAvatar();
             isLoggedIn = true;
             navigateTo('/');
         }
