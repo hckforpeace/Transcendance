@@ -68,9 +68,9 @@ const displayAvatarMenu = () => {
 // ***************************************************************************
 
 async function handleCredentialResponse(response: any) {
-	const errorMsg = document.getElementById("form-error-msg");
-	if (!errorMsg)
-		return;
+  const errorMsg = document.getElementById("form-error-msg");
+  if (!errorMsg)
+  return;
   const res = await fetch('/auth/google', {
     method: 'POST',
     headers: {
@@ -80,10 +80,11 @@ async function handleCredentialResponse(response: any) {
   });
   if (res.ok) {
     console.log('success')
+    isLoggedIn = true;
     navigateTo('/')
   }
   else if (res.status === 400)
-  {
+{
     const response = await res.json();
     console.log(response.error)
     errorMsg.textContent = response.error;
