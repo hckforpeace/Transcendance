@@ -85,6 +85,7 @@ function handleCredentialResponse(response) {
         });
         if (res.ok) {
             console.log('success');
+            isLoggedIn = true;
             navigateTo('/');
         }
         else if (res.status === 400) {
