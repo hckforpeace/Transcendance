@@ -190,7 +190,6 @@ const  updateProfileData = async (req, reply) => {
     try {
       await pipeline(avatar.stream(), fs.createWriteStream(filePath));
       console.log("Avatar saved successfully!");
-
       await db.run('UPDATE users SET avatarPath = ? WHERE id = ?', [avatarPath, userId]);
       modified = 1;
     } catch (err) {

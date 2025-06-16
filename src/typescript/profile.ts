@@ -152,22 +152,19 @@ function UpdateActualFriends(data: any) {
 
     if (image) 
       image.src = avatar
-    if (name_paragraph) {
-      name_paragraph.innerHTML = "dhd"
-    }
 
     if (status && status.getAttribute("data-value") != connected.toString() ) {
       if (status.getAttribute("data-value") == "1") {
+        status.setAttribute("data-value", "0");
+        status.className=""
+        status.classList.add("text-red-600")
+        status.innerHTML = "disconnected"
+      }
+      else {
         status.setAttribute("data-value", "1");
         status.className=""
         status.classList.add("text-green-600")
-        status.innerHTML = "connected"
-      }
-      else {
-        status.setAttribute("data-value", "0");
-        status.className=""
-        status.classList.add("text-green-600")
-        status.innerHTML = "disconnected"; 
+        status.innerHTML = "connected"; 
       }
     }
   } else {

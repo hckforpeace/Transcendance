@@ -18,7 +18,8 @@ function logout() {
 }
 
 window.addEventListener("beforeunload", function(e){
-   // Do something
-    logout();
+  // Do something
+  e.preventDefault(); // Prevents the default action
+  logout();
 
 });

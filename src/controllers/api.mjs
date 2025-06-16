@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import bcrypt from 'bcryptjs';
 import { getDB } from "../database/database.js"
 import { pipeline } from 'stream/promises';
+import profileRequests from '../database/profile.js'
 import { request } from 'http';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -50,6 +51,7 @@ const login = async (req, reply) => {
       sameSite: "lax",
       path: "/"
     });
+    profileRequests.updateFriended(user.id)
 
   }
   catch (error) {
@@ -150,7 +152,6 @@ const register = async (req, reply) => {
 };
 
 const logout = async (req, reply) => {
-	
   const db = getDB();
 
   try {
@@ -158,11 +159,10 @@ const logout = async (req, reply) => {
     const userId = decoded.userId;
     const data = await db.get('SELECT name FROM users WHERE id = ?', [userId]);
     await db.run("UPDATE users SET connected = 0 WHERE name = ?", data.name);
-
     reply.clearCookie("token", {
 			path: "/"
 		});
-    
+    await profileRequests.updateFriended(decoded.userId);
 		return reply.code(200).send({ message: "Logged out" });
 	} catch (err) {
 		req.log.error(err);

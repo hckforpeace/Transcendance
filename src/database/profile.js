@@ -5,6 +5,23 @@ import socket from "../controllers/profile.mjs"
 //                                       Request for Friends and AddFriend
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+const updateFriended = async (userId) => {
+  const db = getDB();
+  try {
+    const res = await db.get("SELECT friendedMe FROM users WHERE id = ?", [userId]);
+    const friends = JSON.parse(res.friendedMe);
+    for (const friend of friends) {
+      if (socket.connections.has(friend)){
+        var val = await getFriends(friend);
+        socket.connections.get(friend).send(JSON.stringify(val))
+      } 
+    }
+  } catch (error) {
+    console.error("Error inserting friendedMe:", error);
+    return null;
+  } 
+}
+
 const getFriends = async (userId) => {
   const db = getDB();
   const users = [];
@@ -185,7 +202,6 @@ const getStats = async (id) => {
   let avg_win;
 
   try {
-    console.log('id of Request: ' + id);
     stats = await db.get("SELECT matchesWon, matchesLost FROM stats WHERE playerId = ?", [id]);
     matches = await db.all("SELECT player1_alias, player2_alias, player1_score, player2_score, date FROM matches WHERE player1_id = ? OR player2_id = ?", [id, id]);
 
@@ -217,4 +233,4 @@ const getStats = async (id) => {
 };
 
 
-export default { getConnectedUsers, getProfileData , getNonFriends, updateConnected, updateDisconnected, addFriend, getFriends, getStats };
+export default { getConnectedUsers, getProfileData , getNonFriends, updateConnected, updateDisconnected, addFriend, getFriends, getStats, updateFriended };
