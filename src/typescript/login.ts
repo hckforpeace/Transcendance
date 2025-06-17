@@ -50,6 +50,9 @@ function send2faCode() {
 	errorMsg.style.color = "red";
 	const formData = new FormData(formElement);
 	formData.append("user_id", localStorage.getItem("user_id") || "");
+    const inputElement = document.getElementById('2fa-input') as HTMLInputElement;
+	if (!inputElement)
+		return;
 	const xhttp = new XMLHttpRequest();
 
 	xhttp.onreadystatechange = function ()
@@ -58,16 +61,31 @@ function send2faCode() {
 		{
 			try
 			{
-				if (this.status === 400 || this.status === 500)
-				{
+				if (this.status === 200) {
+					console.log("Valid 2fa Code");
+					isLoggedIn = true;
+					errorMsg.style.color = "green";
+					errorMsg.textContent = "Welcome!";
+// 					// Corrected: fetch avatar and update it
+					fetch("/api/avatar")
+						.then(response => response.json())
+						.then(data => {
+							if (data.avatarUrl) {
+								updateUserAvatar(data.avatarUrl);
+							}
+						})
+						.catch(err => {
+							console.error("Error fetching avatar:", err);
+						});
+					navigateTo('/');
+				}
+				else {
+				    inputElement.disabled = false; // Make the field uneditable
+				    inputElement.style.backgroundColor = '#FFFFFF'; // Change background color to indicate disabled state
+				    inputElement.style.color = '#222'; // Change text color for visual indication
+					inputElement.value = ""; // Clear the input field after sending the code
 					const response = JSON.parse(this.responseText);
 				 	errorMsg.textContent = response.error || "An error occurred.";
-				}
-				if (this.status === 200)
-				{
-                    // errorMsg.style.color = "green";
-                    // errorMsg.textContent = "Welcome!";
-					console.log("Valid 2fa Code");
 				}
 			}
 			catch (e)
@@ -78,7 +96,7 @@ function send2faCode() {
 
 	};
 
-	xhttp.open("POST", "/api/2fa", true);
+	xhttp.open("POST", "/auth/2fa", true);
 	console.log(formData);
 	xhttp.send(formData);
 }
@@ -124,26 +142,24 @@ function login() {
 				}
 				if (this.status === 200)
 				{
-                    // errorMsg.style.color = "green";
-                    // errorMsg.textContent = "Welcome!";
 					load2faView();
 // =======
 // 				if (this.status === 200) {
-// 					isLoggedIn = true;
-// 					errorMsg.style.color = "green";
-// 					errorMsg.textContent = "Welcome!";
-// 					// Corrected: fetch avatar and update it
-// 					fetch("/api/avatar")
-// 						.then(response => response.json())
-// 						.then(data => {
-// 							if (data.avatarUrl) {
-// 								updateUserAvatar(data.avatarUrl);
-// 							}
-// 						})
-// 						.catch(err => {
-// 							console.error("Error fetching avatar:", err);
-// 						});
-// 					navigateTo('/');
+					// isLoggedIn = true;
+					// errorMsg.style.color = "green";
+					// errorMsg.textContent = "Welcome!";
+					// // Corrected: fetch avatar and update it
+					// fetch("/api/avatar")
+					// 	.then(response => response.json())
+					// 	.then(data => {
+					// 		if (data.avatarUrl) {
+					// 			updateUserAvatar(data.avatarUrl);
+					// 		}
+					// 	})
+					// 	.catch(err => {
+					// 		console.error("Error fetching avatar:", err);
+					// 	});
+					// navigateTo('/');
 // >>>>>>> main
 				}
 			}
