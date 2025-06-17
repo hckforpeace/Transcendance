@@ -75,10 +75,21 @@ const routes: Route[] = [
     view: '/html/rgpd.html', 
     title: 'RGPD'
   },
+  {
+	path: '/tournament',
+	view: '/html/tournament_menu.html',
+	title: 'Tournament',
+	function: init_tournamentMenu
+  },
 
 ];
 
+function isLoggedIn(): number
+{
 
+  const jwt = jwt.verify();
+
+}
 
 // Function to handle navigation
 function navigateTo(path: string): void {

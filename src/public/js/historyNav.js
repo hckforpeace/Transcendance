@@ -76,7 +76,16 @@ const routes = [
         view: '/html/rgpd.html',
         title: 'RGPD'
     },
+    {
+        path: '/tournament',
+        view: '/html/tournament_menu.html',
+        title: 'Tournament',
+        function: init_tournamentMenu
+    },
 ];
+function isLoggedIn() {
+    const jwt = jwt.verify();
+}
 // Function to handle navigation
 function navigateTo(path) {
     socket === null || socket === void 0 ? void 0 : socket.close(); // Close socket connection if it exists

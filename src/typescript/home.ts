@@ -1,4 +1,3 @@
-var isLoggedIn = false;
 
 function injectViewToContentDiv(data: string): Promise<void> {
     return new Promise((resolve) => {
