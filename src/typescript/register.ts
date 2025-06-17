@@ -1,6 +1,4 @@
-// // // Construct the register URL dynamically
-// const currentUrl = window.location.hostname;
-// const currentPort = window.location.port;
+
 
 /**
  * @brief Register a new user if not exist

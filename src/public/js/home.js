@@ -1,5 +1,4 @@
 "use strict";
-var isLoggedIn = false;
 function injectViewToContentDiv(data) {
     return new Promise((resolve) => {
         const contentDiv = document.getElementById('content-div');

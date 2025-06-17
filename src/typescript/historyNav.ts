@@ -84,7 +84,12 @@ const routes: Route[] = [
 
 ];
 
+function isLoggedIn(): number
+{
 
+  const jwt = jwt.verify();
+
+}
 
 // Function to handle navigation
 function navigateTo(path: string): void {
