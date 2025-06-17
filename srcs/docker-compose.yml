@@ -1,0 +1,88 @@
+version: "8.2"
+
+# services
+services:
+
+  app:
+    image: app:user
+    container_name: app
+    build: requirements/app
+    networks:
+      - Transcendence
+    restart: always
+ #nginx
+  nginx:
+    image: nginx:user
+    container_name: nginx
+    build: requirements/nginx
+    ports: # port binding 442 on the host to 443 on the container
+      - "443:443"
+    depends_on: # insures that wordpress service starts before Nginx
+      - app 
+    networks:
+      - Transcendence 
+    restart: always
+# wordpress
+  # wordpress:
+  #   image: wordpress:user
+  #   container_name: wordpress
+  #   build: requirements/wordpress
+  #   secrets:
+  #     - db_password
+  #     - wp_adm_password
+  #     - wp_usr_password
+  #   depends_on: # the container wodpress wont run before the container mariadb runs
+  #     mariadb:
+  #       condition: service_healthy # and it will run only if it is healthy (succeeded to run, relies on healthcheck)
+  #   volumes:
+  #     - wordpress:/var/www/wordpress
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - inception
+  #   restart: always
+
+
+# Volumes
+# volumes:
+#   mariadb:
+#     name: mariadb
+#     driver: local
+#     driver_opts:
+#       device: /home/${USER}/data/mariadb # To change in case I change laptop
+#       o : bind
+#       type : none
+#   wordpress:
+#     name: wordpress
+#     driver: local
+#     driver_opts:
+#       device: /home/${USER}/data/wordpress # To change in case I change laptop
+#       o: bind
+#       type: none
+#   redis:
+#     name: redis
+#     driver: local
+#     driver_opts:
+#       device: /home/${USER}/data/redis # To change in case I change laptop
+#       o: bind
+#       type: none
+
+# network
+networks:
+  Transcendence:
+    name: Transcendence 
+
+# secrets
+# secrets:
+#   db_root_password:
+#     file: ../secrets/db_root_password.txt
+#   db_password:
+#     file: ../secrets/db_password.txt
+#   wp_adm_password:
+#     file: ../secrets/wp_adm_pw.txt
+#   wp_usr_password:
+#     file: ../secrets/wp_usr_pw.txt
+#   ftp_pw:
+#     file: ../secrets/ftp_pw.txt
+#   ftp_uname:
+#     file: ../secrets/ftp_uname.txt

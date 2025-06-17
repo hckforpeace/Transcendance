@@ -39,10 +39,6 @@ export default defineConfig({
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const fastify = Fastify({
-  https: {
-      key: fs.readFileSync(__dirname + '/secret/certs/server.key'),
-      cert: fs.readFileSync(__dirname + '/secret/certs/server.crt')
-  },
   logger: true,
 });
 
