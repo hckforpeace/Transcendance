@@ -24,6 +24,7 @@ const login = async (req, reply) => {
     const password = formData.get("password");
 
     const db = getDB();
+	const { mailer } = req.server;
 
     if (!name || !password) {
       return reply.status(400).send({ error: 'All fields are required' });
@@ -52,17 +53,17 @@ const login = async (req, reply) => {
 	  /* Storing it in db */
 	  console.log(user);
 	  db.run(`
-	  	INSERT INTO twofa (user_id, code, created_at, expired_at) VALUES (?, ?, ?, ?)
-	  	`, [user.id, code, Date.now(), Date.now() + 5 * 60 * 1000]);
+	  	INSERT INTO twofa (user_id, code, validity, created_at, expired_at) VALUES (?, ?, ?, ?, ?)
+	  	`, [user.id, code, true, Date.now(), Date.now() + 5 * 60 * 1000]);
 	  // db.prepare(`
 	  // 	INSERT INTO twofa (user_id, code, created_at, expired_at) VALUES (?, ?, ?, ?)
 	  // 	`).run(user.id, code, Date.now(), Date.now() + 5 * 60 * 1000);
 	  console.log("Inserted into db");
 
 	  console.log("Checking insertion");
-	  const tmp = db.prepare(`
+	  const tmp = await db.all(`
 	  			SELECT * FROM twofa WHERE user_id = ? AND code = ?
-	  		`).all(user.id, code);
+	  		`, [user.id, code]);
 	  console.log(tmp);
 
 	  /* Sending it to user */

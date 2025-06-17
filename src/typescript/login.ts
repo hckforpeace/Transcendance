@@ -17,12 +17,25 @@ function load2faView(): void {
         return;
     }
 
-    inputElement.addEventListener('input', () => {
-        if (inputElement.value.length === 6) {
-            console.log('6 characters entered:', inputElement.value);
-			send2faCode();
-            // Proceed with further logic
+	inputElement.addEventListener('input', (event) => {
+	  const target = event.target as HTMLInputElement;
+	  target.value = target.value.replace(/\D/g, ''); // Remove non-digit characters
+
+    // Truncate input to 6 characters if it exceeds the limit
+      if (target.value.length > 6) {
+        target.value = target.value.slice(0, 6);
+      }
+      if (inputElement.value.length === 6) {
+          console.log('6 characters entered:', inputElement.value);
+          send2faCode();
+    	  inputElement.disabled = true; // Make the field uneditable
+    	  inputElement.style.backgroundColor = '#e0e0e0'; // Change background color to indicate disabled state
+    	  inputElement.style.color = '#888'; // Change text color for visual indication
+          // Proceed with further logic
         }
+	});
+
+    inputElement.addEventListener('input', () => {
 	});
 };
 
@@ -36,6 +49,7 @@ function send2faCode() {
 	errorMsg.textContent = ""; // Reset previous error
 	errorMsg.style.color = "red";
 	const formData = new FormData(formElement);
+	formData.append("user_id", localStorage.getItem("user_id") || "");
 	const xhttp = new XMLHttpRequest();
 
 	xhttp.onreadystatechange = function ()
@@ -90,6 +104,9 @@ function login() {
 	const formElement = document.getElementById("login-form") as HTMLFormElement;
 	if (!formElement)
 		return;
+	const userField = document.getElementById("username") as HTMLInputElement | null;
+	const userValue = userField ? userField.value : "";
+	localStorage.setItem("user_id", userValue);
 	const errorMsg = document.getElementById("form-error-msg");
 	if (!errorMsg)
 		return;

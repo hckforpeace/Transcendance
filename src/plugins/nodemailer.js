@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import fp from 'fastify-plugin';
 
 async function mailConnector(fastify, options) {
-  const transporter = nodemailer.createTransport({
+  const mailer = nodemailer.createTransport({
 		service: 'gmail',
 	    host: "smtp.gmail.com",
 	    poort: 465,
@@ -15,7 +15,7 @@ async function mailConnector(fastify, options) {
 		},
   });
 
-  fastify.decorate('mail_transporter', transporter);
+  fastify.decorate('mailer', mailer);
 }
 
 export default fp(mailConnector);

@@ -1,5 +1,6 @@
 import fs from 'fs'
 import jwtPlugin from './plugins/jwtPlugin.js'
+import mailConnector from './plugins/nodemailer.js'
 import Fastify from 'fastify'
 import routesHome from './routes/home.js'
 import routesApi from './routes/api.js'
@@ -55,6 +56,7 @@ fastify.register(websockets);
 fastify.register(pong_match);
 // jwt plugin
 fastify.register(jwtPlugin);
+fastify.register(mailConnector);
 
 // To handle form submissions
 fastify.register(fastifyFormbody);
