@@ -1,14 +1,14 @@
 {
   "main": {
-    "id": "9b29ab04ca638baa",
+    "id": "ffebbe9f08b1c621",
     "type": "split",
     "children": [
       {
-        "id": "b816bce74605a13c",
+        "id": "cdb28819934dfcb3",
         "type": "tabs",
         "children": [
           {
-            "id": "c6cf55fc2674b504",
+            "id": "3a8fe22a4e9d3f1a",
             "type": "leaf",
             "state": {
               "type": "excalidraw",
@@ -25,15 +25,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "192f60d44bf521e7",
+    "id": "b443a8814a6066a5",
     "type": "split",
     "children": [
       {
-        "id": "4209e1695f298511",
+        "id": "09fd8c98eba7c057",
         "type": "tabs",
         "children": [
           {
-            "id": "da1e010a4b8cb2c6",
+            "id": "4eb73efb99c2bfee",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -46,7 +46,7 @@
             }
           },
           {
-            "id": "21b4aa4530c1eb60",
+            "id": "1b6148a4eced2ead",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -63,7 +63,7 @@
             }
           },
           {
-            "id": "a78b260e5dbba78f",
+            "id": "2312d4ec3ac1a056",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -76,23 +76,23 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
-    "id": "f1214239ea4b9822",
+    "id": "e7f5ce3fa4586d54",
     "type": "split",
     "children": [
       {
-        "id": "dc85d3452ada9ee7",
+        "id": "d5a951f4c935c389",
         "type": "tabs",
         "children": [
           {
-            "id": "eaf4bcd7f7cfaded",
+            "id": "bbd3e7785143cea8",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Transcendance/Excalidraw/UI design.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,25 +102,24 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for UI design"
+              "title": "Backlinks"
             }
           },
           {
-            "id": "f5dfbd1f53a44b90",
+            "id": "a03c6afde938dd48",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Transcendance/Excalidraw/UI design.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from UI design"
+              "title": "Outgoing links"
             }
           },
           {
-            "id": "bc54b9e7a1eddd82",
+            "id": "6b2961745390160f",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -135,18 +134,17 @@
             }
           },
           {
-            "id": "05b9d834c53291b4",
+            "id": "94e035bca3196414",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "Transcendance/Excalidraw/UI design.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of UI design"
+              "title": "Outline"
             }
           }
         ]
@@ -167,9 +165,8 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "c6cf55fc2674b504",
+  "active": "4a40e36b3c153996",
   "lastOpenFiles": [
-    "Transcendance/Excalidraw/UI design.md",
-    "Transcendance/Excalidraw/Services.md"
+    "Transcendance/Excalidraw/UI design.md"
   ]
 }

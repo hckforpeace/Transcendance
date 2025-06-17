@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Too Many Requests</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: sans-serif;
+      background: #f8d7da;
+      color: #721c24;
+
+      /* Flex centering */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      text-align: center;
+    }
+    h1 {
+      font-size: 2rem;
+      margin: 0 0 1rem 0;
+    }
+    #bottom-text {
+      font-size: 0.85rem;
+      color: #721c24;
+      font-weight: 400;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>🚫 Too Many Requests</h1>
+
+  <p id="bottom-text">
+    Please wait <span id="countdown"><%= seconds %></span> seconds before trying again.
+  </p>
+
+  <script>
+    let seconds = <%= seconds %>;
+    const countdownEl = document.getElementById('countdown');
+    const bottomText = document.getElementById('bottom-text');
+
+    const interval = setInterval(() => {
+      seconds--;
+      if (seconds <= 0) {
+        clearInterval(interval);
+        countdownEl.textContent = '0';
+        bottomText.textContent = 'You can now retry.';
+      } else {
+        countdownEl.textContent = seconds;
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

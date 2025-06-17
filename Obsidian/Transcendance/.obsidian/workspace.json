@@ -1,22 +1,22 @@
 {
   "main": {
-    "id": "245747c8d9265bf2",
+    "id": "7b21c65e8ad26fcf",
     "type": "split",
     "children": [
       {
-        "id": "01b9e195addd60a4",
+        "id": "fb807a60b2bda409",
         "type": "tabs",
         "children": [
           {
-            "id": "dd2e2f59c9cde2d1",
+            "id": "10ca17d23b1909d9",
             "type": "leaf",
             "state": {
-              "type": "release-notes",
+              "type": "excalidraw",
               "state": {
-                "currentVersion": "1.8.10"
+                "file": "Excalidraw/UI design.md"
               },
-              "icon": "lucide-book-up",
-              "title": "Release Notes 1.8.10"
+              "icon": "excalidraw-icon",
+              "title": "UI design"
             }
           }
         ]
@@ -25,15 +25,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "5fbc7a0aff22d001",
+    "id": "8d4148b87df61468",
     "type": "split",
     "children": [
       {
-        "id": "02cd00331ae94b3a",
+        "id": "059f953ee6373ab1",
         "type": "tabs",
         "children": [
           {
-            "id": "46e887028fdfa610",
+            "id": "13af834b98a1054a",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -46,7 +46,7 @@
             }
           },
           {
-            "id": "4c579f143addb0b5",
+            "id": "49e10c8cdb4d15e7",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -63,7 +63,7 @@
             }
           },
           {
-            "id": "26be3ad6fadfd70b",
+            "id": "c66496771d605834",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -76,23 +76,23 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
-    "id": "3985b73406d8978d",
+    "id": "7e5dbfd24e7f89d4",
     "type": "split",
     "children": [
       {
-        "id": "179ce1da3d93e71e",
+        "id": "249eaf9559c46184",
         "type": "tabs",
         "children": [
           {
-            "id": "0df56195d3770ae0",
+            "id": "d0aa91dc7d88f27a",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
+                "file": "Excalidraw/UI design.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,24 +102,25 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks"
+              "title": "Backlinks for UI design"
             }
           },
           {
-            "id": "2e172046cc9f8265",
+            "id": "4282664b1eac1079",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "Excalidraw/UI design.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links"
+              "title": "Outgoing links from UI design"
             }
           },
           {
-            "id": "72af1d4f8c488acc",
+            "id": "6b7b1ad486b2d4c1",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -134,17 +135,18 @@
             }
           },
           {
-            "id": "91b22f3fa985ae39",
+            "id": "ae56838fb1d28d26",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
+                "file": "Excalidraw/UI design.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of UI design"
             }
           }
         ]
@@ -165,6 +167,32 @@
       "obsidian-excalidraw-plugin:New drawing": false
     }
   },
-  "active": "dd2e2f59c9cde2d1",
+<<<<<<< Updated upstream
+  "active": "10ca17d23b1909d9",
   "lastOpenFiles": []
+=======
+  "active": "5f5c0b29ac129458",
+  "lastOpenFiles": [
+    "Excalidraw/UI design.md",
+    "Excalidraw/Services.md",
+    "TypeScript.md",
+    "Views.md",
+    "Organisation.md",
+    "Resources NodeJs.md",
+    "NODE.js.md",
+    "Minimal Technical Requirement.md",
+    "Fastify.md",
+    "NPM.md",
+    "Untitled.md",
+    "Untitled.canvas",
+    "Screenshot from 2025-03-27 16-40-53.png",
+    "Screenshot from 2025-03-27 16-37-29.png",
+    "Screenshot from 2025-03-27 16-34-42.png",
+    "Excalidraw/Drawing 2025-03-28 13.11.56.excalidraw.md",
+    "Excalidraw",
+    "Screenshot from 2025-03-27 16-40-53 1.png",
+    "Node.js Crash Course.md",
+    "link.md"
+  ]
+>>>>>>> Stashed changes
 }

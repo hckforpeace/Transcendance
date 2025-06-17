@@ -1,38 +1,32 @@
-// const currentUrl = window.location.hostname;
-// const currentPort = window.location.port;
 const currentRoot = currentUrl + ":" + currentPort;
-var socket: WebSocket;
 var playerSide:string;
 var gameId: number;
-var opponent: string;
 var truePong: boolean = false;
+var local_username: string;
+var opponent: string;
 
 function IncomingInvitationAlert(data: any)
 {
-  if (confirm('Player: ' + data.src + ' is inviting you to play !'))
-    socket.send(JSON.stringify({type: 'accept', user: data.src, src: local_user}));
+  if (confirm('PlayerRemote: ' + data.username + ' is inviting you to play !'))
+    socket.send(JSON.stringify({type: 'accept', userId: data.userId}));
   else
-    socket.send(JSON.stringify({type: 'refuse', user: data.src, src: local_user}));
+    socket.send(JSON.stringify({type: 'refuse', userId: data.userId}));
 }
 
-function launchPongRemote(data:any)
-{
+async function launchPongRemote(data: any): Promise<void> {
+  navigateTo('/pong_remote');
   gameId = data.gameid;
   playerSide = data.side;
   opponent = data.opponent;
+  local_username = data.username;
   if (data.truePong == 'true')
     truePong = true;
-  fetchPong();
 }
 
 function moveBall(data:any)
 {
-  game.ball.pos.x = Number(data.x);
-  game.ball.pos.y = Number(data.y); 
-  console.log("ball pos x: " + game.ball.pos.x);
-  console.log("ball pos y: " + game.ball.pos.y);
-  // ball.style.top = data.y + 'px';
-
+  game_remote.ball.pos.x = Number(data.x);
+  game_remote.ball.pos.y = Number(data.y); 
 }
 
 function moveOpponent(data:any)
@@ -43,101 +37,41 @@ function moveOpponent(data:any)
   if (type == 'pressed') {
     if (dir == 'up') {
       if (playerSide == 'p1')
-        p2_upPressed = true;
+        p2_upPressed_remote = true;
       else
-        p1_upPressed = true;
+        p1_upPressed_remote = true;
     }
     else {
       if (playerSide == 'p1')
-        p2_downPressed = true;
+        p2_downPressed_remote = true;
       else
-        p1_downPressed = true;
+        p1_downPressed_remote = true;
     } 
   } else {
     if (dir == 'up') {
       if (playerSide == 'p1')
-        p2_upPressed = false;
+        p2_upPressed_remote = false;
       else
-        p1_upPressed = false;
-      // p2_upPressed = false;
+        p1_upPressed_remote = false;
     }
     else {
       if (playerSide == 'p1')
-        p2_downPressed = false;
+        p2_downPressed_remote = false;
       else
-        p1_downPressed = false;
-      // p2_downPressed = false;
+        p1_downPressed_remote = false;
     }
-  }
-  // console.log("p2_upPressed:&&  " + p2_upPressed);
-  // console.log("p2_downPressed: " + p2_downPressed);
-}
-
-function parseIncommingSocketMsg(data: any)
-{
-  // const jsonData = JSON.parse(data);
-  try {
-    if (!data.users && !data.type)
-      throw new Error("wrong data format server error");
-    if (data.users != null)
-      updateLobbyUsers(data); 
-    else if (data.type == 'invite')
-      IncomingInvitationAlert(data);
-    else if (data.type == 'startgame')
-      launchPongRemote(data); 
-    else if (data.type == 'pressed' || data.type == 'released')
-      moveOpponent(data); 
-    else if (data.type == 'moveBall')
-      moveBall(data);
-    else if (data.type == 'opponentdisconnect')
-      alert("opponent " + data.opponent + " was disconnected");
-  }
-  catch (error)
-  {
-    console.log(error);
   }
 }
 
-function listclick()
-{
-  document.getElementById('users_list')?.addEventListener('click', function (event) {
-    try {
-      const listItem = event.target as HTMLElement;
-      if (!listItem)
-        throw new Error('li not found');
-      const user = listItem.closest('p');
-      if (!user)
-        throw new Error('usli value not defined not found');
-      // console.log();
-      socket.send(JSON.stringify({ type: 'invite', user: user.innerHTML, src: local_user }));
-    }
-    catch (error) {
-      console.log(error);
-    }
-  })
+
+
+
+function sendInvitation(id: any) {
+  console.log('I am caaled the id is :' + id);
+  // var para = document.getElementById(id) as HTMLParagraphElement 
+  socket.send(JSON.stringify({ type: 'invite', userId: id}));
 }
 
-function changeRegion()
-{
-    var tag = document.getElementById("dynamic-script") as HTMLScriptElement;
-    if (!tag) {
-      return
-    }
-    tag.remove(); // remove the old script tag
-  
-    var newTag = document.createElement("script");
-    newTag.id = "dynamic-script";
-    newTag.type = "text/javascript";
-    newTag.src = 'js/pong.js';
-    var footer = document.head;
-    console.log(  "change region");
-    if (!footer) {
-      console.log(  "footer failed");
-      return ;
-    }
-    footer.appendChild(newTag);
-    console.log("script loaded");
-}
 
 function updateLobbyUsers(data: any)
 {
@@ -147,116 +81,37 @@ function updateLobbyUsers(data: any)
   if (data.users === undefined)
     return;
 
-  const numberofusers = data.users.length;
+  // const numberofusers = data.users.length;
   
   var users_tag = document.getElementById('users_list');
   if (!users_tag)
     throw new Error('li not found');
   users_tag.innerHTML = '';
-  for (let i = 0; i < numberofusers; i++)
+  for (const user of data.users)
   {
     let element = document.createElement('p');
-    element.classList.add('text-center'); 
-    element.innerHTML = data.users[i];
+    element.id =  user.id; 
+    element.innerHTML = user.username;
+    element.classList.add("flex", "justify-center", "py-2", "border-b", "cursor-pointer", "peer-checked:bg-blue-100", "transition-colors", "rounded", "text-lg", "font-medium")
+    element.setAttribute('onclick', 'sendInvitation(this.id)')
     element.style.cursor = 'pointer';
     users_tag.appendChild(element);
   }
 }
 
-function renderLobby()
-{
-  try
-  {
-    var content_div = document.getElementById('content-div');
-    if (!content_div)
-      throw new Error('missing content_div ')
-    content_div.innerHTML = '';
-
-    // content_div.classList.add('content-center');
-   var list = document.createElement("div");
-    list.id = 'users_list';
-    list.classList.add('border-3', 'p-9', 'rounded-xl', 'border-blue-500');
-    // list.classList.add('border');
-    list.classList.add('w-100');
-    list.classList.add('h-100');
-    // list.style.width = '300px';
-    // list.style.height = '100 px';
-    // list.style.border = '1px solid black';
-    content_div.appendChild(list);
-  
-    // var request_btn = document.createElement('input');
-    // request_btn.type = 'button';
-    // request_btn.value = 'send invitation';
-    // request_btn.id = 'request';
-    // content_div.appendChild(request_btn);    
-  }
-  catch (error)
-  {
-    console.log(error);
-  }
-}
-
 document.addEventListener("DOMContentLoaded", function () {
-  socket_connect();
 });
 
 async function fetchPong() {
-  await fetch("https://" + currentUrl + ":" + currentPort + "/api/pong", {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  })
+  await fetch("/html/pong.html")
     .then(response => response.text())
     .then(html => {
-      var content = document.getElementById("content-div");
-      if (!content)
-        throw new Error("Content div not found");
-      content.className = "";
-      content.innerHTML = html;
-      changeRegion();
+    	injectViewToContentDiv(html);
+      // const contentDiv = document.getElementById('content-div') as HTMLDivElement;
+      // contentDiv.innerHTML = html;      // injectViewToContentDiv(html);
     })
     .catch((error) => {
       console.error("Error:", error);
     }); 
 }
 
-// TODO: do something with event parameter
-function wsEvent(event: any) 
-{
-  console.log(currentRoot);
-  socket = new WebSocket('wss://' + currentRoot + '/api/remote', localStorage.getItem("token")?.toString());
-  socket.onopen = function (event) {
-    renderLobby();
-    listclick();
-  };
-
-  socket.onmessage = function(event) {
-    let data = JSON.parse(event.data);
-    // if (!data)
-    //   return ;
-    console.log('received: ' + data);
-    parseIncommingSocketMsg(data);
-  };
-
-  socket.onclose = function(event) {
-    if (event.wasClean) {
-      console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-    } else {
-      // par exemple : processus serveur arrêté ou réseau en panne
-      // event.code est généralement 1006 dans ce cas
-      console.log('[close] Connection died');
-    }
-  };
-
-  socket.onerror = function(error) {
-    console.log('connection refused');
-  };
-
-}
-
-function socket_connect() {
-  const remote = document.getElementById("start") ;
-  if (!remote)
-    return;
-  remote.addEventListener("click", wsEvent);
-}

@@ -1,0 +1,131 @@
+<!-- Main 4x4 Grid -->
+<div class="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-rows-4 gap-4 p-4">
+
+  <!-- Profile Section (Top-Left) -->
+  <div class="row-span-2 col-span-2 bg-white border-4 rounded-xl border-blue-500 flex flex-col h-[500px]">
+    <h2 class="text-center text-blue-500 text-2xl md:text-3xl lg:text-4xl mb-2 font-bold">Profile</h2>
+    <!-- Form content -->
+    <div class="overflow-auto p-4">
+      <!-- Your form here -->
+      <form id="update-form" class="h-full flex flex-col lg:flex-row gap-4" enctype="multipart/form-data">
+        
+        <!-- Avatar & logout -->
+        <div class="flex flex-col items-center justify-start lg:w-1/3 flex-shrink-0">
+          <!-- Avatar -->
+          <img id="avatar-preview" class="h-24 w-24 md:h-32 md:w-32 object-cover rounded-full border-4 border-blue-200 mb-3" src="images/avatar.jpg" alt="Avatar">  
+          <input name="avatar" class="block w-full max-w-xs p-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500" 
+            onchange="previewAvatar(event)" id="file_input" type="file">
+          <div id="form-error-msg" class="text-red-500 text-sm"></div>
+
+          <!-- Logout Button with extra spacing -->
+          <input type="button" value="Logout" onclick="logout()" 
+                class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors max-w-xs mt-10">
+        </div>
+
+
+        <!-- Fields -->
+        <div class="flex-1 overflow-y-auto space-y-4">
+          <div class="space-y-3">
+            <h2 class="text-blue-700 font-bold text-lg md:text-xl">Change Credentials</h2>
+            <div class="space-y-2">
+              <label class="text-blue-500 text-sm font-medium">Username</label>
+              <input name="name" id="uname" type="text" placeholder="New Name" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500" value="John">
+            </div>
+            <div class="space-y-2">
+              <label class="text-blue-500 text-sm font-medium">Email</label>
+              <input name="email" id="email" type="email" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500" value="Doe">
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <h2 class="text-blue-700 text-lg md:text-xl font-bold">Change Password</h2>
+            <div class="space-y-2">
+              <label id="pw1" class="text-blue-500 text-sm font-medium">New Password</label>
+              <input name="password" type="password" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500">
+            </div>
+            <div class="space-y-2">
+              <label id="pw2" class="text-blue-500 text-sm font-medium">Confirm Password</label>
+              <input name="confirm_password" type="password" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500">
+            </div>
+            <input type="button" value="Update" onclick="ChangeProfileData()" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors">
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Friends Section (Top-Right) -->
+  <div class="row-span-2 col-span-2 bg-white border-4 rounded-xl border-blue-500 flex flex-col h-[500px]">
+    <h2 class="text-center text-blue-500 text-2xl md:text-3xl lg:text-4xl mb-2 font-bold">Friends</h2>
+    <div id="friends" class="flex-1 overflow-auto px-4 pb-4 space-y-2">
+      <!-- Friends list scrolls inside here -->
+    </div>
+  </div>
+
+  <!-- Stats Section (Bottom-Left) -->
+  <div class="row-span-2 col-span-2 bg-white border-4 rounded-xl border-blue-500 flex flex-col h-[500px]">
+    <h2 class="text-center text-blue-500 text-2xl md:text-3xl lg:text-4xl mb-2 font-bold">Stats</h2>
+    
+    <div class="grid grid-cols-2 gap-4 mx-4 mb-4">
+      <!-- Left Column: Wins -->
+      <div class="text-center space-y-2">
+        <div>
+          <h3 class="text-green-700 text-lg font-bold">Wins</h3>
+          <p class="text-green-700 text-xl font-bold" id="wins">4</p>
+        </div>
+        <div>
+          <p class="text-green-700 text-sm font-bold">Avg Won</p> 
+          <p class="text-green-700 text-lg font-bold" id="avg-wins">2%</p>
+        </div>
+      </div>
+
+      <!-- Right Column: Losses -->
+      <div class="text-center space-y-2">
+        <div>
+          <h3 class="text-red-700 text-lg font-bold">Losses</h3>
+          <p class="text-red-700 text-xl font-bold" id="loses">4</p>
+        </div>
+        <div>
+          <p class="text-red-700 text-sm font-bold">Avg Lost</p>
+          <p class="text-red-700 text-lg font-bold" id="avg-loses">98%</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex-1 px-4 pb-4 overflow-auto">
+      <div class="border rounded overflow-auto max-h-full">
+        <table class="min-w-full table-fixed border-collapse">
+          <thead class="bg-gray-200 sticky top-0">
+            <tr>
+              <th class="p-2 text-xs">P1</th>
+              <th class="p-2 text-xs">P2</th>
+              <th class="p-2 text-xs">Score P1</th>
+              <th class="p-2 text-xs">Score P2</th>
+              <th class="p-2 text-xs">Date</th>
+            </tr>
+          </thead>
+          <tbody id="statsTable" class="bg-white">
+            <!-- Stats rows here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Friends Section (Bottom-Right) -->
+  <div class="row-span-2 col-span-2 bg-white border-4 rounded-xl border-blue-500 flex flex-col h-[500px]">
+    <div id="notFriends" class="flex-1 overflow-auto px-4 pt-4 space-y-2">
+      <!-- Addable users scroll here -->
+    </div>
+    <div class="p-4 border-t bg-white">
+      <input type="button" onclick="getFriends()" value="Add Friends" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    </div>
+  </div>
+
+</div>
+
+
+
+
+

@@ -1,0 +1,23 @@
+<form method="POST"  id="login-form" class="bg-white p-8 rounded-2xl shadow-md w-full max-w-md space-y-4">
+  <h1 class="text-2xl font-bold text-center">Login</h1>
+
+  <input type="text" name="name" placeholder="Name"
+         class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500" required>
+
+  <input type="password" name="password" placeholder="Password"
+         class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-500" required>
+
+ <button type="button" onclick="login()" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition">Login</button>
+  <!-- <div class="g-signin2" data-onsuccess="onSignIn"> -->
+  <!--   <button  name="google_id" id="google_id"> Google SignIn </button>> -->
+   <div id="g_id_onload"
+       data-client_id="998291091717-69t8ub79jvhdfq195vqtc93buajcgsaf.apps.googleusercontent.com"
+       data-callback="handleCredentialResponse"
+       data-auto_prompt="false">
+  </div>
+  <div id="g_id_signin"></div>  
+ 
+ <p id="form-error-msg" class="text-red-600 text-sm text-center mt-2"></p>
+
+</form>
+

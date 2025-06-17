@@ -1,31 +1,43 @@
 <!-- layout.ejs --->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <title> <%= text %> </title>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <!-- <meta name="google-signin-client_id" content="998291091717-69t8ub79jvhdfq195vqtc93buajcgsaf.apps.googleusercontent.com"> -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script id='remote-script' src="js/main.js"> </script>
+    <script id='home-script' src="js/socket.js"> </script>
     <script id='remote-script' src="js/remote.js"> </script>
+    <script id='remote-pong-script' src="js/pong_remote.js"> </script>
+    <script id='remote-script' src="js/menu.js"> </script>
     <script id='dynamic-script' src="js/login.js"> </script>
     <script id='home-script' src="js/home.js"> </script>
+    <script id='friendCard-script' src="js/friendCard.js"> </script>
+    <script id='remote-script' src="js/profile.js"> </script>
     <script id='register-script' src="js/register.js"> </script>
-    <script id='register-script' src="js/tournament.js"> </script>
+    <script id='register-script' src="js/tournament_menu.js"> </script>
+    <script id='rgpd-script' src="js/rgpd.js"> </script>
+    <script id='pong_ia' src="/js/pong_ia.js"> </script>
     <link rel="stylesheet" href="css/pong.css">
     <link rel="stylesheet" href="css/index.css">
+    <script id='remote-script' src="js/historyNav.js"> </script>
+    <script id='logout-script' src="js/logout.js"> </script>
     <link rel="stylesheet" href="css/button.css">
-  </head>
-  <body>
-  <div id="menu">
-  </div>
-    <div id="content-div" class="flex items-center justify-center min-h-screen">  
-      <%- body %>
-    </div>
-  <div id="footer">
-  </div>
-  </body>
-  <footer id="footer">
 
-  </footer>
+  </head>
+  <body class=" bg-cover bg-center bg-no-repeat min-h-screen flex flex-col">
+    <div id="menu" class="grid grid-cols-2 items-center h-16 px-4 border-4 border-blue-500">
+     <%- include('./menu.ejs') %>
+    </div>
+    <div id="content-div" class="flex-grow flex items-center justify-center">
+     <%- body %>
+    </div>
+    <footer id="footer" class="flex text-white items-center justify-center h-16">
+     <input id="RGPD" type="button" value="Privacy Policy" href="/rgpd" onclick="handleRouteClick(event)">
+    </footer>
+  </body>
+
 </html>

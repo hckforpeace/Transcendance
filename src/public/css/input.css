@@ -14,4 +14,7 @@
 .btn-blue:hover {
   @apply bg-blue-700;
 }
-
+.tr-all-center td {
+  @apply text-center;
+  /* @apply text-black-500; */
+}

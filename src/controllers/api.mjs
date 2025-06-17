@@ -5,169 +5,197 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import bcrypt from 'bcryptjs';
 import { getDB } from "../database/database.js"
-
-import formData from "form-data"
+import { pipeline } from 'stream/promises';
+import { request } from 'http';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-const auth = async (req, reply) => {
-  // password: req.body.password 
-  try { const user_data = { username: req.body.username, id: uuidv4() };
-    
-    const token = await reply.jwtSign(user_data, { expiresIn: "1h" });
-
-    return reply.status(200).send({ 
-      message: 'Login successful', 
-      token: token 
-    });
-  }
-  catch (error) {
-		req.log.error(error);
-		return reply.status(500).send({ message: 'Internal server error' });
-	}
-};
+const uploadDir = path.join(__dirname, '..', 'public/images');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 const login = async (req, reply) => {
-	try {
-		const { email, password } = req.body;
-		const db = getDB();
-		if (!email || !password) {
-			return reply.status(400).send({ error: "Email and password are required" });
-		}
 
-		const user = await db.get("SELECT * FROM users WHERE email = ?", [email]);
+  try {
+    const formData = await req.formData();
+    const name = formData.get("name");
+    const password = formData.get("password");
 
-		if (!user || !(await bcrypt.compare(password, user.hashed_password))) {
-        	return reply.status(401).send({ error: "Invalid email or password" });}
+    const db = getDB();
 
-		// Use the JWT functionality from the fastify instance
-		const token = await reply.jwtSign({ userId: user.id, email: user.email }, { expiresIn: "1m" });
+    if (!name || !password) {
+      return reply.status(400).send({ error: 'All fields are required' });
+    }
 
-		reply.setCookie("token", token, {
-			httpOnly: true,
-			secure: true,
-			sameSite: "lax",
-			path: "/"
-		});
+    // Username doesn't exist
+    const user = await db.get("SELECT * FROM users WHERE name = ?", name);
+    if (!user) {
+      return reply.status(400).send({ error: "User is not registered" });
+    }
 
-		//return reply.redirect("/");
-		//return reply.status(200).send({ message: 'Login successful', token: token });
-	} catch (error) {
-		req.log.error(error);
-		return reply.status(500).send({ message: 'Internal server error' });
-	}
+    // Bad password
+    if (!(await bcrypt.compare(password, user.hashed_password))) {
+      return reply.status(400).send({ error: "Wrong password, try again" });
+    }
+
+    const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name }, { expiresIn: "1h" });
+
+    await db.run("UPDATE users SET connected = 1 WHERE name = ?", name);
+    await db.run("UPDATE users SET token_exp = ? WHERE id = ?", [Date.now(), user.id]);
+
+    reply.setCookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/"
+    });
+
+  }
+  catch (error) {
+    req.log.error(error);
+    return reply.status(500).send({ message: 'Internal server error' });
+  }
+
 };
+
+const avatar = async (req, reply) => {
+  const db = getDB();
+
+  try {
+
+    const decoded = await req.jwtVerify()
+
+
+    const userId = decoded.userId;
+    const data = await db.get('SELECT avatarPath FROM users WHERE id = ?', [userId]);
+
+    let avatarUrl = '/images/avatar.jpg'; // default avatar
+    if (data.avatarPath) {
+      avatarUrl = data.avatarPath;
+    }
+
+    reply.send({ avatarUrl });
+  } catch (err) {
+    return reply.status(401).send({ error: 'Non authentifié: token invalide' });
+  }
+};
+
 
 const register = async (req, reply) => {
 
+  var uniqueId; 
   const formData = await req.formData();
-	const email = formData.get("email");
-	const name = formData.get("name");
-	const password = formData.get("password");
-  console.log(name + " " + password)
-	// const { name, email, password } = req.body;
-  console.log(name);
-	const db = getDB();
+  const email = formData.get("email");
+  const name = formData.get("name");
+  const password = formData.get("password");
+  const confirm_password = formData.get("confirm_password");
+  const avatar = formData.get("avatar");
 
-  if (!name || !email || !password) {
-    return reply.status(400).send({ error: 'Name, email, and password are required' });
+  const db = getDB();
+
+  if (!name || !email || !password || !confirm_password) {
+    return reply.status(400).send({ error: 'All fields are required' });
   }
 
-	const hashed_password = await bcrypt.hash(password, 10);
+  // Email format check
+  console.log("Name = " + name + "\nMail = " + email);
+  if (!email.includes("@")) {
+    return reply.status(400).send({ error: "Invalid email address" });
+  }
 
+  // Password confirmation check
+  if (password !== confirm_password) {
+    return reply.status(400).send({ error: "Passwords do not match" });
+  }
+
+  // Username already used
+  const existingUser = await db.get("SELECT * FROM users WHERE name = ?", name);
+  if (existingUser) {
+    return reply.status(400).send({ error: "Name is already in use" });
+  }
+
+  // Email already used
+  const existingEmail = await db.get("SELECT * FROM users WHERE email = ?", email);
+  if (existingEmail) {
+    return reply.status(400).send({ error: "Email is already in use" });
+  }
+
+  let avatarPath = "images/avatar.jpg";  // <- déclaration ici
+
+  if (avatar && typeof avatar.stream === 'function' && avatar.name) {
+    const ext = path.extname(avatar.name);
+    const filename = avatar.name;
+    avatarPath = `images/${filename}`;
+    const filePath = path.join(uploadDir, filename);
+    console.log(`Saving avatar file to: ${filePath}`);
+
+    try {
+      await pipeline(avatar.stream(), fs.createWriteStream(filePath));
+      console.log("Avatar saved successfully!");
+    } catch (err) {
+      console.error("Error saving avatar:", err);
+    }
+  } else {
+    console.log("No valid avatar file to save.");
+  }
   try {
-    const result = await db.run(`INSERT INTO users (name, email, hashed_password) VALUES (?, ?, ?)`, [name, email, hashed_password]);
-	//reply.send({ message: 'User registered successfully', result });
-    // return reply.redirect('/');
+    const hashed_password = await bcrypt.hash(password, 10);
+    uniqueId = uuidv4(); // Generate a unique ID for the user
+    const result = await db.run(`INSERT INTO users (id, name, email, hashed_password, avatarPath) VALUES (?, ?, ?, ?, ?)`, [uniqueId, name, email, hashed_password, avatarPath]);
   } catch (error) {
- console.error('Error registering user:', error); // Affiche l'erreur dans la console
+    console.error('Error registering user:', error); // Affiche l'erreur dans la console
     return reply.status(500).send({ error: 'Error registering user' });
   }
 };
 
-// const express = import('express');
-// const multer = import('multer');
-// //const path = require('path');
+const logout = async (req, reply) => {
+	
+  const db = getDB();
 
-// const app = express();
-// app.use(express.json());
+  try {
+    const decoded = await req.jwtVerify()
+    const userId = decoded.userId;
+    const data = await db.get('SELECT name FROM users WHERE id = ?', [userId]);
+    await db.run("UPDATE users SET connected = 0 WHERE name = ?", data.name);
 
-// // Set up multer storage
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, 'uploads/');  // Save files to 'uploads' directory
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, Date.now() + path.extname(file.originalname));  // Unique filename based on timestamp
-//   }
-// });
-
-// const upload = multer({ storage: storage });
-
-// // Serve static files from the 'uploads' directory
-// app.use('/uploads', express.static('uploads'));
-
-// // Register route with file upload
-// app.post('/api/register', upload.single('avatar'), async (req, res) => {
-//   const { name, email, password } = req.body;
-//   const db = getDB();
-
-//   if (!name || !email || !password) {
-//     return res.status(400).send({ error: 'Name, email, and password are required' });
-//   }
-
-//   const hashed_password = await bcrypt.hash(password, 10);
-//   const avatarPath = req.file ? `/uploads/${req.file.filename}` : null;  // File path
-
-//   try {
-//     const result = await db.run(
-//       `INSERT INTO users (name, email, hashed_password, avatar) VALUES (?, ?, ?, ?)`,
-//       [name, email, hashed_password, avatarPath]
-//     );
-//     return res.status(201).send({ message: 'User registered successfully' });
-//   } catch (error) {
-//     console.error('Error registering user:', error);
-//     return res.status(500).send({ error: 'Error registering user' });
-//   }
-// });
+    reply.clearCookie("token", {
+			path: "/"
+		});
+    
+		return reply.code(200).send({ message: "Logged out" });
+	} catch (err) {
+		req.log.error(err);
+		return reply.status(500).send({ error: "Logout failed" });
+	}
+};
 
 
-
-
-const sock_con =  async (socket, req, fastify) => {
-  try
-  {
-    // var id = uuidvw();
-    var token = req.headers['sec-websocket-protocol'];
-    if (!token) 
+const sock_con = async (socket, req, fastify) => {
+  try {
+    var token = await req.jwtVerify()
+    if (!token)
       throw new Error('No token provided');
-    
-    var decodedToken = fastify.jwt.verify(token);
-    if (!decodedToken) 
-      throw new Error('failed to decode token');
 
-    var username = decodedToken['username'];
-    var id = decodedToken['id']
-
-    remoteObj.addPlayer(id, token, username, socket); 
-    
-    remoteObj.sendCurrentUsers(id);
-     // remoteObj.getUsers();
+    var username = token.name;
+    var id = token.userId;
+    remoteObj.addPlayer(id, token, username, socket);    // DEBUG: Check socket state immediately after connection
+    remoteObj.sendCurrentUsers();
 
     socket.on('message', message => {
       try {
         message = JSON.parse(message);
-        // console.log('Received message:', message);
         if (message != null && message.type == 'invite')
-          remoteObj.invitePlayer(message, socket);
+          remoteObj.invitePlayer(message, id);
         else if (message.type == 'accept' || message.type == 'refuse')
-          remoteObj.startGame(message, uuidv4());  
+          remoteObj.startGame(message, id, uuidv4());
+        else if (message.type == 'endGame')
+          remoteObj.endGame(message, id);
         else if (message.type == 'pressed' || message.type == 'released')
           remoteObj.moveOpponent(message);
         else if (message.type == 'moveBall')
           remoteObj.moveBall(message);
-      } catch (error)
-      {
+      } catch (error) {
         console.log(error)
         socket.send(error);
       }
@@ -176,32 +204,26 @@ const sock_con =  async (socket, req, fastify) => {
     socket.on('close', () => {
       console.log('Connection closed:', id);
       remoteObj.DisconnectPlayer(id);
-      // remoteObj.removePlayer(id);
-      // remoteObj.sendCurrentUsers(id);
+    remoteObj.sendCurrentUsers();
     });
   }
   catch (error) {
     console.log(error);
     socket.close(4001, 'Unauthorized');
   }
-
-  
 }
 
-const pong_view = async (req, rep) => {
-  const data = fs.readFileSync( path.join(__dirname, '../views/pong.ejs'), 'utf-8');
-  rep.send(data);
-}
 
 const users = async (req, reply) => {
   try {
     const db = getDB();
-	const users = await db.all('SELECT * FROM users');
-    return reply.send({ users });
+    const users = await db.all('SELECT * FROM users');
+    const stats = await db.all('SELECT * FROM stats');
+    return reply.send({ users, stats });
   } catch (error) {
     console.error('Error fetching users:', error);
     return reply.status(500).send({ error: 'Error fetching users' });
   }
 };
 
-export default {auth, sock_con, pong_view, login, register, users};
+export default { sock_con, login, register, users, avatar, logout };
