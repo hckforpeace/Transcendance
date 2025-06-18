@@ -89,7 +89,7 @@ const routes: Route[] = [
 function navigateTo(path: string): void {
   socket?.close(); // Close socket connection if it exists
   // Update browser history without reload
-  if ((path == '/lobby' || path == '/pong_ia' || path == '/profile'))
+  if ((path == '/lobby' || path == '/pong_ia'))
   {
     const errorMsg = document.getElementById("not-logged-in-msg");
     if (!errorMsg)

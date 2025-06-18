@@ -170,6 +170,23 @@ const logout = async (req, reply) => {
 	}
 };
 
+const delete_account = async (req, reply) => {
+
+  const db = getDB();
+
+  try {
+    const decoded = await req.jwtVerify()
+    const userId = decoded.userId;
+    await db.run('DELETE FROM users WHERE id = ?', [userId]);
+    reply.clearCookie("token", { path: "/" });
+		return reply.code(200).send({ message: "Account deleted" });
+  }
+  catch (err) {
+    req.log.error(err);
+		return reply.status(500).send({ error: "Account deletion failed" });
+  }
+};
+
 
 const sock_con = async (socket, req, fastify) => {
   try {
@@ -226,4 +243,4 @@ const users = async (req, reply) => {
   }
 };
 
-export default { sock_con, login, register, users, avatar, logout };
+export default { sock_con, login, register, users, avatar, logout, delete_account };
