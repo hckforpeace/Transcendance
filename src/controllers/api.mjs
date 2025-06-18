@@ -271,4 +271,4 @@ const users = async (req, reply) => {
   }
 };
 
-export default { sock_con, login, register, users, avatar, logout, delete_account, isLoggedIn, setLoggedIn };
+export default { sock_con, login, register, users, avatar, logout, delete_account, isLoggedIn };
