@@ -8,7 +8,7 @@ export default fp(async function (fastify, opts) {
       cookieName: 'token',
       signed: false
     }
-  })
+ })
 
 fastify.decorate("tryVerifyJWTOrShowLayout", async function (request, reply) {
   try {

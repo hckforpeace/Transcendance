@@ -9,7 +9,6 @@ function delete_account() {
             .then(response => {
             if (response.ok) {
                 updateUserAvatar('/images/avatar.jpg'); // Optionally clear avatar
-                //isLoggedIn = false;
                 navigateTo('/');
             }
             else {
