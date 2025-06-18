@@ -40,11 +40,6 @@ const getFriends = async (userId) => {
   }
 
   return users;
-  // if (socket.connections.has(Number(userId))) {
-  //   await socket.connections.get(Number(userId)).send(
-  //     JSON.stringify(users)
-  //   );
-  // }
 };
 const getConnectedUsers = async () => {
   const db = getDB();
@@ -149,14 +144,9 @@ const addFriend = async (userId, friendId) => {
     if (!friends.includes(friendId)) { 
       friendId.forEach (id => { friends.push(id) }) 
       await db.run("UPDATE users SET friends = ? WHERE id = ?", [JSON.stringify(friends), userId]);
-
-      // users.forEach(async (user) => {
-      //   if (socket.connections.has(Number(userId)))
-      //     await socket.connections.get(Number(userId)).send(JSON.stringify({id: user.id, name: user.name, connected: user.connected, avatar: user.avatar }))
-      // })
     }
-      if (socket.connections.has(userId))
-        await socket.connections.get(userId).send(JSON.stringify(users));
+    if (socket.connections.has(userId))
+      await socket.connections.get(userId).send(JSON.stringify(users));
   } catch (error) {
     console.error("Error adding friend:", error);
     return (null);
@@ -168,31 +158,6 @@ const addFriend = async (userId, friendId) => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //                                              Requests for stats 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-/* const getStats = async (id) => {
-  const db = getDB()
-  var stats = [];
-  var matches = [];
-  var avg_lost;
-  var avg_win;
-
-  try {
-    console.log('id of Request: ' + id)
-    stats = await db.get("SELECT matchesWon, matchesLost  FROM stats WHERE playerId = ?",  [id])
-    matches = await db.all("SELECT player1_alias, player2_alias, player1_score, player2_score, date FROM matches WHERE player1_id = ? OR player2_id = ?",  [id, id])
-    if (stats) {
-      avg_lost = (stats.matchesLost * 100) / (stats.matchesWon + stats.matchesLost) 
-      avg_win = (stats.matchesWon * 100) / (stats.matchesWon + stats.matchesLost) 
-      stats = { matchesWon: stats.matchesWon, matchesLost: stats.matchesLost, avg_lost: avg_lost.toFixed(2), avg_win: avg_win.toFixed(2)}
-    }
-    if (matches !== null) {
-      stats.push({'matches': matches})
-    }
-    return stats ; 
-  } catch (error) {
-    console.error("Error fetching stats:", error);
-  }
-} */
 
 const getStats = async (id) => {
   const db = getDB();

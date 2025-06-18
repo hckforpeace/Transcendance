@@ -1,8 +1,6 @@
-version: "8.2"
 
 # services
 services:
-
   app:
     image: app:user
     container_name: app
@@ -12,16 +10,20 @@ services:
     restart: always
  #nginx
   nginx:
-    image: nginx:user
+    image: owasp/modsecurity-crs:nginx
     container_name: nginx
-    build: requirements/nginx
+    user: root
+    env_file:
+      - .env
     ports: # port binding 442 on the host to 443 on the container
-      - "443:443"
+      - "443:8843"
     depends_on: # insures that wordpress service starts before Nginx
       - app 
     networks:
       - Transcendence 
     restart: always
+    volumes:
+      - ./requirements/nginxModSec/log/modsec_audit.log:/var/log/modsec_audit.log # bind mount the volume to the container
 # wordpress
   # wordpress:
   #   image: wordpress:user
@@ -45,11 +47,11 @@ services:
 
 # Volumes
 # volumes:
-#   mariadb:
-#     name: mariadb
+#   modsec-nginx:
+#     name: modsec-nginx
 #     driver: local
 #     driver_opts:
-#       device: /home/${USER}/data/mariadb # To change in case I change laptop
+#       device: ./requirements/nginxModSec/log/modsec_audit.log # To change in case I change laptop
 #       o : bind
 #       type : none
 #   wordpress:

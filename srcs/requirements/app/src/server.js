@@ -56,8 +56,8 @@ fastify.register(jwtPlugin);
 fastify.register(fastifyFormbody);
 
 // WAF Hooks
-fastify.addHook('preHandler', sql_xss_check);
-fastify.addHook('preHandler', rateLimiter(100, 60000));
+// fastify.addHook('preHandler', sql_xss_check);
+// fastify.addHook('preHandler', rateLimiter(100, 60000));
 
 // fastify/static
 fastify.register(fastifyStatic, {

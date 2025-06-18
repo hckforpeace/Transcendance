@@ -90,7 +90,7 @@ function filladdFriendsDiv(id: number, name:string) {
 }
 
 const getFriends =  async () => {
-  var friends:  string[] = []; 
+  const friends = { friendsList: [] as string[] };
 
   // Select all checked checkboxes inside the document
   const checkedBoxes: NodeListOf<HTMLInputElement> = document.querySelectorAll('input[type="checkbox"]:checked');
@@ -106,9 +106,16 @@ const getFriends =  async () => {
     return ;
   } else {
     selectedFriends.forEach(element => {
-      friends.push(element.id);
+      friends.friendsList.push(element.id);
     })    // Remove each friend's container div
-    fetch("/api/profile/add/friends", {method: "PATCH", body: JSON.stringify(friends)})
+    fetch("/api/profile/add/friends", {
+      method: "POST",
+      body: JSON.stringify(friends),
+      headers: {
+        "Content-Type": "application/json",
+      },
+  
+    })
     .then(response => {
       try {
         if (!response.ok) {
@@ -354,7 +361,7 @@ const updateFieldsFriendsCard = (data: UserData) => {
 
   mail_input.innerHTML = mail;
   username_input.innerHTML = username;
-  img_avatar.src = '/' + avatar_file_name;
+  img_avatar.src = avatar_file_name;
 }
 
 const displayFriendCard = async (id: number) => {

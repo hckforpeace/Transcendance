@@ -78,11 +78,10 @@ const profileSocket = async (socket, req, fastify) => {
 }
 
 const addFriends = async (req, reply)  => {
-  const stringFriends =  JSON.parse(req.body); // Assuming the body is a JSON string
+  const stringFriends =  req.body; // Assuming the body is a JSON string
   const decoded = await req.jwtVerify()
   const userId = decoded.userId;
-  console.log('the userId id is ' + userId + ' and the friendsId are ' + stringFriends);
-  var res =  await requests.addFriend(userId, stringFriends)
+  var res =  await requests.addFriend(userId, stringFriends.friendsList)
   if (res != 1)
     reply.code(500).send(res)
   else

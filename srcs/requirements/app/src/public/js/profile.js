@@ -81,7 +81,7 @@ function filladdFriendsDiv(id, name) {
     div.appendChild(friendDiv);
 }
 const getFriends = () => __awaiter(void 0, void 0, void 0, function* () {
-    var friends = [];
+    const friends = { friendsList: [] };
     // Select all checked checkboxes inside the document
     const checkedBoxes = document.querySelectorAll('input[type="checkbox"]:checked');
     // Extract values (friend name and ID)
@@ -94,9 +94,15 @@ const getFriends = () => __awaiter(void 0, void 0, void 0, function* () {
     }
     else {
         selectedFriends.forEach(element => {
-            friends.push(element.id);
+            friends.friendsList.push(element.id);
         }); // Remove each friend's container div
-        fetch("/api/profile/add/friends", { method: "PATCH", body: JSON.stringify(friends) })
+        fetch("/api/profile/add/friends", {
+            method: "POST",
+            body: JSON.stringify(friends),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
             .then(response => {
             try {
                 if (!response.ok) {
