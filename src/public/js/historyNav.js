@@ -92,7 +92,7 @@ function navigateTo(path) {
             const errorMsg = document.getElementById("not-logged-in-msg");
             if (!errorMsg)
                 return;
-            errorMsg.style.color = "red";
+            //errorMsg.style.color = "red";
             errorMsg.textContent = "You are not logged in";
             return;
         }
