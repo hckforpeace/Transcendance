@@ -26,6 +26,11 @@ import { rateLimiter, sql_xss_check } from './WAF.js';
 import pong_match from './routes/pong_match.js';
 import {check_token_validity} from './handle_account.js';
 
+
+const vaultToken = process.env.VAULT_TOKEN;
+
+console.log("Vault Token: ", vaultToken);
+
 dotenv.config();
 // setting up the PORT TODO: use .env ?
 const PORT = 3000;

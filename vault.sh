@@ -9,12 +9,15 @@ docker exec vault apk add --no-cache jq
 # 3. Initialize Vault inside the container and save the output to a file on the host
 docker exec vault vault operator init -key-shares=1 -key-threshold=1 -format=json > init.json
 
+# transfer the init.json file to the container
+docker cp init.json vault:/vault/init.json
+
 # 4. Extract unseal key and root token from the init.json on the host
 UNSEAL_KEY=$(jq -r '.unseal_keys_b64[0]' init.json)
 ROOT_TOKEN=$(jq -r '.root_token' init.json)
 
 # 5. Copy init.json into the container (optional, for future reference)
-docker cp init.json vault:/vault/init.json
+# docker cp init.json vault:/vault/init.json
 
 # 6. Unseal Vault inside the container
 docker exec vault vault operator unseal "$UNSEAL_KEY"

@@ -62,6 +62,12 @@ services:
 
 volumes:
   vault-file:
+    name: vault-file 
+    driver: local
+    driver_opts:
+      device: /home/${USER}/volume/vault # To change in case I change laptop
+      o : bind
+      type : none
 
 networks:
   Transcendence:
