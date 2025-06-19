@@ -217,3 +217,4 @@ const getFriendStats = async (req, reply) => {
 }
 
 export default { profileInfo, updateProfileData, connectedUsers, profileFriends, profileSocket, addFriends , getStats, connections, updateProfileData, getFriendStats, getFriendInfo};
+

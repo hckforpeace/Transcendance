@@ -7,6 +7,7 @@ import bcrypt from 'bcryptjs';
 import { getDB } from "../database/database.js"
 import { pipeline } from 'stream/promises';
 import profileRequests from '../database/profile.js'
+import { randomInt } from "crypto"
 import { request } from 'http';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -24,6 +25,7 @@ const login = async (req, reply) => {
     const password = formData.get("password");
 
     const db = getDB();
+	const { mailer } = req.server;
 
     if (!name || !password) {
       return reply.status(400).send({ error: 'All fields are required' });
@@ -40,19 +42,48 @@ const login = async (req, reply) => {
       return reply.status(400).send({ error: "Wrong password, try again" });
     }
 
-    const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name }, { expiresIn: "1h" });
+	  // ADDED
+//     const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name }, { expiresIn: "1h" });
+//
+//     await db.run("UPDATE users SET connected = 1 WHERE name = ?", name);
+//     await db.run("UPDATE users SET token_exp = ? WHERE id = ?", [Date.now(), user.id]);
+//
+	  const code = randomInt(100000, 999999);
+	  console.log(code);
+	  
+	  /* Storing it in db */
+	  console.log(user);
+	  db.run(`
+	  	INSERT INTO twofa (user_id, code, validity, created_at, expired_at) VALUES (?, ?, ?, ?, ?)
+	  	`, [user.id, code, true, Date.now(), Date.now() + 5 * 60 * 1000]);
+	  // db.prepare(`
+	  // 	INSERT INTO twofa (user_id, code, created_at, expired_at) VALUES (?, ?, ?, ?)
+	  // 	`).run(user.id, code, Date.now(), Date.now() + 5 * 60 * 1000);
+	  console.log("Inserted into db");
 
-    await db.run("UPDATE users SET connected = 1 WHERE name = ?", name);
-    await db.run("UPDATE users SET token_exp = ? WHERE id = ?", [Date.now(), user.id]);
+	  console.log("Checking insertion");
+	  const tmp = await db.all(`
+	  			SELECT * FROM twofa WHERE user_id = ? AND code = ?
+	  		`, [user.id, code]);
+	  console.log(tmp);
 
-    reply.setCookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "lax",
-      path: "/"
-    });
-    profileRequests.updateFriended(user.id)
-
+	  /* Sending it to user */
+	  const mailOptions = {
+	  	from: 'youremail@gmail.com',
+	  	to: user.email,
+	  	subject: '2fa code',
+	  	text: code.toString().padStart(6, '0')
+	  };
+	  mailer.sendMail(mailOptions, function(err, info) {
+	  	if (err) {
+	  		console.log(err);
+	  	} else {
+	  		console.log('Email sent: ' + info.response);
+	  	}
+	  });
+	  console.log("Email sent");
+	  return reply
+	  .code(200).send();
   }
   catch (error) {
     req.log.error(error);
@@ -67,10 +98,8 @@ const avatar = async (req, reply) => {
   try {
 
     const decoded = await req.jwtVerify()
-
-
-    const userId = decoded.userId;
-    const data = await db.get('SELECT avatarPath FROM users WHERE id = ?', [userId]);
+	const username = decoded.username;
+	const data = await db.get('SELECT avatarPath FROM users WHERE name = ?', [username]);
 
     let avatarUrl = '/images/avatar.jpg'; // default avatar
     if (data.avatarPath) {
@@ -230,6 +259,11 @@ const sock_con = async (socket, req, fastify) => {
 }
 
 
+const	tournament_view = async (req, rep) => {
+  const data = fs.readFileSync(path.join(__dirname, '../views/tournament.ejs'), 'utf-8');
+  rep.send(data);
+}
+
 const users = async (req, reply) => {
   try {
     const db = getDB();
@@ -242,4 +276,4 @@ const users = async (req, reply) => {
   }
 };
 
-export default { sock_con, login, register, users, avatar, logout, delete_account };
+export default { sock_con, login, register, users, avatar, logout, delete_account, tournament_view };
