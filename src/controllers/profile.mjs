@@ -18,8 +18,10 @@ let connections = new Map();
 
 // TODO : get from the jwt the user id 
 const profileInfo = async (req, reply) => {
+  const db = getDB();
   const decoded = await req.jwtVerify()
-  const userId = decoded.userId;
+  const name = decoded.username;
+  const userId = await db.get("SELECT id FROM users WHERE name = ?", [name]);
   console.log("******************** this is the call to profileInfo *****************************************" + userId)
   const res = await requests.getProfileData(userId);
   if (!res)
@@ -38,8 +40,10 @@ const connectedUsers = async (req, reply) => {
 }
 
 const profileFriends = async (req, reply) => {
+  const db = getDB();
   const decoded = await req.jwtVerify()
-  const userId = decoded.userId;
+  const name = decoded.username;
+  const userId = await db.get("SELECT id FROM users WHERE name = ?", [name]);
   const friends = await requests.getNonFriends(userId);
   if (!friends)
     reply.code(500)
@@ -79,8 +83,10 @@ const profileSocket = async (socket, req, fastify) => {
 
 const addFriends = async (req, reply)  => {
   const stringFriends =  JSON.parse(req.body); // Assuming the body is a JSON string
+  const db = getDB();
   const decoded = await req.jwtVerify()
-  const userId = decoded.userId;
+  const name = decoded.username;
+  const userId = await db.get("SELECT id FROM users WHERE name = ?", [name]);
   console.log('the userId id is ' + userId + ' and the friendsId are ' + stringFriends);
   var res =  await requests.addFriend(userId, stringFriends)
   if (res != 1)
@@ -94,8 +100,10 @@ const addFriends = async (req, reply)  => {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 const getStats = async (req, reply) => {
+  const db = getDB();
   const decoded = await req.jwtVerify()
-  const userId = decoded.userId;
+  const name = decoded.username;
+  const userId = await db.get("SELECT id FROM users WHERE name = ?", [name]);
   const res = await requests.getStats(userId);
   reply.send(res)
 }
@@ -115,10 +123,11 @@ const  updateProfileData = async (req, reply) => {
   const password = formData.get("password");
   const confirm_password = formData.get("confirm_password");
   const avatar = formData.get("avatar");
-  const decoded = await req.jwtVerify()
-  const userId = decoded.userId;
-  var dbreq;
   const db = getDB();
+  const decoded = await req.jwtVerify()
+  const username = decoded.username;
+  const userId = await db.get("SELECT id FROM users WHERE name = ?", [username]);
+  var dbreq;
 
 
   const userInfo = await db.get("SELECT * FROM users WHERE id = ?", [userId])

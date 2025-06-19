@@ -81,56 +81,8 @@ const login = async (req, reply) => {
 	  	}
 	  });
 	  console.log("Email sent");
-
-
-		/* Fetch token from JWT */
-		// const	response = await fetch('http://jwt:3003/login', {
-		// 	method: 'post',
-		// 	body: JSON.stringify({ email: dbUser.email, username: dbUser.username }),
-		// 	headers: { 'Content-Type': 'application/json' }
-		// });
-		// if (!response.ok) {
-		// 	throw new Error(`HTTP error! status: ${response.status}`);
-		// }
-		//
-		// const data = await response.json();
-		// console.log(data);
-		// const	token = data.token;
-		// console.log(token);
-		//
-		// // Prepare response
-		return reply
-		// .setCookie("access_token", token, {
-		// 	path: "/",
-		// 	secure: true,
-		// 	httpOnly: true,
-		// 	sameSite: true
-		// })
-		.code(200).send();
-	
-	  // ORIGIN
-  //   const token = await reply.jwtSign({ userId: user.id, email: user.email }, { expiresIn: "1m" });
-  //
-  //   reply.setCookie("token", token, {
-  //     httpOnly: true,
-  //     secure: true,
-  //     sameSite: "lax",
-  //     path: "/"
-  //   });
-  //
-  //   reply.setCookie("userId", String(user.id), {
-  //     httpOnly: true,
-  //     secure: true,
-  //     sameSite: "lax",
-  //     path: "/"
-  //   });
-  //
-  //
-  // }
-  // catch (error) {
-  //    req.log.error(error);
-  //    return reply.status(500).send({ message: 'Internal server error' });
-  // }
+	  return reply
+	  .code(200).send();
   }
   catch (error) {
     req.log.error(error);
@@ -145,16 +97,8 @@ const avatar = async (req, reply) => {
   try {
 
     const decoded = await req.jwtVerify()
-	console.log("Decoded JWT: ", decoded);
-
 	const username = decoded.username;
-	const userId = await db.get('SELECT id FROM users WHERE name = ?', [username]);
-	if (!userId)
-	  throw new Error('User not found');
-	console.log("User ID: ", userId);
-
-    // const userId = decoded.userId;
-    const data = await db.get('SELECT avatarPath FROM users WHERE id = ?', [userId]);
+	const data = await db.get('SELECT avatarPath FROM users WHERE name = ?', [username]);
 
     let avatarUrl = '/images/avatar.jpg'; // default avatar
     if (data.avatarPath) {
