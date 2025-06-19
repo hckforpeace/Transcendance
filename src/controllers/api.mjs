@@ -145,9 +145,15 @@ const avatar = async (req, reply) => {
   try {
 
     const decoded = await req.jwtVerify()
+	console.log("Decoded JWT: ", decoded);
 
+	const username = decoded.username;
+	const userId = await db.get('SELECT id FROM users WHERE name = ?', [username]);
+	if (!userId)
+	  throw new Error('User not found');
+	console.log("User ID: ", userId);
 
-    const userId = decoded.userId;
+    // const userId = decoded.userId;
     const data = await db.get('SELECT avatarPath FROM users WHERE id = ?', [userId]);
 
     let avatarUrl = '/images/avatar.jpg'; // default avatar

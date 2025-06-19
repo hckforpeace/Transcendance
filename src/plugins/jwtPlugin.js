@@ -5,7 +5,7 @@ export default fp(async function (fastify, opts) {
   fastify.register(jwt, {
     secret: 'foobar',
     cookie: {
-      cookieName: 'token',
+    cookieName: 'access_token',
       signed: false
     }
   });
