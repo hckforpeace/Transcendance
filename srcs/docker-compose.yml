@@ -1,13 +1,16 @@
-
 # services
 services:
   app:
     image: app:user
     container_name: app
     build: requirements/app
+    depends_on: # insures that wordpress service starts before Nginx
+      - vault 
     networks:
       - Transcendence
     restart: always
+    volumes:
+          - vault-file:/vault
  #nginx
   nginx:
     image: owasp/modsecurity-crs:nginx
@@ -24,67 +27,43 @@ services:
     restart: always
     volumes:
       - ./requirements/nginxModSec/log/modsec_audit.log:/var/log/modsec_audit.log # bind mount the volume to the container
-# wordpress
-  # wordpress:
-  #   image: wordpress:user
-  #   container_name: wordpress
-  #   build: requirements/wordpress
-  #   secrets:
-  #     - db_password
-  #     - wp_adm_password
-  #     - wp_usr_password
-  #   depends_on: # the container wodpress wont run before the container mariadb runs
-  #     mariadb:
-  #       condition: service_healthy # and it will run only if it is healthy (succeeded to run, relies on healthcheck)
-  #   volumes:
-  #     - wordpress:/var/www/wordpress
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - inception
-  #   restart: always
+  # vault
+  vault:
+    image: vault:latest
+    container_name: vault
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_LOCAL_CONFIG: |
+        {
+          "storage": {
+            "file": {
+              "path": "/vault/file"
+            }
+          },
+          "listener": [{
+            "tcp": {
+              "address": "0.0.0.0:8200",
+              "tls_disable": true
+            }
+          }],
+          "default_lease_ttl": "168h",
+          "max_lease_ttl": "720h",
+          "ui": true
+        }
+      VAULT_ADDR: 'http://localhost:8200'
+      ROOT_TOKEN: 'root-token' 
+    cap_add:
+      - IPC_LOCK
+    volumes:
+          - vault-file:/vault
+    networks:
+      - Transcendence
 
+volumes:
+  vault-file:
 
-# Volumes
-# volumes:
-#   modsec-nginx:
-#     name: modsec-nginx
-#     driver: local
-#     driver_opts:
-#       device: ./requirements/nginxModSec/log/modsec_audit.log # To change in case I change laptop
-#       o : bind
-#       type : none
-#   wordpress:
-#     name: wordpress
-#     driver: local
-#     driver_opts:
-#       device: /home/${USER}/data/wordpress # To change in case I change laptop
-#       o: bind
-#       type: none
-#   redis:
-#     name: redis
-#     driver: local
-#     driver_opts:
-#       device: /home/${USER}/data/redis # To change in case I change laptop
-#       o: bind
-#       type: none
-
-# network
 networks:
   Transcendence:
     name: Transcendence 
 
-# secrets
-# secrets:
-#   db_root_password:
-#     file: ../secrets/db_root_password.txt
-#   db_password:
-#     file: ../secrets/db_password.txt
-#   wp_adm_password:
-#     file: ../secrets/wp_adm_pw.txt
-#   wp_usr_password:
-#     file: ../secrets/wp_usr_pw.txt
-#   ftp_pw:
-#     file: ../secrets/ftp_pw.txt
-#   ftp_uname:
-#     file: ../secrets/ftp_uname.txt
