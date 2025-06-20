@@ -41,7 +41,6 @@ function login() {
                     errorMsg.textContent = response.error || "An error occurred.";
                 }
                 if (this.status === 200) {
-                    isLoggedIn = true;
                     errorMsg.style.color = "green";
                     errorMsg.textContent = "Welcome!";
                     // Corrected: fetch avatar and update it
@@ -89,7 +88,7 @@ function handleCredentialResponse(response) {
         if (res.ok) {
             console.log('success');
             renderAvatar();
-            isLoggedIn = true;
+            // isLoggedIn = true;
             navigateTo('/');
         }
         else if (res.status === 400) {

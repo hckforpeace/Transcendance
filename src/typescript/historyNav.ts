@@ -84,18 +84,11 @@ const routes: Route[] = [
 
 ];
 
-function isLoggedIn(): number
-{
-
-  const jwt = jwt.verify();
-
-}
-
 // Function to handle navigation
 function navigateTo(path: string): void {
   socket?.close(); // Close socket connection if it exists
   // Update browser history without reload
-  if ((path == '/games' || path == '/profile') && !isLoggedIn)
+  if ((path == '/games' || path == '/profile') && !isLoggedIn())
   {
     const errorMsg = document.getElementById("not-logged-in-msg");
     if (!errorMsg)

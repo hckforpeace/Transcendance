@@ -6,7 +6,7 @@ function logout() {
 	.then(response => {
 		if (response.ok) {
 			updateUserAvatar('/images/avatar.jpg'); // Optionally clear avatar
-			isLoggedIn = false;
+			// isLoggedIn = false;
 			navigateTo('/');
 		} else {
 			console.error("Logout failed");
@@ -23,3 +23,5 @@ window.addEventListener("beforeunload", function(e){
   logout();
 
 });
+
+

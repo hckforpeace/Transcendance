@@ -1,5 +1,6 @@
 // Import the required modules
 import api from '../controllers/api.mjs';
+import isLoggedIn from '../controllers/isLoggedIn.mjs';
 import fs from 'fs';
 import path from 'path'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -66,6 +67,8 @@ async function routes(fastify, options) {
   fastify.get('/api/avatar', { preHandler: [fastify.authenticate] }, api.avatar);
 
   fastify.get('/api/logout', { preHandler: [fastify.authenticate] }, api.logout);
+
+  fastify.get('/isLoggedIn', isLoggedIn.isLoggedIn());
 
   fastify.post('/api/login', api.login);
 
