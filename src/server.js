@@ -43,7 +43,7 @@ const fastify = Fastify({
       key: fs.readFileSync(__dirname + '/secret/certs/server.key'),
       cert: fs.readFileSync(__dirname + '/secret/certs/server.crt')
   },
-  logger: true,
+  logger: false,
 });
 
 
@@ -68,7 +68,6 @@ fastify.register(fastifyStatic, {
 	root: path.join(__dirname, '/public'),
 	prefix: '/',
 });
-
 
 fastify.addHook('preHandler', async (req, reply) => {
 	reply.locals = reply.locals || {};

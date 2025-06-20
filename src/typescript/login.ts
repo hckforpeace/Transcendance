@@ -21,7 +21,7 @@ function login() {
 	const errorMsg = document.getElementById("form-error-msg");
 	if (!errorMsg)
 		return;
-	errorMsg.textContent = ""; // Reset previous error
+	errorMsg.textContent = "";
 	errorMsg.style.color = "red";
 	const formData = new FormData(formElement);
 	const xhttp = new XMLHttpRequest();
@@ -35,11 +35,13 @@ function login() {
 					errorMsg.textContent = response.error || "An error occurred.";
 				}
 				if (this.status === 200) {
+<<<<<<< HEAD
 					
+=======
+>>>>>>> refs/remotes/origin/mel_pablo_tournament
 					errorMsg.style.color = "green";
 					errorMsg.textContent = "Welcome!";
-					// Corrected: fetch avatar and update it
-          renderAvatar();
+          			renderAvatar();
 					navigateTo('/');
 				}
 			}
@@ -86,7 +88,7 @@ async function handleCredentialResponse(response: any) {
   if (res.ok) {
     console.log('success')
     renderAvatar();
-    // isLoggedIn = true;
+    //isLoggedIn = true;
     navigateTo('/')
   }
   else if (res.status === 400){

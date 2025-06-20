@@ -7,3 +7,12 @@ function injectViewToContentDiv(data: string): Promise<void> {
     });
 }
 
+function hideErrorMsg(): void {
+	const errMsg = document.getElementById("not-logged-in-msg");
+	if (!errMsg)
+        return;
+
+	errMsg.classList.add("hidden");
+}
+
+hideErrorMsg();

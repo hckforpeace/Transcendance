@@ -29,7 +29,7 @@ function login() {
     const errorMsg = document.getElementById("form-error-msg");
     if (!errorMsg)
         return;
-    errorMsg.textContent = ""; // Reset previous error
+    errorMsg.textContent = "";
     errorMsg.style.color = "red";
     const formData = new FormData(formElement);
     const xhttp = new XMLHttpRequest();
@@ -43,7 +43,6 @@ function login() {
                 if (this.status === 200) {
                     errorMsg.style.color = "green";
                     errorMsg.textContent = "Welcome!";
-                    // Corrected: fetch avatar and update it
                     renderAvatar();
                     navigateTo('/');
                 }
@@ -88,7 +87,11 @@ function handleCredentialResponse(response) {
         if (res.ok) {
             console.log('success');
             renderAvatar();
+<<<<<<< HEAD
             // isLoggedIn = true;
+=======
+            //isLoggedIn = true;
+>>>>>>> refs/remotes/origin/mel_pablo_tournament
             navigateTo('/');
         }
         else if (res.status === 400) {

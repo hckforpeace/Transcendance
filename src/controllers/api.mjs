@@ -47,7 +47,7 @@ const login = async (req, reply) => {
 
     reply.setCookie("token", token, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/"
     });
@@ -151,6 +151,7 @@ const register = async (req, reply) => {
   }
 };
 
+
 const logout = async (req, reply) => {
   const db = getDB();
 
@@ -168,6 +169,50 @@ const logout = async (req, reply) => {
 		req.log.error(err);
 		return reply.status(500).send({ error: "Logout failed" });
 	}
+};
+
+
+const isLoggedIn = async (req, reply) => {
+  const db = getDB();
+  let decoded;
+
+  try {
+    decoded = await req.jwtVerify();
+  } catch (err) {
+    return reply.code(200).send({ message: "jwt failed", connected: false });
+  }
+
+  try {
+    const userId = decoded.userId;
+    const data = await db.get('SELECT connected FROM users WHERE id = ?', [userId]);
+
+    if (!data) {
+      return reply.code(200).send({ connected: false });
+    }
+
+    return reply.code(200).send({ connected: true });
+  } catch (err) {
+    req.log.error(err);
+    return reply.status(500).send({ error: "isLoggedIn failed" });
+  }
+};
+
+
+const delete_account = async (req, reply) => {
+
+  const db = getDB();
+
+  try {
+    const decoded = await req.jwtVerify()
+    const userId = decoded.userId;
+    await db.run('DELETE FROM users WHERE id = ?', [userId]);
+    reply.clearCookie("token", { path: "/" });
+		return reply.code(200).send({ message: "Account deleted" });
+  }
+  catch (err) {
+    req.log.error(err);
+		return reply.status(500).send({ error: "Account deletion failed" });
+  }
 };
 
 
@@ -226,4 +271,4 @@ const users = async (req, reply) => {
   }
 };
 
-export default { sock_con, login, register, users, avatar, logout };
+export default { sock_con, login, register, users, avatar, logout, delete_account, isLoggedIn };

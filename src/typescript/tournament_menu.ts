@@ -52,29 +52,6 @@ function get_next_player_type(event: Event): void {
 		childP.innerText = "Bot";
 }
 
-/**
- * Get next player selector object
- *
- * When user click on right arrow to change player type
- *
- * @paran event -- event object
- */
-function get_prev_player_type(event: Event): void {
-	const	clickedButton = event.target as HTMLButtonElement;
-	const	buttonDiv = clickedButton.parentNode as HTMLDivElement;
-	const	childP = buttonDiv.querySelector("p") as HTMLParagraphElement;
-
-	if (!childP)
-		return;
-
-	if (childP.innerText === "Guest")
-		childP.innerText = "Bot";
-	else if (childP.innerText === "User")
-		childP.innerText = "Guest";
-	else
-		childP.innerText = "User";
-}
-
 /* ************************************************************************** */
 /*                                SLIDER FUNCTOINS                            */
 /* ************************************************************************** */

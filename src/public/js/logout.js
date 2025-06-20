@@ -7,7 +7,10 @@ function logout() {
         .then(response => {
         if (response.ok) {
             updateUserAvatar('/images/avatar.jpg'); // Optionally clear avatar
+<<<<<<< HEAD
             // isLoggedIn = false;
+=======
+>>>>>>> refs/remotes/origin/mel_pablo_tournament
             navigateTo('/');
         }
         else {
@@ -18,8 +21,3 @@ function logout() {
         console.error("Logout error:", err);
     });
 }
-window.addEventListener("beforeunload", function (e) {
-    // Do something
-    e.preventDefault(); // Prevents the default action
-    logout();
-});
