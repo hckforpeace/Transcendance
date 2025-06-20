@@ -87,11 +87,7 @@ function handleCredentialResponse(response) {
         if (res.ok) {
             console.log('success');
             renderAvatar();
-<<<<<<< HEAD
-            // isLoggedIn = true;
-=======
             //isLoggedIn = true;
->>>>>>> refs/remotes/origin/mel_pablo_tournament
             navigateTo('/');
         }
         else if (res.status === 400) {

@@ -85,13 +85,6 @@ const routes = [
 ];
 // Function to handle navigation
 function navigateTo(path) {
-<<<<<<< HEAD
-    socket === null || socket === void 0 ? void 0 : socket.close(); // Close socket connection if it exists
-    // Update browser history without reload
-    if ((path == '/games' || path == '/profile') && !isLoggedIn()) {
-        const errorMsg = document.getElementById("not-logged-in-msg");
-        if (!errorMsg)
-=======
     return __awaiter(this, void 0, void 0, function* () {
         socket === null || socket === void 0 ? void 0 : socket.close(); // Close socket connection if it exists
         // Update browser history without reload
@@ -101,7 +94,6 @@ function navigateTo(path) {
                 return;
             //errorMsg.style.color = "red";
             errorMsg.textContent = "You are not logged in";
->>>>>>> refs/remotes/origin/mel_pablo_tournament
             return;
         }
         window.history.pushState({}, '', path);

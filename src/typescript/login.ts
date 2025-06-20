@@ -35,10 +35,6 @@ function login() {
 					errorMsg.textContent = response.error || "An error occurred.";
 				}
 				if (this.status === 200) {
-<<<<<<< HEAD
-					
-=======
->>>>>>> refs/remotes/origin/mel_pablo_tournament
 					errorMsg.style.color = "green";
 					errorMsg.textContent = "Welcome!";
           			renderAvatar();
