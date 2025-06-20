@@ -6,10 +6,3 @@ function injectViewToContentDiv(data) {
         resolve(); // Resolve after DOM update
     });
 }
-function hideErrorMsg() {
-    const errMsg = document.getElementById("not-logged-in-msg");
-    if (!errMsg)
-        return;
-    errMsg.classList.add("hidden");
-}
-hideErrorMsg();

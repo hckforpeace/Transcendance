@@ -1,4 +1,3 @@
-<!-- Tournament_menu.html -->
 <body class="h-screen overflow-hidden bg-gray-200">
   <div class="flex flex-col h-full bg-white w-full p-8 space-y-4">
     <!-- Title -->
@@ -6,55 +5,57 @@
 
     <!-- Main Content -->
     <div id="tournament-display" class="flex flex-col flex-1 space-y-4 overflow-hidden">
-      
-      <!-- TOP: SCROLLBAR ZONE -->
-      <div id="future-play-zone" class="flex flex-col bg-gray-100 items-center justify-center p-4 rounded-lg">
-        <div class="flex items-center space-x-4">
-          <span class="text-lg font-semibold">Select number of players</span>
-          <input
-            id="player_nbr_slider"
-            type="range"
-            min="0"
-            max="3"
-            step="1"
-            value="0"
-            onchange="set_player_nbr()"
-            oninput="set_player_nbr()"
-            class="w-40"
-          />
-          <p id="player_nbr" class="text-md font-medium">2</p>
-        </div>
+      <!-- Slider Section -->
+      <div class="flex items-center justify-center space-x-4 bg-gray-100 p-4 rounded-lg">
+        <span class="text-lg font-semibold">Select number of players</span>
+        <input
+          id="player_nbr_slider"
+          type="range"
+          min="0"
+          max="3"
+          step="1"
+          value="0"
+          class="w-40"
+        />
+        <p id="player_nbr" class="text-md font-medium"></p>
       </div>
 
-      <!-- BOTTOM: PLAYER ZONES -->
+      <!-- Player Containers -->
       <div class="flex flex-1 space-x-4 overflow-hidden">
-        <!-- LEFT PLAYERS -->
-        <div id="player-container1" class="flex-1 flex flex-col overflow-y-auto bg-gray-100 rounded-lg p-2 space-y-2">
-        </div>
-
-        <!-- RIGHT PLAYERS -->
-        <div id="player-container2" class="flex-1 flex flex-col overflow-y-auto bg-gray-100 rounded-lg p-2 space-y-2">
-        </div>
+        <div id="player-container1" class="flex-1 flex flex-col overflow-y-auto bg-gray-100 rounded-lg p-2 space-y-2"></div>
+        <div id="player-container2" class="flex-1 flex flex-col overflow-y-auto bg-gray-100 rounded-lg p-2 space-y-2"></div>
       </div>
     </div>
+
+    <!-- Play Button -->
+    <div class="flex justify-center">
+      <input
+    id="play-button"
+    type="button"
+    value="PLAY"
+    href='/pong_ia'
+    onclick="handleRouteClick(event)"
+    class="px-8 py-4 bg-gray-400 hover:bg-green-600 text-white rounded-lg cursor-not-allowed font-bold"
+  />
+    </div>
+
+    <div class="w-full flex justify-center">
+      <p id="not-logged-in-msg" class="text-sm mt-2 px-4 py-2"></p>
+    </div>
+
   </div>
 
-  <!-- Template for a Player -->
+  <!-- Player Template -->
   <template id="t-player-elem">
-    <div id="player-elem" class="flex flex-col p-2 border border-gray-300 rounded-lg shadow bg-gray-50 justify-center min-h-[100px]">
-      <div class="flex justify-center">
-        <img src="/images/test.jpg" alt="Player" class="min-w-[10%] max-w-[60%] h-auto mx-auto mb-4" />
-      </div>
-      <input type="text" id="alias" placeholder="Alias" class="w-full p-2 border border-gray-300 rounded-lg mb-2" />
-      <div class="flex justify-center items-center space-x-2">
-        <button class="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300" onclick="get_prev_player_type(event)">&lt;</button>
-        <p class="font-medium">Bot</p>
-        <!-- <button class="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300" onclick="get_next_player_type(event)">&gt;</button> -->
-      </div>
+    <div class="player-entry flex flex-col items-center p-4 bg-white border border-gray-300 rounded-lg shadow">
+      <img src="/images/test.jpg" alt="Player" class="w-48 h-48 object-contain mb-2 border border-gray-300 bg-white" />
+
+      <input type="text"  class="alias-input w-full p-2 border border-gray-300 rounded-lg mb-2" placeholder="Enter alias" />
+      <button class="ok-button px-4 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded disabled:opacity-50" onclick="validateAlias(this)">
+        OK
+      </button>
     </div>
   </template>
 
-  <script>
-    init();
-  </script>
+  <script src="tournament_menu.js"></script>
 </body>

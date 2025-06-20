@@ -32,11 +32,10 @@ function rateLimiter(maxRequests, timeWindowMs) {
     const now = Date.now();
     let entry = rateLimitMap.get(ip) || { count: 0, startTime: now, blockedUntil: 0 };
 
-    console.log(`[RateLimiter] IP: ${ip}, Count: ${entry.count}, BlockedUntil: ${entry.blockedUntil}, Now: ${now}`);
+    // console.log(`[RateLimiter] IP: ${ip}, Count: ${entry.count}, BlockedUntil: ${entry.blockedUntil}, Now: ${now}`);
 
     if (entry.blockedUntil > now) {
       const remaining = Math.ceil((entry.blockedUntil - now) / 1000);
-      console.log(`[RateLimiter] IP ${ip} still blocked for ${remaining} seconds`);
 
       // Render le HTML avec ejs en brut, sans layout
       const html = ejs.render(template, { seconds: remaining });
