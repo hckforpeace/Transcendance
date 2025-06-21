@@ -112,6 +112,10 @@ const avatar = async (req, reply) => {
   }
 };
 
+const showSecret = async (req, reply) => {
+	
+};
+
 
 const register = async (req, reply) => {
 
@@ -122,6 +126,7 @@ const register = async (req, reply) => {
   const password = formData.get("password");
   const confirm_password = formData.get("confirm_password");
   const avatar = formData.get("avatar");
+  const twofa_methods = formData.get("2fa_method");
 
   const db = getDB();
 
@@ -173,7 +178,20 @@ const register = async (req, reply) => {
   try {
     const hashed_password = await bcrypt.hash(password, 10);
     uniqueId = uuidv4(); // Generate a unique ID for the user
-    const result = await db.run(`INSERT INTO users (id, name, email, hashed_password, avatarPath) VALUES (?, ?, ?, ?, ?)`, [uniqueId, name, email, hashed_password, avatarPath]);
+	if (twofa_methods === "app") {
+		const twofa_secret = req.server.totp.generateSecret();
+		console.log("2FA secret generated:", twofa_secret);
+		const hashed_secret = await bcrypt.hash(twofa_secret.ascii, 10);
+		const encodedSecret = encodeURIComponent(twofa_secret.ascii); // URL-safe encoding
+		const result = await db.run(`INSERT INTO users (id, name, email, hashed_password, avatarPath, twofa_secret) VALUES (?, ?, ?, ?, ?, ?)`, [uniqueId, name, email, hashed_password, avatarPath, hashed_secret]);
+		const qrcode = await req.server.totp.generateQRCode({ secret: twofa_secret.ascii });
+		return reply.status(200).send( { qrCode: qrcode, secret: encodedSecret } );
+		
+	}
+	console.log("else");
+	const result = await db.run(`INSERT INTO users (id, name, email, hashed_password, avatarPath) VALUES (?, ?, ?, ?, ?)`, [uniqueId, name, email, hashed_password, avatarPath]);
+	return reply.status(200);
+
   } catch (error) {
     console.error('Error registering user:', error); // Affiche l'erreur dans la console
     return reply.status(500).send({ error: 'Error registering user' });

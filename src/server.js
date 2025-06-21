@@ -21,6 +21,7 @@ import populate from './database/populate.js'
 import fastifyCookie from '@fastify/cookie'
 import fastifyFormbody from '@fastify/formbody'
 import fastifyMultipart from "@fastify/multipart"
+import fastifyTotp from "fastify-totp"
 import dotenv from 'dotenv';
 import { rateLimiter, sql_xss_check } from './WAF.js';
 //import routesPong from './routes/pong.js';
@@ -91,6 +92,9 @@ fastify.register(view, {
 });
 
 fastify.register(fastifyMultipart, { attachFieldsToBody: true });
+
+fastify.register(fastifyTotp);
+
 // regiter routes
 fastify.register(routesHome);
 fastify.register(routesApi);

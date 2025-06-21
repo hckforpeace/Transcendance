@@ -20,7 +20,8 @@ export const initDB = async () => {
         socketConnectionProfile BOOL DEFAULT 0,
         friendedMe TEXT DEFAULT '[]',
         isGoogleAuth BOOL DEFAULT 0,
-        token_exp INTEGER
+        token_exp INTEGER,
+		twofa_secret TEXT DEFAULT ''
     )`);
 
     await db.exec(`CREATE TABLE IF NOT EXISTS stats (
