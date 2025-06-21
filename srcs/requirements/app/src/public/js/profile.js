@@ -314,7 +314,7 @@ const updateFieldsFriendsCard = (data) => {
     console.log(mail, username, avatar_file_name);
     mail_input.innerHTML = mail;
     username_input.innerHTML = username;
-    img_avatar.src = avatar_file_name;
+    img_avatar.src = '/' + avatar_file_name;
 };
 const displayFriendCard = (id) => __awaiter(void 0, void 0, void 0, function* () {
     getFriendInfo(id);

@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import fs from 'fs';
 import { getDB } from "../database/database.js"
 import { request } from 'http';
+import jwtFunctions from '../jwt.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -18,9 +19,8 @@ let connections = new Map();
 
 // TODO : get from the jwt the user id 
 const profileInfo = async (req, reply) => {
-  const decoded = await req.jwtVerify()
+  const decoded = await jwtFunctions.decodeJWTPayload(req.cookies['token']);
   const userId = decoded.userId;
-  console.log("******************** this is the call to profileInfo *****************************************" + userId)
   const res = await requests.getProfileData(userId);
   if (!res)
     reply.code(500)
@@ -38,7 +38,7 @@ const connectedUsers = async (req, reply) => {
 }
 
 const profileFriends = async (req, reply) => {
-  const decoded = await req.jwtVerify()
+  const decoded = await jwtFunctions.decodeJWTPayload(req.cookies['token']);
   const userId = decoded.userId;
   const friends = await requests.getNonFriends(userId);
   if (!friends)
@@ -51,7 +51,7 @@ const profileFriends = async (req, reply) => {
 const profileSocket = async (socket, req, fastify) => {
   try {
     var friends;
-    const decoded = await req.jwtVerify()
+    const decoded = await jwtFunctions.decodeJWTPayload(req.cookies['token']);
     const userId = decoded.userId;
     if (connections.has(userId)) {
       console.log(`🔌 WebSocket already connected for user ${userId} `);
@@ -79,7 +79,7 @@ const profileSocket = async (socket, req, fastify) => {
 
 const addFriends = async (req, reply)  => {
   const stringFriends =  req.body; // Assuming the body is a JSON string
-  const decoded = await req.jwtVerify()
+  const decoded = await jwtFunctions.decodeJWTPayload(req.cookies['token']);
   const userId = decoded.userId;
   var res =  await requests.addFriend(userId, stringFriends.friendsList)
   if (res != 1)
@@ -93,8 +93,9 @@ const addFriends = async (req, reply)  => {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 const getStats = async (req, reply) => {
-  const decoded = await req.jwtVerify()
+  const decoded = await jwtFunctions.decodeJWTPayload(req.cookies['token']);
   const userId = decoded.userId;
+  console.log("******************** this is the call to getStats ***************************************** userId" + userId)
   const res = await requests.getStats(userId);
   reply.send(res)
 }
@@ -114,7 +115,7 @@ const  updateProfileData = async (req, reply) => {
   const password = formData.get("password");
   const confirm_password = formData.get("confirm_password");
   const avatar = formData.get("avatar");
-  const decoded = await req.jwtVerify()
+  const decoded = await jwtFunctions.decodeJWTPayload(req.cookies['token']);
   const userId = decoded.userId;
   var dbreq;
   const db = getDB();

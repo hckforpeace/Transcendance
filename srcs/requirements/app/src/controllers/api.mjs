@@ -7,7 +7,7 @@ import bcrypt from 'bcryptjs';
 import { getDB } from "../database/database.js"
 import { pipeline } from 'stream/promises';
 import profileRequests from '../database/profile.js'
-import { request } from 'http';
+import jwtFunc from '../jwt.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -40,12 +40,17 @@ const login = async (req, reply) => {
       return reply.status(400).send({ error: "Wrong password, try again" });
     }
 
-    const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name }, { expiresIn: "1h" });
+    // const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name }, { expiresIn: "1h" });
+    const payload = { userId: user.id, email: user.email, name: user.name, iat: Math.floor(Date.now() / 1000)};
+    const JWT = await jwtFunc.signJWT(payload);
+    
+    console.log('************* JWT successfully Signed value: ' + JWT + '********************');
+
 
     await db.run("UPDATE users SET connected = 1 WHERE name = ?", name);
     await db.run("UPDATE users SET token_exp = ? WHERE id = ?", [Date.now(), user.id]);
 
-    reply.setCookie("token", token, {
+    reply.setCookie("token", JWT, {
       httpOnly: true,
       secure: true,
       sameSite: "lax",
@@ -66,7 +71,7 @@ const avatar = async (req, reply) => {
 
   try {
 
-    const decoded = await req.jwtVerify()
+    const decoded = await jwtFunctions.decodeJWTPayload(req.cookies['token']);
 
 
     const userId = decoded.userId;
@@ -155,7 +160,7 @@ const logout = async (req, reply) => {
   const db = getDB();
 
   try {
-    const decoded = await req.jwtVerify()
+    const decoded = await req.decodeJWTPayload(req.cookies['token']);
     const userId = decoded.userId;
     const data = await db.get('SELECT name FROM users WHERE id = ?', [userId]);
     await db.run("UPDATE users SET connected = 0 WHERE name = ?", data.name);
@@ -173,7 +178,7 @@ const logout = async (req, reply) => {
 
 const sock_con = async (socket, req, fastify) => {
   try {
-    var token = await req.jwtVerify()
+    var token = await req.decodeJWTPayload(req.cookies['token']);
     if (!token)
       throw new Error('No token provided');
 

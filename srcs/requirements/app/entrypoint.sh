@@ -8,6 +8,3 @@ done
 
 # Extract VAULT_TOKEN from init.json
 export VAULT_TOKEN=$(jq -r '.root_token' /vault/init.json)
-
-
-

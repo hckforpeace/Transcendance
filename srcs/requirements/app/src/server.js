@@ -21,15 +21,10 @@ import fastifyCookie from '@fastify/cookie'
 import fastifyFormbody from '@fastify/formbody'
 import fastifyMultipart from "@fastify/multipart"
 import dotenv from 'dotenv';
-import { rateLimiter, sql_xss_check } from './WAF.js';
-//import routesPong from './routes/pong.js';
 import pong_match from './routes/pong_match.js';
 import {check_token_validity} from './handle_account.js';
 
 
-const vaultToken = process.env.VAULT_TOKEN;
-
-console.log("Vault Token: ", vaultToken);
 
 dotenv.config();
 // setting up the PORT TODO: use .env ?
@@ -79,7 +74,7 @@ fastify.addHook('preHandler', async (req, reply) => {
 // Get the DB
 await initDB();
 const db = getDB();
-await populate.populateDB(db);
+// await populate.populateDB(db);
 fastify.decorate('db', db);
 
 // view

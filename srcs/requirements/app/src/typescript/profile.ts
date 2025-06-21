@@ -361,7 +361,7 @@ const updateFieldsFriendsCard = (data: UserData) => {
 
   mail_input.innerHTML = mail;
   username_input.innerHTML = username;
-  img_avatar.src = avatar_file_name;
+  img_avatar.src = '/' + avatar_file_name;
 }
 
 const displayFriendCard = async (id: number) => {

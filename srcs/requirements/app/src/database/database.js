@@ -1,12 +1,16 @@
 import sqlite3 from 'sqlite3';
+import fs from 'fs';
 import { open } from 'sqlite';
 
 let db;
+const dbPath = 'mydatabase.db';
 
 export const initDB = async () => {
+  db = await open({ filename: dbPath, driver: sqlite3.Database });
+  const fileExists = fs.existsSync(dbPath);
+  if (fileExists)
+    return ;
   try {
-    db = await open({ filename: 'mydatabase.db', driver: sqlite3.Database });
-    console.log('Database opened successfully.');
 
     // TODO Change id to make it unique wihtout auto increment
     await db.exec(`CREATE TABLE IF NOT EXISTS users (

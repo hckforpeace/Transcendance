@@ -1,4 +1,5 @@
 import { getDB } from "../database/database.js";
+import jwtFunctions from '../jwt.js'
 
 const updateUserStats = async (req, reply) => {
   try {
@@ -9,7 +10,7 @@ const updateUserStats = async (req, reply) => {
       return;
     }
 
-    const decoded = await req.jwtVerify();
+    const decoded = await jwtFunctions.decodeJWTPayload(req.cookies['token']);
     const userId = decoded.userId;
 
 

@@ -6,8 +6,8 @@
   "scripts": {
     "tailwind_dev": "npx tailwindcss -i ./src/public/css/input.css -o ./src/public/css/index.css --watch",
     "tailwind_prod": "npx tailwindcss -i ./src/public/css/input.css -o ./src/public/css/index.css --minify",
-    "build": "./src/setup-vault.sh &&  tsc && npm run tailwind_prod",
-    "dev": "rm -f mydatabase.db;  concurrently \"npm run tailwind_dev\" \"nodemon\"",
+    "build": "tsc && npm run tailwind_prod",
+    "dev": "concurrently \"npm run tailwind_dev\" \"nodemon\"",
     "start": "node ./src/server.js "
   },
   "keywords": [],

@@ -1,3 +1,4 @@
+import jwtFunc from '../jwt.js'
 import { OAuth2Client } from 'google-auth-library';
 import requests from '../database/auth.js'
 import profileRequests from '../database/profile.js'
@@ -14,7 +15,7 @@ const googleAuth = async (req, reply, fastify) => {
     });
     const payload = ticket.getPayload();
     const jwtPayload = await requests.googleAuth(payload);
-    JWT = await fastify.jwt.sign(jwtPayload, {expiresIn: "1h"});
+    JWT = await jwtFunc.signJWT(jwtPayload);
     reply.code(200).setCookie("token", JWT, {
       httpOnly: true,
       secure: true,

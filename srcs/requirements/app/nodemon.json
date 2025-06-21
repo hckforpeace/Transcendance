@@ -2,6 +2,6 @@
   "watch": ["src"],
   "ignore": ["./src/public/js"],
   "ext": "ts,js,mjs,ejs,css",
-  "exec": "rm mydatabase.db; tsc && node ./src/server.js"
+  "exec": "tsc && node ./src/server.js"
 }
 
