@@ -3,13 +3,18 @@ import fs from 'fs';
 import { open } from 'sqlite';
 
 let db;
-const dbPath = 'mydatabase.db';
+const dbPath = 'database/mydatabase.db';
 
 export const initDB = async () => {
-  db = await open({ filename: dbPath, driver: sqlite3.Database });
   const fileExists = fs.existsSync(dbPath);
-  if (fileExists)
+  if (fileExists) {
+    db = await open({ filename: dbPath, driver: sqlite3.Database });
+    console.log('***** Database File already exists *****')
     return ;
+  } else {
+    console.log('***** NO database file found creating one ! *****')
+    db = await open({ filename: dbPath, driver: sqlite3.Database });
+  }
   try {
 
     // TODO Change id to make it unique wihtout auto increment

@@ -1,11 +1,12 @@
 MODSEC_AUDIT= ./srcs/requirements/nginxModSec/log/modsec_audit.log
 MODSEC_AUDIT_DIR= ./srcs/requirements/nginxModSec/log/
 VOLUME_VAULT= /home/${USER}/volume/vault 
-
+VOLUME_DB= /home/${USER}/volume/database
 all: up 
 	@./vault.sh
 
 up: build
+	mkdir -p $(VOLUME_DB)
 	mkdir -p $(VOLUME_VAULT)
 	mkdir -p $(MODSEC_AUDIT_DIR)
 	@echo >> $(MODSEC_AUDIT)

@@ -11,6 +11,7 @@ services:
     restart: always
     volumes:
           - vault-file:/vault
+          - database:/app/database/
  #nginx
   nginx:
     image: owasp/modsecurity-crs:nginx
@@ -27,6 +28,16 @@ services:
     restart: always
     volumes:
       - ./requirements/nginxModSec/log/modsec_audit.log:/var/log/modsec_audit.log # bind mount the volume to the container
+  
+  # Prometheus
+  # prometheus:
+  #   image: 'ubuntu/prometheus'
+  #   container_name: prometheus
+  #   ports: 
+  #     - 9090:9090
+  #   network:
+  #     - Transcendence
+
   # vault
   vault:
     image: vault:latest
@@ -66,6 +77,13 @@ volumes:
     driver: local
     driver_opts:
       device: /home/${USER}/volume/vault # To change in case I change laptop
+      o : bind
+      type : none
+  database:
+    name: database
+    driver: local
+    driver_opts:
+      device: /home/${USER}/volume/database # To change in case I change laptop
       o : bind
       type : none
 

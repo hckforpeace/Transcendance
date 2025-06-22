@@ -71,7 +71,7 @@ const avatar = async (req, reply) => {
 
   try {
 
-    const decoded = await jwtFunctions.decodeJWTPayload(req.cookies['token']);
+    const decoded = await jwtFunc.decodeJWTPayload(req.cookies['token']);
 
 
     const userId = decoded.userId;
@@ -160,7 +160,7 @@ const logout = async (req, reply) => {
   const db = getDB();
 
   try {
-    const decoded = await req.decodeJWTPayload(req.cookies['token']);
+    const decoded = await jwtFunc.decodeJWTPayload(req.cookies['token']);
     const userId = decoded.userId;
     const data = await db.get('SELECT name FROM users WHERE id = ?', [userId]);
     await db.run("UPDATE users SET connected = 0 WHERE name = ?", data.name);
@@ -178,7 +178,7 @@ const logout = async (req, reply) => {
 
 const sock_con = async (socket, req, fastify) => {
   try {
-    var token = await req.decodeJWTPayload(req.cookies['token']);
+    var token = await jwtFunc.decodeJWTPayload(req.cookies['token']);
     if (!token)
       throw new Error('No token provided');
 

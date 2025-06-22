@@ -100,20 +100,20 @@ fastify.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {
   }
 })
 
-fastify.addHook('onRequest', async (req, reply) => {
-	const token = req.cookies.token;
-	if (token) {
-		try {
-			const user = await req.jwtVerify();
-			req.user = user;
-		}
-		catch (err) {
-			req.user = null;
-		}
-	}
-	else {
-		req.user = null;
-	}
-});
+// fastify.addHook('onRequest', async (req, reply) => {
+// 	const token = req.cookies.token;
+// 	if (token) {
+// 		try {
+// 			const user = await req.jwtVerify();
+// 			req.user = user;
+// 		}
+// 		catch (err) {
+// 			req.user = null;
+// 		}
+// 	}
+// 	else {
+// 		req.user = null;
+// 	}
+// });
 
 check_token_validity()
