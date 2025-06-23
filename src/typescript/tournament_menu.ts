@@ -1,7 +1,7 @@
 let playerIdCounter = 1;
 let player1Alias: string = '';
 let player2Alias: string = '';
-let currentMatchIndex = 0; // 0 for first match (P1 vs P2), 1 for second match (P3 vs P4)
+let currentMatchIndex = 1; // 0 for first match (P1 vs P2), 1 for second match (P3 vs P4)
 
 interface PlayerData {
   id: string;
@@ -142,14 +142,16 @@ function remove_player(nbr: number): void {
  */
 function update_player() {
   const slider = document.getElementById("player_nbr_slider") as HTMLInputElement;
-  if (!slider) return;
+  if (!slider)
+    return;
 
   const desired_val = player_nbr_val[Number(slider.value)];
   const half = desired_val / 2;
 
   const container1 = document.getElementById("player-container1") as HTMLDivElement;
   const container2 = document.getElementById("player-container2") as HTMLDivElement;
-  if (!container1 || !container2) return;
+  if (!container1 || !container2)
+    return;
 
   resetPlayers();
 
@@ -159,7 +161,8 @@ function update_player() {
     // Ajouter les joueurs manquants (en paires)
     const pairsToAdd = (desired_val - currentPlayersCount) / 2;
     add_player(pairsToAdd);
-  } else if (desired_val < currentPlayersCount) {
+  }
+  else if (desired_val < currentPlayersCount) {
     // Enlever les joueurs en trop
     const pairsToRemove = (currentPlayersCount - desired_val) / 2;
     remove_player(pairsToRemove);
@@ -206,6 +209,19 @@ function validateAlias(button: HTMLButtonElement): void {
   }
   extractPlayerAliases();
   updatePlayButton();
+}
+
+function startTournament(button: HTMLButtonElement): void {
+  if (currentMatchIndex === 1) {
+    player1Alias = players[0].alias;
+    player2Alias = players[1].alias;
+  }
+
+  else if (currentMatchIndex === 2) {
+    player1Alias = players[2].alias;
+    player2Alias = players[3].alias;
+  }
+
 }
 
 /**
