@@ -20,12 +20,6 @@ function extractPlayerAliases(): void {
   player2Alias = input2?.value.trim() || '';
 }
 
-function getAlias(playerId: number): string {
-  const input = document.querySelector(`#player_${playerId} .alias-input`) as HTMLInputElement;
-  return input?.value.trim() || '';
-}
-
-
 /**
  * Initialise les événements, le slider et les joueurs au chargement
  */
