@@ -74,10 +74,7 @@ class Pong_T {
         this.player_1 = new Player_T(player_1_name, { x: player_offset, y: (canvas.height - PLAYER_HEIGHT_T) / 2 });
         this.player_2 = new Player_T(player_2_name, { x: canvas.width - player_offset, y: (canvas.height - PLAYER_HEIGHT_T) / 2 });
         this.ball_T = new Ball_T(center);
-        if (TRAINING)
-            this.score_max = 150;
-        else
-            this.score_max = 1;
+        this.score_max = 5;
         this.new_round = true;
     }
 }
@@ -173,18 +170,14 @@ function update_player_pos_t() {
     if (!canvas)
         throw new Error("Canvas not found");
     /* Update position */
-    if (TRAINING)
-        p1.pos.y = game_t.ball_T.pos.y - (PLAYER_HEIGHT_T / 2);
-    else {
-        if (p1_upPressed && !p1_downPressed)
-            p1.pos.y -= p1.speed;
-        if (!p1_upPressed && p1_downPressed)
-            p1.pos.y += p1.speed;
-        if (p2_upPressed && !p2_downPressed)
-            p2.pos.y -= p2.speed;
-        if (!p2_upPressed && p2_downPressed)
-            p2.pos.y += p2.speed;
-    }
+    if (p1_upPressed && !p1_downPressed)
+        p1.pos.y -= p1.speed;
+    if (!p1_upPressed && p1_downPressed)
+        p1.pos.y += p1.speed;
+    if (p2_upPressed && !p2_downPressed)
+        p2.pos.y -= p2.speed;
+    if (!p2_upPressed && p2_downPressed)
+        p2.pos.y += p2.speed;
     let player_offset = 0.05 * canvas.width;
     p1.pos.x = player_offset;
     p2.pos.x = canvas.width - player_offset;
@@ -208,20 +201,13 @@ function draw_player_t(player_T) {
     ctx.fill();
 }
 /**
- * @brief Draw ball_T  on screen
-*/
+ * @brief Draw ball  on screen
+ */
 function draw_ball_t(ball_T) {
-    currTime = Date.now();
     if (!ctx)
         throw new Error("Context not found.");
     ctx.beginPath();
     ctx.arc(ball_T.pos.x, ball_T.pos.y, BALL_RADIUS_T, 0, 2 * Math.PI);
-    if (currTime - lastTime > 1000) {
-        ball_color_T = "#FF0000";
-        lastTime = currTime;
-    }
-    if (currTime - lastTime > 200)
-        ball_color_T = "#FFFFFF";
     ctx.fillStyle = ball_color_T;
     ctx.fill();
 }
