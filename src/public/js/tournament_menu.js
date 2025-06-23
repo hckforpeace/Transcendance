@@ -2,7 +2,10 @@
 let playerIdCounter = 1;
 let player1Alias = '';
 let player2Alias = '';
+<<<<<<< HEAD
 let currentMatchIndex = 1; // 0 for first match (P1 vs P2), 1 for second match (P3 vs P4)
+=======
+>>>>>>> mel_pablo_tournament
 const players = {};
 const player_nbr_val = [2, 4, 8, 16];
 function extractPlayerAliases() {
@@ -11,10 +14,13 @@ function extractPlayerAliases() {
     player1Alias = (input1 === null || input1 === void 0 ? void 0 : input1.value.trim()) || '';
     player2Alias = (input2 === null || input2 === void 0 ? void 0 : input2.value.trim()) || '';
 }
+<<<<<<< HEAD
 function getAlias(playerId) {
     const input = document.querySelector(`#player_${playerId} .alias-input`);
     return (input === null || input === void 0 ? void 0 : input.value.trim()) || '';
 }
+=======
+>>>>>>> mel_pablo_tournament
 /**
  * Initialise les événements, le slider et les joueurs au chargement
  */
@@ -177,6 +183,7 @@ function validateAlias(button) {
     extractPlayerAliases();
     updatePlayButton();
 }
+<<<<<<< HEAD
 function startTournament(button) {
     if (currentMatchIndex === 1) {
         player1Alias = players[0].alias;
@@ -187,6 +194,8 @@ function startTournament(button) {
         player2Alias = players[3].alias;
     }
 }
+=======
+>>>>>>> mel_pablo_tournament
 /**
  * Active ou désactive le bouton Play selon la validation des alias
  */
