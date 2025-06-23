@@ -278,7 +278,7 @@ function draw_t() {
 }
 
 /**
- * @brief Draw fianal state, when player_T win
+ * @brief Draw final state, when player_T win
  */
 function draw_finish_t() {
 	if (!canvas)
@@ -422,12 +422,20 @@ async function update_user_stats_t(p1_score: number, p2_score: number): Promise<
 	draw_finish_t();
 }
 
+function defineWinner () {
+	if (game_t.player_1.score > game_t.player_2.score)
+		winnerAlias = game_t.player_1.name;
+	else
+		winnerAlias = game_t.player_2.name;
+}
+
 /**
  * @brief Main game_t loop
  */
 function game_loop_t() {
 	if (game_t.player_1.score >= game_t.score_max || game_t.player_2.score >= game_t.score_max) {
 		end_game = true;
+		defineWinner();
 		update_user_stats_t(game_t.player_1.score, game_t.player_2.score);
 		finish_game_t();
 		clearInterval(game_interval);

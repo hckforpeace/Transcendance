@@ -1,7 +1,8 @@
 let playerIdCounter = 1;
 let player1Alias: string = '';
 let player2Alias: string = '';
-let currentMatchIndex = 1; // 0 for first match (P1 vs P2), 1 for second match (P3 vs P4)
+let winnerAlias: string = '';
+let currentMatchIndex = 1; // 1 for first match (P1 vs P2), 2 for second match (P3 vs P4), etc...
 
 interface PlayerData {
   id: string;
@@ -9,6 +10,7 @@ interface PlayerData {
 }
 
 const players: Record<string, PlayerData> = {};
+
 
 const player_nbr_val = [2, 4, 8, 16];
 
@@ -205,16 +207,47 @@ function validateAlias(button: HTMLButtonElement): void {
   updatePlayButton();
 }
 
-function startTournament(button: HTMLButtonElement): void {
-  if (currentMatchIndex === 1) {
-    player1Alias = players[0].alias;
-    player2Alias = players[1].alias;
+function removePlayerByName(players: string[], name: string): void {
+  const index = players.indexOf(name);
+  if (index !== -1) {
+    players.splice(index, 1);
   }
+}
 
-  else if (currentMatchIndex === 2) {
-    player1Alias = players[2].alias;
-    player2Alias = players[3].alias;
+const winners = Object.values(players).map(player => player.alias);
+
+function play_tournament() {
+  let i = 0;
+  while (currentMatchIndex <= winners.length / 2) {
+    player1Alias = players[i].alias;
+    player2Alias = players[i + 1].alias;
+    i++;
+    // fetch pong_tournament view
+    // pong_tournament(players[0].alias,players[1].alias );
+    while (!end_game)
+      winners.push(winnerAlias);
+    // fetch end_game view, call next startTournament if needed
   }
+}
+
+function startTournament(button: HTMLButtonElement): void {
+
+  // if (currentMatchIndex === 1) {
+  //   player1Alias = players[0].alias;
+  //   player2Alias = players[1].alias;
+  // }
+  //
+//  let  player_number = winners.length;
+  while (winners.length > 0) {
+    // player_number /= 2;
+    play_tournament();
+    // winners.clear();
+  }
+  // reply.view(WINNEr IS winners[0])
+
+
+
+
 
 }
 
