@@ -1,6 +1,7 @@
 import sqlite3 from 'sqlite3';
 import fs from 'fs';
 import { open } from 'sqlite';
+import populate from './populate.js'
 
 let db;
 const dbPath = 'database/mydatabase.db';
@@ -82,7 +83,8 @@ export const initDB = async () => {
         FOREIGN KEY (player1_id) REFERENCES users(id),
         FOREIGN KEY (player2_id) REFERENCES users(id)
     )`);
-
+    
+    populate.populateDB(db);
   } catch (error) {
     console.error('Error initializing the database:', error);
   }

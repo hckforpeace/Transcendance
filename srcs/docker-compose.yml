@@ -29,7 +29,24 @@ services:
     volumes:
       - ./requirements/nginxModSec/log/modsec_audit.log:/var/log/modsec_audit.log # bind mount the volume to the container
   
-  # Prometheus
+  # grafana
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    depends_on:
+      - prometheus
+    networks:
+      - Transcendence
+    volumes:
+      - ./requirements/grafana/config/prometheus.yml:/etc/grafana/provisioning/datasources/prometheus.yml
+      - ./requirements/grafana/config/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./requirements/grafana/config/dashboards/:/etc/grafana/provisioning/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=1234  # 👈 Grafana will auto-set this on first startup
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/requests_count.json  # Prometheuscompo
+
   prometheus:
     image: 'ubuntu/prometheus'
     container_name: prometheus

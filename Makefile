@@ -19,7 +19,7 @@ down:
 	docker compose -f ./srcs/docker-compose.yml down --remove-orphans 
 
 clean: down
-	@sudo rm -rf $(VOLUME_VAULT)
+	@sudo rm -rf	/home/${USER}/volume/ 
 	@rm -f init.json
 	@rm -f $(MODSEC_AUDIT)
 

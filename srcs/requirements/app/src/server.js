@@ -16,7 +16,6 @@ import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 import { initDB } from './database/database.js'
 import { getDB } from './database/database.js'
-import populate from './database/populate.js'
 import fastifyCookie from '@fastify/cookie'
 import fastifyFormbody from '@fastify/formbody'
 import fastifyMultipart from "@fastify/multipart"
@@ -78,7 +77,6 @@ fastify.addHook('preHandler', async (req, reply) => {
 // Get the DB
 await initDB();
 const db = getDB();
-// await populate.populateDB(db);
 fastify.decorate('db', db);
 
 // view
