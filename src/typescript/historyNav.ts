@@ -76,11 +76,17 @@ const routes: Route[] = [
     title: 'RGPD'
   },
   {
-	path: '/tournament',
-	view: '/html/tournament_menu.html',
-	title: 'Tournament',
-	function: init_tournamentMenu
+    path: '/tournament',
+    view: '/html/tournament_menu.html',
+    title: 'Tournament',
+    function: init_tournamentMenu
   },
+  {
+    path: '/pong_tournament',
+    view: '/html/pong_tournament.html',
+    title: 'Tournament',
+    function: load_script_t
+  }
 
 ];
 

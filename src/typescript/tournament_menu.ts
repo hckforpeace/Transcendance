@@ -1,4 +1,6 @@
 let playerIdCounter = 1;
+let player1Alias: string = '';
+let player2Alias: string = '';
 
 interface PlayerData {
   id: string;
@@ -8,6 +10,15 @@ interface PlayerData {
 const players: Record<string, PlayerData> = {};
 
 const player_nbr_val = [2, 4, 8, 16];
+
+function extractPlayerAliases(): void {
+  const input1 = document.querySelector('#player-container1 .alias-input') as HTMLInputElement;
+  const input2 = document.querySelector('#player-container2 .alias-input') as HTMLInputElement;
+
+  player1Alias = input1?.value.trim() || '';
+  player2Alias = input2?.value.trim() || '';
+}
+
 
 /**
  * Initialise les événements, le slider et les joueurs au chargement
@@ -170,7 +181,8 @@ function validateAlias(button: HTMLButtonElement): void {
   );
 
   const errorMsg = document.getElementById("not-logged-in-msg");
-  if (!errorMsg) return;
+  if (!errorMsg)
+    return;
 
   if (duplicate) {
     errorMsg.style.color = "red";
@@ -186,6 +198,7 @@ function validateAlias(button: HTMLButtonElement): void {
     player.alias = alias;
     console.log(`Alias mis à jour pour ${player.id}: ${player.alias}`);
   }
+  extractPlayerAliases();
   updatePlayButton();
 }
 

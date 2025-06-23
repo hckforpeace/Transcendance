@@ -1,7 +1,15 @@
 "use strict";
 let playerIdCounter = 1;
+let player1Alias = '';
+let player2Alias = '';
 const players = {};
 const player_nbr_val = [2, 4, 8, 16];
+function extractPlayerAliases() {
+    const input1 = document.querySelector('#player-container1 .alias-input');
+    const input2 = document.querySelector('#player-container2 .alias-input');
+    player1Alias = (input1 === null || input1 === void 0 ? void 0 : input1.value.trim()) || '';
+    player2Alias = (input2 === null || input2 === void 0 ? void 0 : input2.value.trim()) || '';
+}
 /**
  * Initialise les événements, le slider et les joueurs au chargement
  */
@@ -161,6 +169,7 @@ function validateAlias(button) {
         player.alias = alias;
         console.log(`Alias mis à jour pour ${player.id}: ${player.alias}`);
     }
+    extractPlayerAliases();
     updatePlayButton();
 }
 /**
