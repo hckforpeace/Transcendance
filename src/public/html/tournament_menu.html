@@ -1,0 +1,61 @@
+<body class="h-screen overflow-hidden bg-gray-200">
+  <div class="flex flex-col h-full bg-white w-full p-8 space-y-4">
+    <!-- Title -->
+    <h1 class="text-2xl font-bold text-center">Tournament</h1>
+
+    <!-- Main Content -->
+    <div id="tournament-display" class="flex flex-col flex-1 space-y-4 overflow-hidden">
+      <!-- Slider Section -->
+      <div class="flex items-center justify-center space-x-4 bg-gray-100 p-4 rounded-lg">
+        <span class="text-lg font-semibold">Select number of players</span>
+        <input
+          id="player_nbr_slider"
+          type="range"
+          min="0"
+          max="3"
+          step="1"
+          value="0"
+          class="w-40"
+        />
+        <p id="player_nbr" class="text-md font-medium"></p>
+      </div>
+
+      <!-- Player Containers -->
+      <div class="flex flex-1 space-x-4 overflow-hidden">
+        <div id="player-container1" class="flex-1 flex flex-col overflow-y-auto bg-gray-100 rounded-lg p-2 space-y-2"></div>
+        <div id="player-container2" class="flex-1 flex flex-col overflow-y-auto bg-gray-100 rounded-lg p-2 space-y-2"></div>
+      </div>
+    </div>
+
+    <!-- Play Button -->
+    <div class="flex justify-center">
+      <input
+        id="play-button"
+        type="button"
+        value="PLAY"
+        href='/pong_tournament'
+        onclick="handleRouteClick(event)"
+        class="px-8 py-4 bg-gray-400 hover:bg-green-600 text-white rounded-lg cursor-not-allowed font-bold"
+      />
+    </div>
+
+    <div class="w-full flex justify-center">
+      <p id="not-logged-in-msg" class="text-sm mt-2 px-4 py-2"></p>
+    </div>
+
+  </div>
+
+  <!-- Player Template -->
+  <template id="t-player-elem">
+    <div class="player-entry flex flex-col items-center p-4 bg-white border border-gray-300 rounded-lg shadow">
+      <img src="/images/test.jpg" alt="Player" class="w-48 h-48 object-contain mb-2 border border-gray-300 bg-white" />
+
+      <input type="text"  class="alias-input w-full p-2 border border-gray-300 rounded-lg mb-2" placeholder="Enter alias" />
+      <button class="ok-button px-4 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded disabled:opacity-50" onclick="validateAlias(this)">
+        OK
+      </button>
+    </div>
+  </template>
+
+  <script src="tournament_menu.js"></script>
+</body>

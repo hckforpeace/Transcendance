@@ -74,16 +74,27 @@ const routes: Route[] = [
     path: '/rgpd',
     view: '/html/rgpd.html', 
     title: 'RGPD'
+  },
+  {
+    path: '/tournament',
+    view: '/html/tournament_menu.html',
+    title: 'Tournament',
+    function: init_tournamentMenu
+  },
+  {
+    path: '/pong_tournament',
+    view: '/html/pong_tournament.html',
+    title: 'Tournament',
+    function: load_script_t
   }
+
 ];
 
-
-
 // Function to handle navigation
-function navigateTo(path: string): void {
+async function navigateTo(path: string): Promise<void> {
   socket?.close(); // Close socket connection if it exists
   // Update browser history without reload
-  if ((path == '/games' || path == '/profile') && !isLoggedIn)
+  if ((path == '/lobby' || path == '/pong_ia' || path == '/profile') && !(await isLoggedIn()))
   {
     const errorMsg = document.getElementById("not-logged-in-msg");
     if (!errorMsg)
@@ -96,15 +107,6 @@ function navigateTo(path: string): void {
   appState.currentPath = path;
   updateView();
 }
-
-// Function to update the view based on current route
-// async function updateView(): Promise<void> {
-//   const currentRoute = routes.find(route => route.path === appState.currentPath) || routes[0];
-//   document.title = currentRoute.title;
-//   await loadView(currentRoute.view);
-//   if (currentRoute.function)
-//   currentRoute.function();
-// }
 
 async function updateView(): Promise<void> {
   let currentRoute: Route | undefined = routes.find(route => route.path === appState.currentPath);

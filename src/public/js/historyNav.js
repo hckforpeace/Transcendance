@@ -75,32 +75,38 @@ const routes = [
         path: '/rgpd',
         view: '/html/rgpd.html',
         title: 'RGPD'
+    },
+    {
+        path: '/tournament',
+        view: '/html/tournament_menu.html',
+        title: 'Tournament',
+        function: init_tournamentMenu
+    },
+    {
+        path: '/pong_tournament',
+        view: '/html/pong_tournament.html',
+        title: 'Tournament',
+        function: load_script_t
     }
 ];
 // Function to handle navigation
 function navigateTo(path) {
-    socket === null || socket === void 0 ? void 0 : socket.close(); // Close socket connection if it exists
-    // Update browser history without reload
-    if ((path == '/games' || path == '/profile') && !isLoggedIn) {
-        const errorMsg = document.getElementById("not-logged-in-msg");
-        if (!errorMsg)
+    return __awaiter(this, void 0, void 0, function* () {
+        socket === null || socket === void 0 ? void 0 : socket.close(); // Close socket connection if it exists
+        // Update browser history without reload
+        if ((path == '/lobby' || path == '/pong_ia' || path == '/profile') && !(yield isLoggedIn())) {
+            const errorMsg = document.getElementById("not-logged-in-msg");
+            if (!errorMsg)
+                return;
+            errorMsg.style.color = "red";
+            errorMsg.textContent = "You are not logged in";
             return;
-        errorMsg.style.color = "red";
-        errorMsg.textContent = "You are not logged in";
-        return;
-    }
-    window.history.pushState({}, '', path);
-    appState.currentPath = path;
-    updateView();
+        }
+        window.history.pushState({}, '', path);
+        appState.currentPath = path;
+        updateView();
+    });
 }
-// Function to update the view based on current route
-// async function updateView(): Promise<void> {
-//   const currentRoute = routes.find(route => route.path === appState.currentPath) || routes[0];
-//   document.title = currentRoute.title;
-//   await loadView(currentRoute.view);
-//   if (currentRoute.function)
-//   currentRoute.function();
-// }
 function updateView() {
     return __awaiter(this, void 0, void 0, function* () {
         let currentRoute = routes.find(route => route.path === appState.currentPath);

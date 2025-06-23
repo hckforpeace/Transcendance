@@ -9,7 +9,6 @@ function delete_account() {
 			.then(response => {
 				if (response.ok) {
 					updateUserAvatar('/images/avatar.jpg'); // Optionally clear avatar
-					isLoggedIn = false;
 					navigateTo('/');
 				} else {
 					console.error("Account deletion failed");
@@ -19,5 +18,4 @@ function delete_account() {
 				console.error("Error:", err);
 			});
 	}
-
 }

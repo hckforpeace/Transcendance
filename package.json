@@ -8,8 +8,7 @@
     "tailwind_prod": "npx tailwindcss -i ./src/public/css/input.css -o ./src/public/css/index.css --minify",
     "build": "./src/setup-vault.sh &&  tsc && npm run tailwind_prod",
     "dev": "rm -f mydatabase.db; ./src/setup-vault.sh && concurrently \"npm run tailwind_dev\" \"nodemon\"",
-    "start": "node ./src/server.js ",
-    "clean": "rm -rf ./node_modules && rm -rf ./dist"
+    "start": "node ./src/server.js "
   },
   "keywords": [],
   "author": "",
@@ -42,7 +41,6 @@
     "nanoid": "^5.1.5",
     "node-cron": "^4.1.0",
     "node-vault": "^0.10.2",
-    "nodemailer": "^7.0.3",
     "socket.io": "^4.8.1",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",

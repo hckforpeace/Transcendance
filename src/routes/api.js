@@ -1,5 +1,6 @@
 // Import the required modules
 import api from '../controllers/api.mjs';
+import isLoggedIn from '../controllers/isLoggedIn.mjs';
 import fs from 'fs';
 import path from 'path'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -69,14 +70,17 @@ async function routes(fastify, options) {
 
   fastify.get('/api/delete_account', { preHandler: [fastify.authenticate] }, api.delete_account);
 
+  fastify.get('/api/isLoggedIn', api.isLoggedIn);
+
   fastify.post('/api/login', api.login);
 
   fastify.post('/api/register', api.register);
 
-  // connect to the websocket server
   fastify.get('/api/remote', { preHandler: [fastify.authenticate], websocket: true }, (socket, req) => {
     api.sock_con(socket, req, fastify);
   })
 }
 
 export default routes;
+
+

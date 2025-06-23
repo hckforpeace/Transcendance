@@ -7,7 +7,6 @@ function logout() {
         .then(response => {
         if (response.ok) {
             updateUserAvatar('/images/avatar.jpg'); // Optionally clear avatar
-            isLoggedIn = false;
             navigateTo('/');
         }
         else {
@@ -18,8 +17,3 @@ function logout() {
         console.error("Logout error:", err);
     });
 }
-window.addEventListener("beforeunload", function (e) {
-    // Do something
-    e.preventDefault(); // Prevents the default action
-    logout();
-});
