@@ -271,4 +271,21 @@ const users = async (req, reply) => {
   }
 };
 
-export default { sock_con, login, register, users, avatar, logout, delete_account, isLoggedIn };
+const isUserExist = async (req, reply) => {
+  try {
+    const { alias } = req.body;
+    const db = getDB();
+    const existingUser = await db.get("SELECT * FROM users WHERE name = ?", alias);
+
+    if (!existingUser) {
+      return reply.status(404).send({ exists: false });
+    }
+
+    return reply.status(200).send({ exists: true });
+  } catch (err) {
+    console.error(err);
+    return reply.status(500).send({ error: 'Internal server error' });
+  }
+};
+
+export default { sock_con, login, register, users, avatar, logout, delete_account, isLoggedIn, isUserExist };

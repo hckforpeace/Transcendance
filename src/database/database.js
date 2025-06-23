@@ -66,7 +66,7 @@ export const initDB = async () => {
         player1_alias TEXT NOT NULL,
         player2_alias TEXT NOT NULL,
         player1_id TEXT NOT NULL,
-        player2_id TEXT NOT NULL,
+        player2_id TEXT,
         player1_score INTEGER DEFAULT 0,
         player2_score INTEGER DEFAULT 0,
         date DATETIME DEFAULT CURRENT_TIMESTAMP,

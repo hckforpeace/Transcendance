@@ -477,23 +477,6 @@ function saveQTableToFile() {
     // Revoke the object URL to free memory
     URL.revokeObjectURL(url);
 }
-function update_user_stats(p1_score, p2_score) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const response = yield fetch('/updateUserStats', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ p1_score, p2_score, player2_id: 0 }) // Send the scores to the backend
-            });
-            if (!response.ok) {
-                throw new Error('Failed to update user stats');
-            }
-        }
-        catch (error) {
-            console.error('Error updating user stats:', error);
-        }
-    });
-}
 /**
  * @brief Handler on game finish and draw results at the screen
  */ function finish_game() {
@@ -515,7 +498,8 @@ function update_user_stats(p1_score, p2_score) {
 function game_loop() {
     if (game.player_1.score >= game.score_max || game.player_2.score >= game.score_max) {
         end_game = true;
-        update_user_stats(game.player_1.score, game.player_2.score);
+        console.log("IA -> ", game.player_1.name);
+        update_user_stats(game.player_1.name, game.player_2.name, game.player_1.score, game.player_2.score);
         if (TRAINING == true)
             saveQTableToFile();
         finish_game();

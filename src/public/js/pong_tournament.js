@@ -74,7 +74,7 @@ class Pong_T {
         this.player_1 = new Player_T(player_1_name, { x: player_offset, y: (canvas.height - PLAYER_HEIGHT_T) / 2 });
         this.player_2 = new Player_T(player_2_name, { x: canvas.width - player_offset, y: (canvas.height - PLAYER_HEIGHT_T) / 2 });
         this.ball_T = new Ball_T(center);
-        this.score_max = 5;
+        this.score_max = 1;
         this.new_round = true;
     }
 }
@@ -331,13 +331,13 @@ function start_round_t() {
     else
         game_t.ball_T.direction = { x: 0.45, y: 0.55 };
 }
-function update_user_stats_t(p1_score, p2_score) {
+function update_user_stats(alias1, alias2, p1_score, p2_score) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const response = yield fetch('/updateUserStats', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ p1_score, p2_score, player2_id: 0 }) // Send the scores to the backend
+                body: JSON.stringify({ alias1, alias2, p1_score, p2_score })
             });
             if (!response.ok) {
                 throw new Error('Failed to update user stats');
@@ -369,7 +369,8 @@ function update_user_stats_t(p1_score, p2_score) {
 function game_loop_t() {
     if (game_t.player_1.score >= game_t.score_max || game_t.player_2.score >= game_t.score_max) {
         end_game = true;
-        update_user_stats_t(game_t.player_1.score, game_t.player_2.score);
+        update_user_stats(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score);
+        update_user_stats(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score);
         finish_game_t();
         clearInterval(game_interval);
         return;

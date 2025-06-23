@@ -95,7 +95,7 @@ class Pong_T {
 		this.player_1 = new Player_T(player_1_name, { x: player_offset, y: (canvas.height - PLAYER_HEIGHT_T) / 2 });
 		this.player_2 = new Player_T(player_2_name, { x: canvas.width - player_offset, y: (canvas.height - PLAYER_HEIGHT_T) / 2 });
 		this.ball_T = new Ball_T(center);
-		this.score_max = 5;
+		this.score_max = 1;
 		this.new_round = true;
 	}
 }
@@ -216,7 +216,7 @@ function update_player_pos_t() {
 		p2.pos.y -= p2.speed;
 	if (!p2_upPressed && p2_downPressed)
 		p2.pos.y += p2.speed;
-	
+
 	let player_offset = 0.05 * canvas.width;
 
 	p1.pos.x = player_offset;
@@ -385,23 +385,24 @@ function start_round_t() {
 		game_t.ball_T.direction = { x: 0.45, y: 0.55 };
 }
 
-
-async function update_user_stats_t(p1_score: number, p2_score: number): Promise<void> {
+async function update_user_stats(alias1: string, alias2: string, p1_score: number, p2_score: number): Promise<void> {
 	try {
+		
+			const response = await fetch('/updateUserStats', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ alias1, alias2, p1_score, p2_score })
+			});
 
-		const response = await fetch('/updateUserStats', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ p1_score, p2_score, player2_id: 0}) // Send the scores to the backend
-		});
-
-		if (!response.ok) {
-			throw new Error('Failed to update user stats');
-		}
+			if (!response.ok) {
+				throw new Error('Failed to update user stats');
+			}
+		
 	} catch (error) {
 		console.error('Error updating user stats:', error);
 	}
 }
+
 
 /**
  * @brief Handler on game_t finish and draw results at the screen
@@ -428,7 +429,8 @@ async function update_user_stats_t(p1_score: number, p2_score: number): Promise<
 function game_loop_t() {
 	if (game_t.player_1.score >= game_t.score_max || game_t.player_2.score >= game_t.score_max) {
 		end_game = true;
-		update_user_stats_t(game_t.player_1.score, game_t.player_2.score);
+		update_user_stats(player1Alias, player2Alias,game_t.player_1.score, game_t.player_2.score);
+		update_user_stats(player2Alias, player1Alias,  game_t.player_2.score, game_t.player_1.score);
 		finish_game_t();
 		clearInterval(game_interval);
 		return;

@@ -76,6 +76,8 @@ async function routes(fastify, options) {
 
   fastify.post('/api/register', api.register);
 
+  fastify.post('/api/isUserExist', api.isUserExist);
+
   fastify.get('/api/remote', { preHandler: [fastify.authenticate], websocket: true }, (socket, req) => {
     api.sock_con(socket, req, fastify);
   })
