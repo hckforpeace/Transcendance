@@ -23,7 +23,7 @@ import fastifyMultipart from "@fastify/multipart"
 import dotenv from 'dotenv';
 import pong_match from './routes/pong_match.js';
 import {check_token_validity} from './handle_account.js';
-
+import metricsPlugin from 'fastify-metrics'
 
 
 dotenv.config();
@@ -42,6 +42,10 @@ const fastify = Fastify({
   logger: true,
 });
 
+
+// Metrics
+
+fastify.register(metricsPlugin, {endpoint: '/metrics',})
 
 // Plugins
 fastify.register(fastifyCookie);

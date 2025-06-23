@@ -30,13 +30,17 @@ services:
       - ./requirements/nginxModSec/log/modsec_audit.log:/var/log/modsec_audit.log # bind mount the volume to the container
   
   # Prometheus
-  # prometheus:
-  #   image: 'ubuntu/prometheus'
-  #   container_name: prometheus
-  #   ports: 
-  #     - 9090:9090
-  #   network:
-  #     - Transcendence
+  prometheus:
+    image: 'ubuntu/prometheus'
+    container_name: prometheus
+    ports: 
+      - 9090:9090
+    depends_on: # insures that wordpress service starts before Nginx
+      - app 
+    networks:
+      - Transcendence
+    volumes:
+      - ./requirements/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
 
   # vault
   vault:
