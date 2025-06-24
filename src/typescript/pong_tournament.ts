@@ -95,7 +95,7 @@ class Pong_T {
 		this.player_1 = new Player_T(player_1_name, { x: player_offset, y: (canvas.height - PLAYER_HEIGHT_T) / 2 });
 		this.player_2 = new Player_T(player_2_name, { x: canvas.width - player_offset, y: (canvas.height - PLAYER_HEIGHT_T) / 2 });
 		this.ball_T = new Ball_T(center);
-		this.score_max = 5;
+		this.score_max = 1;
 		this.new_round = true;
 	}
 }
@@ -132,12 +132,6 @@ function draw_terrain_t() {
 		throw new Error("Canvas not found");
 	if (!ctx)
 		throw new Error("Context not found");
-
-	// Épaisseur de la ligne horizontale
-	//const LINE_THICKNESS = 4;
-
-	// Position verticale (milieu de l'écran)
-	//const y = (canvas.height - LINE_THICKNESS) / 2;
 
 	ctx.beginPath();
 	ctx.rect((canvas.width - TERRAIN_LINE_FAT) / 2, 0, TERRAIN_LINE_FAT, canvas.height);
@@ -216,7 +210,7 @@ function update_player_pos_t() {
 		p2.pos.y -= p2.speed;
 	if (!p2_upPressed && p2_downPressed)
 		p2.pos.y += p2.speed;
-	
+
 	let player_offset = 0.05 * canvas.width;
 
 	p1.pos.x = player_offset;
@@ -386,47 +380,86 @@ function start_round_t() {
 }
 
 
-async function update_user_stats_t(p1_score: number, p2_score: number): Promise<void> {
+async function update_user_stats_t(alias1: string, alias2: string, p1_score: number, p2_score: number): Promise<void> {
 	try {
 
 		const response = await fetch('/updateUserStats', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ p1_score, p2_score, player2_id: 0}) // Send the scores to the backend
+			body: JSON.stringify({ alias1, alias2, p1_score, p2_score }) // Send the scores to the backend
 		});
 
 		if (!response.ok) {
-			throw new Error('Failed to update user stats');
+			console.log('User not in the DB');
 		}
 	} catch (error) {
 		console.error('Error updating user stats:', error);
 	}
 }
 
-/**
+/** 
  * @brief Handler on game_t finish and draw results at the screen
  */function finish_game_t() {
-	const resultMessage = document.getElementById("game_t-result-message");
+	const resultMessage = document.getElementById("game-result-message");
 	const resultTitle = document.getElementById("result-title");
 	const resultScore = document.getElementById("result-score");
+	const next_players = document.getElementById("next_players");
+	const button = document.getElementById("next-match-button");
+	let winner;
+	let j;
 
+	console.log("winners -> ", winners);
+	if (end_of_tournament_iteration)
+		j = 0;
+	else
+		j = i;
 	if (resultMessage && resultTitle && resultScore) {
 		resultMessage.classList.remove("hidden");
 
 		const p1Score = game_t.player_1.score;
 		const p2Score = game_t.player_2.score;
+		if (p1Score > p2Score)
+			winner = game_t.player_1.name;
+		else
+			winner = game_t.player_2.name;
 
-		resultTitle.textContent = p1Score >= game_t.score_max ? "YOU WIN" : "YOU LOSE";
+		resultTitle.textContent = winner + " WON !";
 		resultScore.textContent = `${p1Score} - ${p2Score}`;
+		if (winners[j] && winners[j + 1] && winners.length > 4) {
+			next_players!.textContent = "Next match: " + winners[j] + " VS " + winners[j + 1];
+			button!.textContent = "Ready ?";
+		}
+		else if (winners[j] && winners[j + 1] && (winners.length == 4 || winners.length == 3)) {
+			next_players!.textContent = "Next, Semifinal: " + winners[j] + " VS " + winners[j + 1];
+			button!.textContent = "Ready ?";
+		}
+		else if (winners[j] && winners[j + 1] && winners.length == 2) {
+			next_players!.textContent = "Next, Final: " + winners[j] + " VS " + winners[j + 1];
+			button!.textContent = "Ready ?";
+		}
+		else {
+			next_players!.textContent = "Congratulations " + winners[0] + ", you won the tournament !";
+			button!.textContent = "Back to home";
+		}
 	}
 	draw_finish_t();
 }
 
-function defineWinner () {
-	if (game_t.player_1.score > game_t.player_2.score)
-		winnerAlias = game_t.player_1.name;
-	else
-		winnerAlias = game_t.player_2.name;
+
+
+function removeWinner() {
+	if (game_t.player_1.score < game_t.player_2.score) {
+		const index = winners.indexOf(game_t.player_1.name);
+		if (index !== -1) {
+			winners.splice(index, 1);
+		}
+	}
+	else {
+		const index = winners.indexOf(game_t.player_2.name);
+		if (index !== -1) {
+			winners.splice(index, 1);
+		}
+	}
 }
 
 /**
@@ -434,9 +467,9 @@ function defineWinner () {
  */
 function game_loop_t() {
 	if (game_t.player_1.score >= game_t.score_max || game_t.player_2.score >= game_t.score_max) {
-		end_game = true;
-		defineWinner();
-		update_user_stats_t(game_t.player_1.score, game_t.player_2.score);
+		removeWinner();
+		update_user_stats_t(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score);
+		update_user_stats_t(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score);
 		finish_game_t();
 		clearInterval(game_interval);
 		return;
@@ -458,10 +491,8 @@ function launch_game_t(p1_name: string, p2_name: string) {
 	if (!p1_name || !p2_name)
 		throw new Error("Invalid player_T name");
 	resizeCanvas_t();
-	console.log("P1 -> ", p1_name, " || P2 -> ", p2_name);
 	game_t = new Pong_T(p1_name, p2_name, { x: canvas.width / 2, y: canvas.height / 2 });
 	game_t.ball_T.direction = { x: 0.5, y: 0.5 };
-	end_game = false;
 }
 
 /* ************************************************************************* */
@@ -488,21 +519,6 @@ function resizeCanvas_t() {
 	FONT_SIZE = 0.08 * Math.min(canvas.width, canvas.height);
 }
 
-// Function to fetch and update profile data 
-const getUserName_t = async () => {
-	const response = await fetch('/api/profile/info', {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	});
-
-	if (!response.ok)
-		throw new Error('Failed to fetch');
-
-	return await response.json();
-};
-
 /**
  * @brief Load the different event for the pong_T game_t
  *
@@ -511,7 +527,7 @@ const getUserName_t = async () => {
 async function load_script_t() {
 	try {
 		//const data = await getUserName_t();
-
+		console.log("p1 -> ", player1Alias, " p2 -> ", player2Alias);
 		const leftName = document.getElementById("left-player-name");
 		if (leftName)
 			leftName.innerHTML = player1Alias;

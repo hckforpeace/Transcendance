@@ -1,8 +1,6 @@
 let playerIdCounter = 1;
 let player1Alias: string = '';
 let player2Alias: string = '';
-let winnerAlias: string = '';
-let currentMatchIndex = 1; // 1 for first match (P1 vs P2), 2 for second match (P3 vs P4), etc...
 
 interface PlayerData {
   id: string;
@@ -26,7 +24,14 @@ function extractPlayerAliases(): void {
  * Initialise les événements, le slider et les joueurs au chargement
  */
 function init_tournamentMenu(): void {
+  winners.length = 0;
+  player1Alias = '';
+  player2Alias = '';
+  i = 0;
+  end_of_tournament_iteration = false;
+  end_game = true;
   init_events();
+  updatePlayButton();
   resetPlayers();
   set_player_nbr();
   update_player();
@@ -199,10 +204,8 @@ function validateAlias(button: HTMLButtonElement): void {
 
   const playerId = container.id;
   const player = players[playerId];
-  if (player) {
+  if (player)
     player.alias = alias;
-    console.log(`Alias mis à jour pour ${player.id}: ${player.alias}`);
-  }
   extractPlayerAliases();
   updatePlayButton();
 }
@@ -214,41 +217,57 @@ function removePlayerByName(players: string[], name: string): void {
   }
 }
 
-const winners = Object.values(players).map(player => player.alias);
+let i = 0;
+let end_of_tournament_iteration = false;
+const winners: string[] = [];
 
-function play_tournament() {
-  let i = 0;
-  while (currentMatchIndex <= winners.length / 2) {
-    player1Alias = players[i].alias;
-    player2Alias = players[i + 1].alias;
-    i++;
-    // fetch pong_tournament view
-    // pong_tournament(players[0].alias,players[1].alias );
-    while (!end_game)
-      winners.push(winnerAlias);
-    // fetch end_game view, call next startTournament if needed
+function waitForEndGame(): Promise<void> {
+  return new Promise((resolve) => {
+    
+    const check = () => {
+      if (end_game)
+        resolve();
+      else
+        setTimeout(check, 100);
+    };
+
+    check();
+
+  });
+}
+
+async function play_tournament() {
+  let matches = winners.length / 2;
+  let currentMatchIndex = 1;
+  
+  while (currentMatchIndex <= matches) {
+    player1Alias = winners[i];
+    player2Alias = winners[++i];
+    end_game = false;
+    if (currentMatchIndex == matches)
+      end_of_tournament_iteration = true;
+    else
+      end_of_tournament_iteration = false;
+    await navigateTo("/pong_tournament");
+    await waitForEndGame();
+    currentMatchIndex++;
   }
 }
 
-function startTournament(button: HTMLButtonElement): void {
-
-  // if (currentMatchIndex === 1) {
-  //   player1Alias = players[0].alias;
-  //   player2Alias = players[1].alias;
-  // }
-  //
-//  let  player_number = winners.length;
-  while (winners.length > 0) {
-    // player_number /= 2;
-    play_tournament();
-    // winners.clear();
+async function startTournament(button: HTMLButtonElement):Promise<void> {
+  const playersArray = Object.values(players).map(player => player.alias);
+  winners.length = 0;
+  winners.push(...playersArray);
+  while (winners.length > 1) {
+    await play_tournament();
+    i = 0;
   }
-  // reply.view(WINNEr IS winners[0])
+}
 
-
-
-
-
+function endGameFlag() {
+  end_game = true;
+  if (winners.length == 1)
+    navigateTo("/");
 }
 
 /**
@@ -263,7 +282,7 @@ function allAliases(): boolean {
 function updatePlayButton(): void {
   const inputs = document.querySelectorAll(".alias-input") as NodeListOf<HTMLInputElement>;
   const playButton = document.getElementById("play-button") as HTMLButtonElement;
-
+  playButton.disabled = true; // Makes it unclickable
 
   if (allAliases() && inputs.length > 0) {
     playButton.disabled = false;

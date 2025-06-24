@@ -1,11 +1,16 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 let playerIdCounter = 1;
 let player1Alias = '';
 let player2Alias = '';
-<<<<<<< HEAD
-let currentMatchIndex = 1; // 0 for first match (P1 vs P2), 1 for second match (P3 vs P4)
-=======
->>>>>>> mel_pablo_tournament
 const players = {};
 const player_nbr_val = [2, 4, 8, 16];
 function extractPlayerAliases() {
@@ -14,18 +19,18 @@ function extractPlayerAliases() {
     player1Alias = (input1 === null || input1 === void 0 ? void 0 : input1.value.trim()) || '';
     player2Alias = (input2 === null || input2 === void 0 ? void 0 : input2.value.trim()) || '';
 }
-<<<<<<< HEAD
-function getAlias(playerId) {
-    const input = document.querySelector(`#player_${playerId} .alias-input`);
-    return (input === null || input === void 0 ? void 0 : input.value.trim()) || '';
-}
-=======
->>>>>>> mel_pablo_tournament
 /**
  * Initialise les événements, le slider et les joueurs au chargement
  */
 function init_tournamentMenu() {
+    winners.length = 0;
+    player1Alias = '';
+    player2Alias = '';
+    i = 0;
+    end_of_tournament_iteration = false;
+    end_game = true;
     init_events();
+    updatePlayButton();
     resetPlayers();
     set_player_nbr();
     update_player();
@@ -176,26 +181,65 @@ function validateAlias(button) {
     }
     const playerId = container.id;
     const player = players[playerId];
-    if (player) {
+    if (player)
         player.alias = alias;
-        console.log(`Alias mis à jour pour ${player.id}: ${player.alias}`);
-    }
     extractPlayerAliases();
     updatePlayButton();
 }
-<<<<<<< HEAD
-function startTournament(button) {
-    if (currentMatchIndex === 1) {
-        player1Alias = players[0].alias;
-        player2Alias = players[1].alias;
-    }
-    else if (currentMatchIndex === 2) {
-        player1Alias = players[2].alias;
-        player2Alias = players[3].alias;
+function removePlayerByName(players, name) {
+    const index = players.indexOf(name);
+    if (index !== -1) {
+        players.splice(index, 1);
     }
 }
-=======
->>>>>>> mel_pablo_tournament
+let i = 0;
+let end_of_tournament_iteration = false;
+const winners = [];
+function waitForEndGame() {
+    return new Promise((resolve) => {
+        const check = () => {
+            if (end_game)
+                resolve();
+            else
+                setTimeout(check, 100);
+        };
+        check();
+    });
+}
+function play_tournament() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let matches = winners.length / 2;
+        let currentMatchIndex = 1;
+        while (currentMatchIndex <= matches) {
+            player1Alias = winners[i];
+            player2Alias = winners[++i];
+            end_game = false;
+            if (currentMatchIndex == matches)
+                end_of_tournament_iteration = true;
+            else
+                end_of_tournament_iteration = false;
+            yield navigateTo("/pong_tournament");
+            yield waitForEndGame();
+            currentMatchIndex++;
+        }
+    });
+}
+function startTournament(button) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const playersArray = Object.values(players).map(player => player.alias);
+        winners.length = 0;
+        winners.push(...playersArray);
+        while (winners.length > 1) {
+            yield play_tournament();
+            i = 0;
+        }
+    });
+}
+function endGameFlag() {
+    end_game = true;
+    if (winners.length == 1)
+        navigateTo("/");
+}
 /**
  * Active ou désactive le bouton Play selon la validation des alias
  */
@@ -206,6 +250,7 @@ function allAliases() {
 function updatePlayButton() {
     const inputs = document.querySelectorAll(".alias-input");
     const playButton = document.getElementById("play-button");
+    playButton.disabled = true; // Makes it unclickable
     if (allAliases() && inputs.length > 0) {
         playButton.disabled = false;
         playButton.classList.remove("bg-gray-400", "cursor-not-allowed");

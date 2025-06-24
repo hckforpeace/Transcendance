@@ -1,33 +1,36 @@
-import { getDB } from "../database/database.js";
+import { getDB } from "../database/database.js"
 
 const updateUserStats = async (req, reply) => {
   try {
     const db = getDB();
 
     if (!db) {
-      reply.code(500).send({ error: "Database not initialized"});
+      reply.code(500).send({ error: "Database not initialized" });
+      return;
+    }
+    
+    const { alias1, alias2, p1_score, p2_score } = req.body;
+
+    console.log("--------- p1 => '", alias1,"'------------ p2 =>", alias2);
+
+    const player_1 = await db.get("SELECT * FROM users WHERE name = ?", alias1);
+    if (!player_1) {
+      reply.code(404).send({ error: "Player1 not found" });
       return;
     }
 
-    const decoded = await req.jwtVerify();
-    const userId = decoded.userId;
-
-
-    const { p1_score, p2_score, player2_id} = req.body;
-
-    const player_1 = await db.get("SELECT * FROM users WHERE id = ?", userId);
+    const player1_id = player_1.id;
     const player1_alias = player_1.name;
-    const player_2 = await db.get("SELECT * FROM users WHERE id = ?", player2_id);
-    const player2_alias = player_2.name;
+    const player2_alias = alias2;
 
     await db.run(
       `INSERT INTO matches
-       (player1_alias, player1_id, player1_score, player2_score, player2_alias, player2_id)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [player1_alias, userId, p1_score, p2_score, player2_alias, player2_id]
+       (player1_alias, player1_id, player1_score, player2_score, player2_alias)
+       VALUES (?, ?, ?, ?, ?)`,
+      [player1_alias, player1_id, p1_score, p2_score, player2_alias]
     );
 
-    const stats = await db.get(`SELECT * FROM stats WHERE playerId = ?`, [userId]);
+    const stats = await db.get(`SELECT * FROM stats WHERE playerId = ?`, [player1_id]);
 
     const won = p1_score > p2_score ? 1 : 0;
     const lost = p2_score > p1_score ? 1 : 0;
@@ -36,7 +39,7 @@ const updateUserStats = async (req, reply) => {
       await db.run(
         `INSERT INTO stats (playerId, matchesWon, matchesLost, matchesPlayed)
          VALUES (?, ?, ?, ?)`,
-        [userId, won, lost, 1]
+        [player1_id, won, lost, 1]
       );
     } else {
       await db.run(
@@ -45,7 +48,7 @@ const updateUserStats = async (req, reply) => {
            matchesLost = matchesLost + ?,
            matchesPlayed = matchesPlayed + 1
          WHERE playerId = ?`,
-        [won, lost, userId]
+        [won, lost, player1_id]
       );
     }
 
@@ -55,5 +58,6 @@ const updateUserStats = async (req, reply) => {
     reply.code(500).send({ error: "Internal Server Error" });
   }
 };
+
 
 export default { updateUserStats };
