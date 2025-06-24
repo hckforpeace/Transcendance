@@ -40,11 +40,9 @@ const login = async (req, reply) => {
       return reply.status(400).send({ error: "Wrong password, try again" });
     }
 
-    // const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name }, { expiresIn: "1h" });
     const payload = { userId: user.id, email: user.email, name: user.name, iat: Math.floor(Date.now() / 1000)};
     const JWT = await jwtFunc.signJWT(payload);
     
-    console.log('************* JWT successfully Signed value: ' + JWT + '********************');
 
 
     await db.run("UPDATE users SET connected = 1 WHERE name = ?", name);
@@ -128,12 +126,12 @@ const register = async (req, reply) => {
     return reply.status(400).send({ error: "Email is already in use" });
   }
 
-  let avatarPath = "images/avatar.jpg";  // <- déclaration ici
+  let avatarPath = "/images/avatar.jpg";  // <- déclaration ici
 
   if (avatar && typeof avatar.stream === 'function' && avatar.name) {
     const ext = path.extname(avatar.name);
     const filename = avatar.name;
-    avatarPath = `images/${filename}`;
+    avatarPath = `/images/${filename}`;
     const filePath = path.join(uploadDir, filename);
     console.log(`Saving avatar file to: ${filePath}`);
 
