@@ -206,6 +206,10 @@ function validateAlias(button: HTMLButtonElement): void {
   const player = players[playerId];
   if (player)
     player.alias = alias;
+
+  button.classList.remove("bg-gray-400", "hover:bg-gray-600");
+  button.classList.add("bg-blue-500", "hover:bg-blue-600");
+
   extractPlayerAliases();
   updatePlayButton();
 }
@@ -286,11 +290,11 @@ function updatePlayButton(): void {
 
   if (allAliases() && inputs.length > 0) {
     playButton.disabled = false;
-    playButton.classList.remove("bg-gray-400", "cursor-not-allowed");
-    playButton.classList.add("bg-green-500", "cursor-pointer");
+    playButton.classList.remove("bg-gray-400", "hover:bg-gray-600", "cursor-not-allowed");
+    playButton.classList.add("bg-green-500", "hover:bg-green-600", "cursor-pointer");
   } else {
     playButton.disabled = true;
-    playButton.classList.add("bg-gray-400", "cursor-not-allowed");
-    playButton.classList.remove("bg-green-500", "cursor-pointer");
+    playButton.classList.add("bg-gray-400", "hover:bg-gray-600", "cursor-not-allowed");
+    playButton.classList.remove("bg-green-500", "hover:bg-blue-600", "cursor-pointer");
   }
 }

@@ -408,7 +408,6 @@ async function update_user_stats_t(alias1: string, alias2: string, p1_score: num
 	let winner;
 	let j;
 
-	console.log("winners -> ", winners);
 	if (end_of_tournament_iteration)
 		j = 0;
 	else

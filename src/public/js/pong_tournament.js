@@ -354,7 +354,6 @@ function update_user_stats_t(alias1, alias2, p1_score, p2_score) {
     const button = document.getElementById("next-match-button");
     let winner;
     let j;
-    console.log("winners -> ", winners);
     if (end_of_tournament_iteration)
         j = 0;
     else
