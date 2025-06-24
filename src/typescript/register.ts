@@ -1,20 +1,8 @@
-// // // Construct the register URL dynamically
-// const currentUrl = window.location.hostname;
-// const currentPort = window.location.port;
 
 function showQRCode(qrCode: string, secret: string) {
 	const mainDiv = document.getElementById("content-div");
 	if (!mainDiv)
 		return;
-	// mainDiv.innerHTML = `
- //            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
- //              <div class="bg-white p-6 rounded-lg shadow-lg text-center">
- //                <h2 class="text-xl font-bold mb-4">Scan this QR Code</h2>
- //                <img src="${qrCode}" alt="Scan this QR code with your authentication app" class="w-full max-w-xs mx-auto">
- //                <button onclick="navigateTo('login')" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg">Done</button>
- //              </div>
- //            </div>
- //          `;
 
 	mainDiv.innerHTML = `
             <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

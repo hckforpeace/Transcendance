@@ -7,8 +7,8 @@ import bcrypt from 'bcryptjs';
 import { getDB } from "../database/database.js"
 import { pipeline } from 'stream/promises';
 import profileRequests from '../database/profile.js'
-import { randomInt } from "crypto"
 import { request } from 'http';
+import twofa from '../controllers/2fa.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -42,48 +42,13 @@ const login = async (req, reply) => {
       return reply.status(400).send({ error: "Wrong password, try again" });
     }
 
-	  // ADDED
-//     const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name }, { expiresIn: "1h" });
-//
-//     await db.run("UPDATE users SET connected = 1 WHERE name = ?", name);
-//     await db.run("UPDATE users SET token_exp = ? WHERE id = ?", [Date.now(), user.id]);
-//
-	  const code = randomInt(100000, 999999);
-	  console.log(code);
-	  
-	  /* Storing it in db */
-	  console.log(user);
-	  db.run(`
-	  	INSERT INTO twofa (user_id, code, validity, created_at, expired_at) VALUES (?, ?, ?, ?, ?)
-	  	`, [user.id, code, true, Date.now(), Date.now() + 5 * 60 * 1000]);
-	  // db.prepare(`
-	  // 	INSERT INTO twofa (user_id, code, created_at, expired_at) VALUES (?, ?, ?, ?)
-	  // 	`).run(user.id, code, Date.now(), Date.now() + 5 * 60 * 1000);
-	  console.log("Inserted into db");
-
-	  console.log("Checking insertion");
-	  const tmp = await db.all(`
-	  			SELECT * FROM twofa WHERE user_id = ? AND code = ?
-	  		`, [user.id, code]);
-	  console.log(tmp);
-
-	  /* Sending it to user */
-	  const mailOptions = {
-	  	from: 'youremail@gmail.com',
-	  	to: user.email,
-	  	subject: '2fa code',
-	  	text: code.toString().padStart(6, '0')
-	  };
-	  mailer.sendMail(mailOptions, function(err, info) {
-	  	if (err) {
-	  		console.log(err);
-	  	} else {
-	  		console.log('Email sent: ' + info.response);
-	  	}
-	  });
-	  console.log("Email sent");
-	  return reply
-	  .code(200).send();
+	  // CHeck 2fa method
+	if (user.twofa_secret === null || user.twofa_secret === '') { // App based 2fa
+		return twofa.send2faEmail(req, reply, user);
+	} else {
+		return reply
+		.code(200).send();
+	}
   }
   catch (error) {
     req.log.error(error);
@@ -111,11 +76,6 @@ const avatar = async (req, reply) => {
     return reply.status(401).send({ error: 'Non authentifié: token invalide' });
   }
 };
-
-const showSecret = async (req, reply) => {
-	
-};
-
 
 const register = async (req, reply) => {
 
@@ -181,17 +141,17 @@ const register = async (req, reply) => {
 	if (twofa_methods === "app") {
 		const twofa_secret = req.server.totp.generateSecret();
 		console.log("2FA secret generated:", twofa_secret);
-		const hashed_secret = await bcrypt.hash(twofa_secret.ascii, 10);
+		console.log("TEST TOKEN: ", req.server.totp.generateToken({ secret: twofa_secret.ascii, encoding: 'ascii' }));
 		const encodedSecret = encodeURIComponent(twofa_secret.ascii); // URL-safe encoding
-		const result = await db.run(`INSERT INTO users (id, name, email, hashed_password, avatarPath, twofa_secret) VALUES (?, ?, ?, ?, ?, ?)`, [uniqueId, name, email, hashed_password, avatarPath, hashed_secret]);
+		const result = await db.run(`INSERT INTO users (id, name, email, hashed_password, avatarPath, twofa_secret) VALUES (?, ?, ?, ?, ?, ?)`, [uniqueId, name, email, hashed_password, avatarPath, twofa_secret.ascii]);
 		const qrcode = await req.server.totp.generateQRCode({ secret: twofa_secret.ascii });
 		return reply.status(200).send( { qrCode: qrcode, secret: encodedSecret } );
-		
+	} else {
+		console.log("else");
+		const result = await db.run(`INSERT INTO users (id, name, email, hashed_password, avatarPath) VALUES (?, ?, ?, ?, ?)`, [uniqueId, name, email, hashed_password, avatarPath]);
+		console.log("User registered successfully:", );
+		return reply.status(200).send({ message: "User registered successfully" });
 	}
-	console.log("else");
-	const result = await db.run(`INSERT INTO users (id, name, email, hashed_password, avatarPath) VALUES (?, ?, ?, ?, ?)`, [uniqueId, name, email, hashed_password, avatarPath]);
-	return reply.status(200);
-
   } catch (error) {
     console.error('Error registering user:', error); // Affiche l'erreur dans la console
     return reply.status(500).send({ error: 'Error registering user' });
