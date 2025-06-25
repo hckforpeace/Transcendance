@@ -19,7 +19,7 @@ services:
     env_file:
       - .env
     ports: # port binding 442 on the host to 443 on the container
-      - "443:8845"
+      - "3000:8845"
     depends_on: # insures that wordpress service starts before Nginx
       - app 
     networks:
@@ -45,10 +45,10 @@ services:
 
   # grafana
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:main-ubuntu
     container_name: grafana
     ports:
-      - 3000:3000
+      - 3001:3000
     env_file:
       - .env
     depends_on:
@@ -61,10 +61,10 @@ services:
       - ./requirements/grafana/config/dashboards/:/etc/grafana/provisioning/dashboards
 
   prometheus:
-    image: 'ubuntu/prometheus'
+    image: ubuntu/prometheus
     container_name: prometheus
     ports: 
-      - 9090:9090
+      - 9091:9090
     depends_on: # insures that wordpress service starts before Nginx
       - app 
     networks:
