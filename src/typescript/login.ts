@@ -117,7 +117,7 @@ function login() {
 		return ;
 	const userField = document.getElementById("username") as HTMLInputElement | null;
     const userValue = userField ? userField.value : "";
-    localStorage.setItem("user_id", userValue);
+    localStorage.setItem("user_id", userValue);	
 	const errorMsg = document.getElementById("form-error-msg")!;
 	if (!errorMsg)
 		return;
@@ -136,6 +136,10 @@ function login() {
 				}
 				if (this.status === 200) {
 					load2faView();
+					// errorMsg.style.color = "green";
+					// errorMsg.textContent = "Welcome!";
+     //      			renderAvatar();
+					// navigateTo('/');
 				}
 			}
 			catch (e) {
