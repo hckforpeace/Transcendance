@@ -20,11 +20,13 @@ import populate from './database/populate.js'
 import fastifyCookie from '@fastify/cookie'
 import fastifyFormbody from '@fastify/formbody'
 import fastifyMultipart from "@fastify/multipart"
+import fastifyTotp from "fastify-totp"
 import dotenv from 'dotenv';
 import { rateLimiter, sql_xss_check } from './WAF.js';
 //import routesPong from './routes/pong.js';
 import pong_match from './routes/pong_match.js';
 import {check_token_validity} from './handle_account.js';
+import mailConnector from './plugins/nodemailer.js'
 
 dotenv.config();
 // setting up the PORT TODO: use .env ?
@@ -55,6 +57,7 @@ fastify.register(websockets);
 fastify.register(pong_match);
 // jwt plugin
 fastify.register(jwtPlugin);
+fastify.register(mailConnector);
 
 // To handle form submissions
 fastify.register(fastifyFormbody);
@@ -88,6 +91,9 @@ fastify.register(view, {
 });
 
 fastify.register(fastifyMultipart, { attachFieldsToBody: true });
+
+fastify.register(fastifyTotp);
+
 // regiter routes
 fastify.register(routesHome);
 fastify.register(routesApi);
@@ -104,7 +110,7 @@ fastify.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {
 })
 
 fastify.addHook('onRequest', async (req, reply) => {
-	const token = req.cookies.token;
+	const token = req.cookies.access_token;
 	if (token) {
 		try {
 			const user = await req.jwtVerify();

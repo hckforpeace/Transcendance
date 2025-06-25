@@ -8,6 +8,7 @@ import { getDB } from "../database/database.js"
 import { pipeline } from 'stream/promises';
 import profileRequests from '../database/profile.js'
 import { request } from 'http';
+import twofa from '../controllers/2fa.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -40,19 +41,28 @@ const login = async (req, reply) => {
       return reply.status(400).send({ error: "Wrong password, try again" });
     }
 
-    const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name }, { expiresIn: "1h" });
-
-    await db.run("UPDATE users SET connected = 1 WHERE name = ?", name);
-    await db.run("UPDATE users SET token_exp = ? WHERE id = ?", [Date.now(), user.id]);
-
-    reply.setCookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/"
-    });
-    profileRequests.updateFriended(user.id)
-
+// <<<<<<< HEAD
+//     const token = await reply.jwtSign({ userId: user.id, email: user.email, name: user.name }, { expiresIn: "1h" });
+//
+//     await db.run("UPDATE users SET connected = 1 WHERE name = ?", name);
+//     await db.run("UPDATE users SET token_exp = ? WHERE id = ?", [Date.now(), user.id]);
+//
+//     reply.setCookie("token", token, {
+//       httpOnly: true,
+//       secure: process.env.NODE_ENV === "production",
+//       sameSite: "lax",
+//       path: "/"
+//     });
+//     profileRequests.updateFriended(user.id)
+//
+// =======
+	  // CHeck 2fa method
+	if (user.twofa_secret === null || user.twofa_secret === '') { // App based 2fa
+		return twofa.send2faEmail(req, reply, user);
+	} else {
+		return reply
+		.code(200).send();
+	}
   }
   catch (error) {
     req.log.error(error);
@@ -83,7 +93,6 @@ const avatar = async (req, reply) => {
   }
 };
 
-
 const register = async (req, reply) => {
 
   var uniqueId; 
@@ -93,6 +102,7 @@ const register = async (req, reply) => {
   const password = formData.get("password");
   const confirm_password = formData.get("confirm_password");
   const avatar = formData.get("avatar");
+  const twofa_methods = formData.get("2fa_method");
 
   const db = getDB();
 
@@ -144,7 +154,20 @@ const register = async (req, reply) => {
   try {
     const hashed_password = await bcrypt.hash(password, 10);
     uniqueId = uuidv4(); // Generate a unique ID for the user
-    const result = await db.run(`INSERT INTO users (id, name, email, hashed_password, avatarPath) VALUES (?, ?, ?, ?, ?)`, [uniqueId, name, email, hashed_password, avatarPath]);
+	if (twofa_methods === "app") {
+		const twofa_secret = req.server.totp.generateSecret();
+		console.log("2FA secret generated:", twofa_secret);
+		console.log("TEST TOKEN: ", req.server.totp.generateToken({ secret: twofa_secret.ascii, encoding: 'ascii' }));
+		const encodedSecret = encodeURIComponent(twofa_secret.base32); // URL-safe encoding
+		const result = await db.run(`INSERT INTO users (id, name, email, hashed_password, avatarPath, twofa_secret) VALUES (?, ?, ?, ?, ?, ?)`, [uniqueId, name, email, hashed_password, avatarPath, twofa_secret.ascii]);
+		const qrcode = await req.server.totp.generateQRCode({ secret: twofa_secret.ascii });
+		return reply.status(200).send( { qrCode: qrcode, secret: encodedSecret } );
+	} else {
+		console.log("else");
+		const result = await db.run(`INSERT INTO users (id, name, email, hashed_password, avatarPath) VALUES (?, ?, ?, ?, ?)`, [uniqueId, name, email, hashed_password, avatarPath]);
+		console.log("User registered successfully:", );
+		return reply.status(200).send({ message: "User registered successfully" });
+	}
   } catch (error) {
     console.error('Error registering user:', error); // Affiche l'erreur dans la console
     return reply.status(500).send({ error: 'Error registering user' });

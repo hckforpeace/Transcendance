@@ -14,11 +14,111 @@ function renderAvatar() {
   });
 }
 
+function load2faView(): void {
+       const   template2fa = document.getElementById("2fa_template") as HTMLTemplateElement | null;
+       const   form = document.getElementById("login-form") as HTMLElement | null;
+
+       if (!template2fa || !form)
+               return ;
+       const   elem2fa = template2fa.content.cloneNode(true) as DocumentFragment;
+       form.innerHTML = '';
+       form.appendChild(elem2fa);
+    const inputElement = document.getElementById('2fa-input') as HTMLInputElement;
+
+    if (!inputElement) {
+        console.error('2FA input element not found');
+        return;
+    }
+
+       inputElement.addEventListener('input', (event) => {
+         const target = event.target as HTMLInputElement;
+         target.value = target.value.replace(/\D/g, ''); // Remove non-digit characters
+
+    // Truncate input to 6 characters if it exceeds the limit
+      if (target.value.length > 6) {
+        target.value = target.value.slice(0, 6);
+      }
+      if (inputElement.value.length === 6) {
+          console.log('6 characters entered:', inputElement.value);
+          send2faCode();
+         inputElement.disabled = true; // Make the field uneditable
+         inputElement.style.backgroundColor = '#e0e0e0'; // Change background color to indicate disabled state
+         inputElement.style.color = '#888'; // Change text color for visual indication
+        }
+       });
+
+};
+
+function send2faCode() {
+       const formElement = document.getElementById("login-form") as HTMLFormElement;
+       if (!formElement)
+               return;
+       const errorMsg = document.getElementById("form-error-msg");
+       if (!errorMsg)
+               return;
+       errorMsg.textContent = ""; // Reset previous error
+       errorMsg.style.color = "red";
+       const formData = new FormData(formElement);
+       formData.append("user_id", localStorage.getItem("user_id") || "");
+    const inputElement = document.getElementById('2fa-input') as HTMLInputElement;
+       if (!inputElement)
+               return;
+       const xhttp = new XMLHttpRequest();
+
+       xhttp.onreadystatechange = function ()
+       {
+               if (this.readyState === 4)
+               {
+                       try
+                       {
+                               if (this.status === 200) {
+                                       console.log("Valid 2fa Code");
+                                       // isLoggedIn = true;
+                                       errorMsg.style.color = "green";
+                                       errorMsg.textContent = "Welcome!";
+//                                     // Corrected: fetch avatar and update it
+                                       fetch("/api/avatar")
+                                               .then(response => response.json())
+                                               .then(data => {
+                                                       if (data.avatarUrl) {
+                                                               updateUserAvatar(data.avatarUrl);
+                                                       }
+                                               })
+                                               .catch(err => {
+                                                       console.error("Error fetching avatar:", err);
+                                               });
+                                               navigateTo('/');
+                               }
+                               else {
+									inputElement.disabled = false; // Make the field uneditable
+                                   inputElement.style.backgroundColor = '#FFFFFF'; // Change background color to indicate disabled state
+                                   inputElement.style.color = '#222'; // Change text color for visual indication
+                                       inputElement.value = ""; // Clear the input field after sending the code
+                                       const response = JSON.parse(this.responseText);
+                                       errorMsg.textContent = response.error || "An error occurred.";
+                               }
+                       }
+                       catch (e)
+                       {
+                               errorMsg.textContent = "Unexpected error";
+                       }
+               }
+
+       };
+
+       xhttp.open("POST", "/auth/2fa", true);
+       console.log(formData);
+       xhttp.send(formData);
+}
+
 function login() {
 	const formElement = document.getElementById("login-form") as HTMLFormElement;
 	if (!formElement)
-		return;
-	const errorMsg = document.getElementById("form-error-msg");
+		return ;
+	const userField = document.getElementById("username") as HTMLInputElement | null;
+    const userValue = userField ? userField.value : "";
+    localStorage.setItem("user_id", userValue);
+	const errorMsg = document.getElementById("form-error-msg")!;
 	if (!errorMsg)
 		return;
 	errorMsg.textContent = "";
@@ -35,10 +135,7 @@ function login() {
 					errorMsg.textContent = response.error || "An error occurred.";
 				}
 				if (this.status === 200) {
-					errorMsg.style.color = "green";
-					errorMsg.textContent = "Welcome!";
-          			renderAvatar();
-					navigateTo('/');
+					load2faView();
 				}
 			}
 			catch (e) {

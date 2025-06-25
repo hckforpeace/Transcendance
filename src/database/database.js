@@ -20,7 +20,8 @@ export const initDB = async () => {
         socketConnectionProfile BOOL DEFAULT 0,
         friendedMe TEXT DEFAULT '[]',
         isGoogleAuth BOOL DEFAULT 0,
-        token_exp INTEGER
+        token_exp INTEGER,
+		twofa_secret TEXT DEFAULT ''
     )`);
 
     await db.exec(`CREATE TABLE IF NOT EXISTS stats (
@@ -34,7 +35,7 @@ export const initDB = async () => {
         FOREIGN KEY (playerId) REFERENCES users(id) ON DELETE CASCADE
     )`);
 
-    await db.exec(`CREATE TABLE IF NOT EXISTS "2fa_code" (
+    await db.exec(`CREATE TABLE IF NOT EXISTS "twofa" (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id TEXT NOT NULL,
         code TEXT NOT NULL,
