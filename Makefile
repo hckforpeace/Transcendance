@@ -5,7 +5,7 @@ VOLUME_DB= /home/${USER}/volume/database
 VOLUME_PROMETHEUS= /home/${USER}/volume/prometheus
 
 all: up 
-	@./vault.sh
+	@./vault-init.sh
 
 up: build
 	mkdir -p $(VOLUME_DB)

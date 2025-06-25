@@ -10,17 +10,16 @@ services:
       - Transcendence
     restart: always
     volumes:
-          - vault-file:/vault
           - database:/app/database/
  #nginx
   nginx:
-    image: owasp/modsecurity-crs:nginx
+    image: owasp/modsecurity-crs:4.15.0-nginx-alpine-202506050606
     container_name: nginx
     user: root
     env_file:
       - .env
     ports: # port binding 442 on the host to 443 on the container
-      - "443:8843"
+      - "443:8845"
     depends_on: # insures that wordpress service starts before Nginx
       - app 
     networks:
@@ -86,22 +85,64 @@ services:
       - Transcendence
     restart: always
     ports:
-      - 9100:9100
+      - 9104:9100
       
-  # vault
   vault:
-    image: vault
+    image: hashicorp/vault:1.15.5
     container_name: vault
     ports:
-      - "8200:8200"
-    env_file:
-      - .env
+      - "18200:8200"
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=dev-token
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
     cap_add:
       - IPC_LOCK
     volumes:
-          - vault-file:/vault
+      - vault-file:/vault
     networks:
       - Transcendence
+    command: vault server -dev -dev-root-token-id=dev-token -dev-listen-address=0.0.0.0:8200
+
+  # vault:
+  #   image: hashicorp/vault:1.15.5
+  #   container_name: vault
+  #   ports:
+  #     - "18200:8200"
+  #   environment:
+  #     - VAULT_DEV_ROOT_TOKEN_ID=myroot
+  #     - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+  #   cap_add:
+  #     - IPC_LOCK
+  #   volumes:
+  #     - vault-file:/vault
+  #     - ./requirements/vault/config:/vault/config
+  #     - ./requirements/vault/init:/vault/init
+  #   networks:
+  #     - Transcendence
+  #   command: >
+  #     sh -c "
+  #     vault server -dev -dev-root-token-id=myroot -dev-listen-address=0.0.0.0:8200 &
+  #     sleep 10 &&
+  #     export VAULT_ADDR=http://localhost:8200 &&
+  #     export VAULT_TOKEN=myroot &&
+  #     /vault/init/setup-jwt.sh &&
+  #     wait
+  #     "
+
+  # # vault
+  # vault:
+  #   image: vault
+  #   container_name: vault
+  #   ports:
+  #     - "8200:8200"
+  #   env_file:
+  #     - .env
+  #   cap_add:
+  #     - IPC_LOCK
+  #   volumes:
+  #         - vault-file:/vault
+  #   networks:
+  #     - Transcendence
 
 volumes:
   vault-file:
