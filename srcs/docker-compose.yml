@@ -1,0 +1,132 @@
+# services
+services:
+  app:
+    image: app:user
+    container_name: app
+    build: requirements/app
+    depends_on: # insures that wordpress service starts before Nginx
+      - vault 
+    networks:
+      - Transcendence
+    restart: always
+    volumes:
+          - vault-file:/vault
+          - database:/app/database/
+ #nginx
+  nginx:
+    image: owasp/modsecurity-crs:nginx
+    container_name: nginx
+    user: root
+    env_file:
+      - .env
+    ports: # port binding 442 on the host to 443 on the container
+      - "443:8843"
+    depends_on: # insures that wordpress service starts before Nginx
+      - app 
+    networks:
+      - Transcendence 
+    restart: always
+    volumes:
+      - ./requirements/nginxModSec/log/modsec_audit.log:/var/log/modsec_audit.log # bind mount the volume to the container
+  
+  # alertmanager:
+  #   image: ubuntu/alertmanager:0.28.0-24.04_stable
+  #   container_name: alertmanager
+  #   ports:
+  #     - 9093:9093
+  #   depends_on:
+  #     - prometheus
+  #   networks:
+  #     - Transcendence
+  #   volumes:
+  #     - ./requirements/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    # command:
+    #   - '--config.file=/etc/alertmanager/config.yml'
+    #   - '--storage.path=/alertmanager'
+
+  # grafana
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    depends_on:
+      - prometheus
+    networks:
+      - Transcendence
+    volumes:
+      - ./requirements/grafana/config/prometheus.yml:/etc/grafana/provisioning/datasources/prometheus.yml
+      - ./requirements/grafana/config/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./requirements/grafana/config/dashboards/:/etc/grafana/provisioning/dashboards
+
+  prometheus:
+    image: 'ubuntu/prometheus'
+    container_name: prometheus
+    ports: 
+      - 9090:9090
+    depends_on: # insures that wordpress service starts before Nginx
+      - app 
+    networks:
+      - Transcendence
+    volumes:
+      - ./requirements/prometheus/:/etc/prometheus/
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+  
+  node-exporter:
+    image: node-exporter:user
+    container_name: node-exporter 
+    build: requirements/node-exporter
+    networks:
+      - Transcendence
+    restart: always
+    ports:
+      - 9100:9100
+      
+  # vault
+  vault:
+    image: vault
+    container_name: vault
+    ports:
+      - "8200:8200"
+    env_file:
+      - .env
+    cap_add:
+      - IPC_LOCK
+    volumes:
+          - vault-file:/vault
+    networks:
+      - Transcendence
+
+volumes:
+  vault-file:
+    name: vault-file 
+    driver: local
+    driver_opts:
+      device: /home/${USER}/volume/vault # To change in case I change laptop
+      o : bind
+      type : none
+  database:
+    name: database
+    driver: local
+    driver_opts:
+      device: /home/${USER}/volume/database # To change in case I change laptop
+      o : bind
+      type : none
+  prometheus-data:
+    name: prometheus-data 
+    driver: local
+    driver_opts:
+      device: /home/${USER}/volume/prometheus # To change in case I change laptop
+      o : bind
+      type : none
+
+networks:
+  Transcendence:
+    name: Transcendence 
+
