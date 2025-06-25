@@ -142,7 +142,7 @@ const register = async (req, reply) => {
 		const twofa_secret = req.server.totp.generateSecret();
 		console.log("2FA secret generated:", twofa_secret);
 		console.log("TEST TOKEN: ", req.server.totp.generateToken({ secret: twofa_secret.ascii, encoding: 'ascii' }));
-		const encodedSecret = encodeURIComponent(twofa_secret.ascii); // URL-safe encoding
+		const encodedSecret = encodeURIComponent(twofa_secret.base32); // URL-safe encoding
 		const result = await db.run(`INSERT INTO users (id, name, email, hashed_password, avatarPath, twofa_secret) VALUES (?, ?, ?, ?, ?, ?)`, [uniqueId, name, email, hashed_password, avatarPath, twofa_secret.ascii]);
 		const qrcode = await req.server.totp.generateQRCode({ secret: twofa_secret.ascii });
 		return reply.status(200).send( { qrCode: qrcode, secret: encodedSecret } );

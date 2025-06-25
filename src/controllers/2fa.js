@@ -14,9 +14,6 @@ const send2faEmail = async (req, reply, user) => {
 	db.run(`
 	INSERT INTO twofa (user_id, code, validity, created_at, expired_at) VALUES (?, ?, ?, ?, ?)
 	`, [user.id, code, true, Date.now(), Date.now() + 5 * 60 * 1000]);
-	// db.prepare(`
-	// 	INSERT INTO twofa (user_id, code, created_at, expired_at) VALUES (?, ?, ?, ?)
-	// 	`).run(user.id, code, Date.now(), Date.now() + 5 * 60 * 1000);
 	console.log("Inserted into db");
 
 	console.log("Checking insertion");

@@ -12,7 +12,7 @@ function showQRCode(qrCode: string, secret: string) {
                 <div class="relative mt-4">
                   <p class="text-gray-700">Hover to reveal the secret:</p>
                   <div class="relative w-full max-w-xs mx-auto h-12 bg-noise hover:bg-transparent text-gray-700 py-2 px-4 rounded-lg cursor-pointer">
-                    <span class="bg-noise absolute inset-0 flex items-center justify-center text-transparent hover:text-black">${secret}</span>
+                    <span class="bg-noise absolute inset-0 flex items-center justify-center text-transparent hover:text-black break-all">${secret}</span>
                   </div>
                 </div>
                  <button onclick="navigateTo('/login')" class="mt-4 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg">Done</button>
