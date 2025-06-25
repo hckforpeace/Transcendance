@@ -129,6 +129,10 @@ function login() {
                 }
                 if (this.status === 200) {
                     load2faView();
+                    // errorMsg.style.color = "green";
+                    // errorMsg.textContent = "Welcome!";
+                    //      			renderAvatar();
+                    // navigateTo('/');
                 }
             }
             catch (e) {
