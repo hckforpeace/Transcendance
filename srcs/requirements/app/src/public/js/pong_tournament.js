@@ -407,8 +407,8 @@ function removeWinner() {
 function game_loop_t() {
     if (game_t.player_1.score >= game_t.score_max || game_t.player_2.score >= game_t.score_max) {
         removeWinner();
-        update_user_stats_t(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score);
-        update_user_stats_t(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score);
+        update_user_stats(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score);
+        update_user_stats(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score);
         finish_game_t();
         clearInterval(game_interval);
         return;
@@ -460,8 +460,6 @@ function resizeCanvas_t() {
 function load_script_t() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            //const data = await getUserName_t();
-            console.log("p1 -> ", player1Alias, " p2 -> ", player2Alias);
             const leftName = document.getElementById("left-player-name");
             if (leftName)
                 leftName.innerHTML = player1Alias;

@@ -552,23 +552,6 @@ function saveQTableToFile() {
 	URL.revokeObjectURL(url);
 }
 
-async function update_user_stats(p1_score: number, p2_score: number): Promise<void> {
-	try {
-
-		const response = await fetch('/updateUserStats', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ p1_score, p2_score, player2_id: 0}) // Send the scores to the backend
-		});
-
-		if (!response.ok) {
-			throw new Error('Failed to update user stats');
-		}
-	} catch (error) {
-		console.error('Error updating user stats:', error);
-	}
-}
-
 /**
  * @brief Handler on game finish and draw results at the screen
  */function finish_game() {
@@ -594,7 +577,7 @@ async function update_user_stats(p1_score: number, p2_score: number): Promise<vo
 function game_loop() {
 	if (game.player_1.score >= game.score_max || game.player_2.score >= game.score_max) {
 		end_game = true;
-		update_user_stats(game.player_1.score, game.player_2.score);
+		update_user_stats(game.player_1.name, game.player_2.name, game.player_1.score, game.player_2.score);
 		if (TRAINING == true)
 			saveQTableToFile();
 		finish_game();

@@ -380,7 +380,7 @@ function start_round_t() {
 }
 
 
-async function update_user_stats_t(alias1: string, alias2: string, p1_score: number, p2_score: number): Promise<void> {
+async function update_user_stats(alias1: string, alias2: string, p1_score: number, p2_score: number): Promise<void> {
 	try {
 
 		const response = await fetch('/updateUserStats', {
@@ -467,8 +467,8 @@ function removeWinner() {
 function game_loop_t() {
 	if (game_t.player_1.score >= game_t.score_max || game_t.player_2.score >= game_t.score_max) {
 		removeWinner();
-		update_user_stats_t(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score);
-		update_user_stats_t(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score);
+		update_user_stats(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score);
+		update_user_stats(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score);
 		finish_game_t();
 		clearInterval(game_interval);
 		return;
