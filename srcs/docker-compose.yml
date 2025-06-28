@@ -4,6 +4,8 @@ services:
     image: app:user
     container_name: app
     build: requirements/app
+    env_file:
+      - .env # Nodemailer credential
     depends_on: # insures that wordpress service starts before Nginx
       - vault 
     networks:

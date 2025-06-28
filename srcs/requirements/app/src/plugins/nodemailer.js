@@ -2,16 +2,17 @@ import nodemailer from 'nodemailer';
 import fp from 'fastify-plugin';
 
 async function mailConnector(fastify, options) {
+  // console.log(process.env);
   const mailer = nodemailer.createTransport({
-               service: 'gmail',
+           service: 'gmail',
            host: "smtp.gmail.com",
-           poort: 465,
+           port: 465,
            secure: true,
                auth: {
-                       user: "mppd.42.transcendence@gmail.com",
-                       pass: "txcj prjh exya uuop"
-                       // user: process.env.GMAIL_USER,
-                       // pass: process.env.GMAIL_PASS,
+                       // user: "mppd.42.transcendence@gmail.com",
+                       // pass: "txcj prjh exya uuop"
+                       user: process.env.MAILER_USER,
+                       pass: process.env.MAILER_PASS,
                },
   });
 
