@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 let playerIdCounter = 1;
 let player1Alias = '';
 let player2Alias = '';
-const players = {};
+let players = {};
 const player_nbr_val = [2, 4, 8, 16];
 function extractPlayerAliases() {
     const input1 = document.querySelector('#player-container1 .alias-input');
@@ -19,11 +19,32 @@ function extractPlayerAliases() {
     player1Alias = (input1 === null || input1 === void 0 ? void 0 : input1.value.trim()) || '';
     player2Alias = (input2 === null || input2 === void 0 ? void 0 : input2.value.trim()) || '';
 }
+// LOCAL PLAY
+function init_localPong() {
+    player1Alias = '';
+    player2Alias = '';
+    players = {};
+    end_of_tournament_iteration = false;
+    end_game = true;
+    updatePlayButton();
+    add_two_players();
+}
+function playLocalPong() {
+    return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b;
+        player1Alias = ((_a = players['player_1']) === null || _a === void 0 ? void 0 : _a.alias) || '';
+        player2Alias = ((_b = players['player_2']) === null || _b === void 0 ? void 0 : _b.alias) || '';
+        end_game = false;
+        yield navigateTo("/pong_tournament");
+        yield waitForEndGame();
+    });
+}
 /**
  * Initialise les événements, le slider et les joueurs au chargement
  */
 function init_tournamentMenu() {
     winners.length = 0;
+    // winners = [];
     player1Alias = '';
     player2Alias = '';
     i = 0;
@@ -196,7 +217,7 @@ function removePlayerByName(players, name) {
 }
 let i = 0;
 let end_of_tournament_iteration = false;
-const winners = [];
+var winners = [];
 function waitForEndGame() {
     return new Promise((resolve) => {
         const check = () => {

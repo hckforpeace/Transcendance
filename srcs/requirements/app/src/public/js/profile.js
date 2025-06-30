@@ -199,13 +199,17 @@ function updateStates(data) {
     var tdScrP2;
     var tdDate;
     const win = document.getElementById('wins');
+    const TournamentsWon = document.getElementById('trnmts-Win');
     const loses = document.getElementById('loses');
+    const TournamentsLost = document.getElementById('trnmts-Lost');
     const avg_win = document.getElementById('avg-wins');
     const avg_lost = document.getElementById('avg-loses');
     avg_win.innerHTML = data.avg_win + " %";
     avg_lost.innerHTML = data.avg_lost + " %";
     win.innerHTML = data.matchesWon;
     loses.innerHTML = data.matchesLost;
+    TournamentsWon.innerHTML = data.tournamentsWon;
+    TournamentsLost.innerHTML = data.tournamentsLost;
     const matches = data.matches;
     const table = document.getElementById('statsTable');
     matches.forEach((match) => {

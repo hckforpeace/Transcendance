@@ -248,7 +248,7 @@ function removePlayerByName(players: string[], name: string): void {
 
 let i = 0;
 let end_of_tournament_iteration = false;
-const winners: string[] = [];
+var winners: string[] = [];
 
 function waitForEndGame(): Promise<void> {
   return new Promise((resolve) => {

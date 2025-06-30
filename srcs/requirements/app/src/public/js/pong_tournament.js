@@ -327,13 +327,13 @@ function start_round_t() {
     else
         game_t.ball_T.direction = { x: 0.45, y: 0.55 };
 }
-function update_user_stats_t(alias1, alias2, p1_score, p2_score) {
+function update_user_stats_t(alias1, alias2, p1_score, p2_score, trnmnt_winner) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const response = yield fetch('/updateUserStats', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ alias1, alias2, p1_score, p2_score }) // Send the scores to the backend
+                body: JSON.stringify({ alias1, alias2, p1_score, p2_score, trnmnt_winner: trnmnt_winner }) // Send the scores to the backend
             });
             if (!response.ok) {
                 console.log('User not in the DB');
@@ -346,7 +346,8 @@ function update_user_stats_t(alias1, alias2, p1_score, p2_score) {
 }
 /**
  * @brief Handler on game_t finish and draw results at the screen
- */ function finish_game_t() {
+ */
+function finish_game_t() {
     const resultMessage = document.getElementById("game-result-message");
     const resultTitle = document.getElementById("result-title");
     const resultScore = document.getElementById("result-score");
@@ -405,10 +406,13 @@ function removeWinner() {
  * @brief Main game_t loop
  */
 function game_loop_t() {
+    var trnmnt_winner = false;
     if (game_t.player_1.score >= game_t.score_max || game_t.player_2.score >= game_t.score_max) {
         removeWinner();
-        update_user_stats_t(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score);
-        update_user_stats_t(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score);
+        if (winners.length == 1)
+            trnmnt_winner = true;
+        update_user_stats_t(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score, trnmnt_winner);
+        update_user_stats_t(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score, trnmnt_winner);
         finish_game_t();
         clearInterval(game_interval);
         return;
@@ -461,6 +465,51 @@ function load_script_t() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             //const data = await getUserName_t();
+            console.log("p1 -> ", player1Alias, " p2 -> ", player2Alias);
+            const leftName = document.getElementById("left-player-name");
+            if (leftName)
+                leftName.innerHTML = player1Alias;
+            const rightName = document.getElementById("right-player-name");
+            if (rightName)
+                rightName.innerHTML = player2Alias;
+            canvas = document.getElementById("pong_canvas");
+            if (!canvas)
+                throw new Error("Canvas not found");
+            ctx = canvas.getContext("2d");
+            if (!ctx)
+                throw new Error("Context not found");
+            /* Start game_t */
+            if (game_interval)
+                clearInterval(game_interval);
+            game_interval = setInterval(game_loop_t, 8);
+            launch_game_t(player1Alias, player2Alias);
+            /* Set events listeners */
+            document.addEventListener("keydown", pressedKeyHandler, false);
+            document.addEventListener("keyup", releasedKeyHandler, false);
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
+}
+// function game_loop_l() {
+// 	if (game_t.player_1.score >= game_t.score_max || game_t.player_2.score >= game_t.score_max) {
+// 		update_user_stats_t(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score);
+// 		update_user_stats_t(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score);
+// 		finish_game_t();
+// 		clearInterval(game_interval);
+// 		return;
+// 	}
+// 	if (game_t.new_round) {
+// 		reset_ball_t();
+// 		setTimeout(start_round_t, 1000);
+// 		game_t.new_round = false;
+// 	}
+// 	draw_t();
+// }
+function load_script_l() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
             console.log("p1 -> ", player1Alias, " p2 -> ", player2Alias);
             const leftName = document.getElementById("left-player-name");
             if (leftName)

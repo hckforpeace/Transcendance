@@ -496,7 +496,8 @@ function update_user_stats(p1_score, p2_score) {
 }
 /**
  * @brief Handler on game finish and draw results at the screen
- */ function finish_game() {
+ */
+function finish_game() {
     const resultMessage = document.getElementById("game-result-message");
     const resultTitle = document.getElementById("result-title");
     const resultScore = document.getElementById("result-score");

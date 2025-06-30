@@ -167,7 +167,7 @@ const getStats = async (id) => {
   let avg_win;
 
   try {
-    stats = await db.get("SELECT matchesWon, matchesLost FROM stats WHERE playerId = ?", [id]);
+    stats = await db.get("SELECT matchesWon, matchesLost, tournamentsWon  FROM stats WHERE playerId = ?", [id]);
     matches = await db.all("SELECT player1_alias, player2_alias, player1_score, player2_score, date FROM matches WHERE player1_id = ? OR player2_id = ?", [id, id]);
 
     if (stats) {
@@ -178,6 +178,8 @@ const getStats = async (id) => {
       stats = {
         matchesWon: stats.matchesWon,
         matchesLost: stats.matchesLost,
+        tournamentsWon: stats.tournamentsWon,
+        tournamentsLost: stats.tournamentsLost,
         avg_lost: avg_lost.toFixed(2),
         avg_win: avg_win.toFixed(2),
         matches: matches || []  // Include matches in the same object
@@ -186,6 +188,8 @@ const getStats = async (id) => {
       stats = {
         matchesWon: 0,
         matchesLost: 0,
+        tournamentsWon: 0,
+        tournamentsLost: 0,
         avg_lost: "0.00",
         avg_win: "0.00",
         matches: []

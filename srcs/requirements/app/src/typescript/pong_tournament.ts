@@ -380,13 +380,13 @@ function start_round_t() {
 }
 
 
-async function update_user_stats_t(alias1: string, alias2: string, p1_score: number, p2_score: number): Promise<void> {
+async function update_user_stats_t(alias1: string, alias2: string, p1_score: number, p2_score: number, trnmnt_winner: boolean): Promise<void> {
 	try {
 
 		const response = await fetch('/updateUserStats', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ alias1, alias2, p1_score, p2_score }) // Send the scores to the backend
+			body: JSON.stringify({ alias1, alias2, p1_score, p2_score, trnmnt_winner: trnmnt_winner}) // Send the scores to the backend
 		});
 
 		if (!response.ok) {
@@ -466,10 +466,15 @@ function removeWinner() {
  * @brief Main game_t loop
  */
 function game_loop_t() {
+  var trnmnt_winner:boolean = false;
 	if (game_t.player_1.score >= game_t.score_max || game_t.player_2.score >= game_t.score_max) {
 		removeWinner();
-		update_user_stats_t(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score);
-		update_user_stats_t(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score);
+
+    if (winners.length == 1)
+      trnmnt_winner = true;
+
+		update_user_stats_t(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score, trnmnt_winner);
+		update_user_stats_t(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score, trnmnt_winner);
 		finish_game_t();
 		clearInterval(game_interval);
 		return;
@@ -555,22 +560,22 @@ async function load_script_t() {
 	}
 }
 
-function game_loop_l() {
-	if (game_t.player_1.score >= game_t.score_max || game_t.player_2.score >= game_t.score_max) {
-		update_user_stats_t(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score);
-		update_user_stats_t(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score);
+// function game_loop_l() {
+// 	if (game_t.player_1.score >= game_t.score_max || game_t.player_2.score >= game_t.score_max) {
+// 		update_user_stats_t(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score);
+// 		update_user_stats_t(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score);
 
-		finish_game_t();
-		clearInterval(game_interval);
-		return;
-	}
-	if (game_t.new_round) {
-		reset_ball_t();
-		setTimeout(start_round_t, 1000);
-		game_t.new_round = false;
-	}
-	draw_t();
-}
+// 		finish_game_t();
+// 		clearInterval(game_interval);
+// 		return;
+// 	}
+// 	if (game_t.new_round) {
+// 		reset_ball_t();
+// 		setTimeout(start_round_t, 1000);
+// 		game_t.new_round = false;
+// 	}
+// 	draw_t();
+// }
 
 async function load_script_l() {
 	try {
