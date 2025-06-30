@@ -1,6 +1,7 @@
 let playerIdCounter = 1;
 let player1Alias: string = '';
 let player2Alias: string = '';
+let localGame: boolean;
 
 interface PlayerData {
   id: string;
@@ -25,11 +26,14 @@ function extractPlayerAliases(): void {
 
 // LOCAL PLAY
 function init_localPong(): void {
+  localGame = true;
   player1Alias = '';
   player2Alias = '';
   players = {};
   end_of_tournament_iteration = false;
   end_game = true;
+  i = 0;
+  start_game = false;
   updatePlayButton();
   add_two_players();
 }
@@ -48,13 +52,16 @@ async function playLocalPong() {
  * Initialise les événements, le slider et les joueurs au chargement
  */
 function init_tournamentMenu(): void {
+  localGame = false;
   winners.length = 0;
-  // winners = [];
+  winners = [];
   player1Alias = '';
   player2Alias = '';
+  players = {};
   i = 0;
   end_of_tournament_iteration = false;
   end_game = true;
+  start_game = false;
   init_events();
   updatePlayButton();
   resetPlayers();
@@ -248,7 +255,21 @@ function removePlayerByName(players: string[], name: string): void {
 
 let i = 0;
 let end_of_tournament_iteration = false;
-const winners: string[] = [];
+let winners: string[] = [];
+
+function waitForStartGame(): Promise<void> {
+  return new Promise((resolve) => {
+	
+	const check = () => {
+	  if (start_game)
+		resolve();
+	  else
+		setTimeout(check, 100);
+	};
+	check();
+  });
+	
+}
 
 function waitForEndGame(): Promise<void> {
   return new Promise((resolve) => {
@@ -271,9 +292,10 @@ async function play_tournament() {
   
   while (currentMatchIndex <= matches) {
     player1Alias = winners[i];
-    player2Alias = winners[++i];
+    player2Alias = winners[i + 1];
     end_game = false;
-    if (currentMatchIndex == matches)
+    if (winners.length == 2)
+    // if (currentMatchIndex == matches)
       end_of_tournament_iteration = true;
     else
       end_of_tournament_iteration = false;
@@ -291,6 +313,14 @@ async function startTournament(button: HTMLButtonElement):Promise<void> {
     await play_tournament();
     i = 0;
   }
+}
+
+function startGameFlag() {
+	start_game = true;
+	const resultMessage = document.getElementById("game-result-message");
+	if (!resultMessage)
+		return ;
+	resultMessage.classList.add("hidden");
 }
 
 function endGameFlag() {

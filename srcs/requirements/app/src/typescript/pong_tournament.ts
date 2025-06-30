@@ -39,6 +39,7 @@ const PLAYER_ONE_T: number = 1;
 const PLAYER_TWO_T: number = 2;
 var game_t: Pong_T;
 var end_game: boolean;
+var start_game: boolean;
 var game_interval: NodeJS.Timeout | number;
 var round_winner: number;
 var p1_upPressed: boolean = false;
@@ -409,7 +410,7 @@ function finish_game_t() {
 	let winner;
 	let j;
 
-	if (end_of_tournament_iteration)
+	if (end_of_tournament_iteration || winners.length == 2)
 		j = 0;
 	else
 		j = i;
@@ -441,6 +442,8 @@ function finish_game_t() {
 			next_players!.textContent = "Congratulations " + winners[0] + ", you won the tournament !";
 			button!.textContent = "Back to home";
 		}
+		button?.addEventListener("click", endGameFlag);
+		button?.removeEventListener("click", startGameFlag);
 	}
 	draw_finish_t();
 }
@@ -462,11 +465,34 @@ function removeWinner() {
 	}
 }
 
+function show_next_match() {
+	const resultMessage = document.getElementById("game-result-message");
+	const resultTitle = document.getElementById("result-title");
+	const next_players = document.getElementById("next_players");
+	const button = document.getElementById("next-match-button");
+	let winner;
+	let j;
+
+	if (end_of_tournament_iteration)
+		j = 0; // VERY RISKY
+	else
+		j = i;
+	if (resultMessage && resultTitle) {
+		resultMessage.classList.remove("hidden");
+		resultTitle.textContent = "Match !";
+		next_players!.textContent = "Next match: " + winners[j] + " VS " + winners[j + 1]; // VERY RISKY
+		button!.textContent = "Go !";
+		button?.removeEventListener("click", endGameFlag);
+		button?.addEventListener("click", startGameFlag);
+	}
+}
+
 /**
  * @brief Main game_t loop
  */
 function game_loop_t() {
 	if (game_t.player_1.score >= game_t.score_max || game_t.player_2.score >= game_t.score_max) {
+		i++;
 		removeWinner();
 		update_user_stats_t(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score);
 		update_user_stats_t(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score);
@@ -544,6 +570,9 @@ async function load_script_t() {
 		/* Start game_t */
 		if (game_interval)
 			clearInterval(game_interval);
+		start_game = false;
+		show_next_match();
+		await waitForStartGame();
 		game_interval = setInterval(game_loop_t, 8);
 		launch_game_t(player1Alias, player2Alias);
 		/* Set events listeners */
@@ -591,9 +620,8 @@ async function load_script_l() {
 		/* Start game_t */
 		if (game_interval)
 			clearInterval(game_interval);
-
-
 		game_interval = setInterval(game_loop_t, 8);
+
 		launch_game_t(player1Alias, player2Alias);
 		/* Set events listeners */
 		document.addEventListener("keydown", pressedKeyHandler, false);
