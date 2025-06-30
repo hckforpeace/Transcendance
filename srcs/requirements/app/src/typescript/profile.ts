@@ -224,6 +224,7 @@ function updateStates(data: any) {
   var tdScrP2;
   var tdDate;
   const win = document.getElementById('wins') as HTMLParagraphElement;
+  const TournamentsWon = document.getElementById('trnmts-Win') as HTMLParagraphElement;
   const loses = document.getElementById('loses') as HTMLParagraphElement;
   const avg_win = document.getElementById('avg-wins') as HTMLParagraphElement;
   const avg_lost = document.getElementById('avg-loses') as HTMLParagraphElement;
@@ -232,6 +233,7 @@ function updateStates(data: any) {
   avg_lost.innerHTML = data.avg_lost + " %"
   win.innerHTML = data.matchesWon 
   loses.innerHTML = data.matchesLost 
+  TournamentsWon.innerHTML = data.tournamentsWon
 
   const matches = data.matches;
   const table = document.getElementById('statsTable') as HTMLTableElement
