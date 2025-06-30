@@ -30,22 +30,10 @@ const routes: Route[] = [
     title: 'Games'
   },
   {
-    path: '/pong_remote',
-    view: '/html/pong.html', 
-    title: 'Pong Remote',
-    function: load_script_remote
-  },
-  {
     path: '/pong_tournement',
     view: '/html/tournement.html', 
     title: 'Pong Tournement',
     // function: / 
-  },
-  {
-    path: '/lobby',
-    view: '/html/lobby.html', 
-    title: 'Lobby',
-    function: wsEvent
   },
   {
     path: '/pong_ia',

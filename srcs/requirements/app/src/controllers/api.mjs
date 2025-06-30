@@ -201,8 +201,13 @@ const isLoggedIn = async (req, reply) => {
   const db = getDB();
   let decoded;
 
-  if ((await jwtFunc.verifyJWT(req.cookies['token'])) === false)
-    return reply.code(200).send({ message: "jwt failed", connected: false });
+  const token = req.cookies['token'];
+  if (!token) {
+    return reply.code(401).send({ message: "No jwt token", connected: false });
+  }
+
+  if ((await jwtFunc.verifyJWT(token)) === false)
+    return reply.code(401).send({ message: "jwt failed", connected: false });
   
   decoded = await jwtFunc.decodeJWTPayload(req.cookies['token']);
 
