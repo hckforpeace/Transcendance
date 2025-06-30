@@ -90,7 +90,7 @@ const routes: Route[] = [
   {
     path: '/local_menu',
     view: '/html/local_menu.html',
-	title: 'Play with friends',
+	title: 'Local pong',
 	function: init_localPong
   }
 

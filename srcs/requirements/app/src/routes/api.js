@@ -15,6 +15,7 @@ async function routes(fastify, options) {
   fastify.get('/api/delete_account', { preHandler: [fastify.authenticate] }, api.delete_account);
 
   fastify.get('/api/isLoggedIn', api.isLoggedIn);
+  // fastify.get('/api/isLoggedIn', { preHandler: [fastify.authenticate] }, api.isLoggedIn);
 
   fastify.post('/api/login', api.login);
 

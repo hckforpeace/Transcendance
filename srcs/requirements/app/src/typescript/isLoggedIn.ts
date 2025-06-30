@@ -4,6 +4,10 @@ async function isLoggedIn(): Promise<boolean> {
   			method: "GET",
   			credentials: "include"
 		});
+		if (response.status == 401) {
+			console.error("Invalid token");
+			return (false);
+		}
 		if (response.status == 400 || response.status == 404) {
 			console.error("User doesn't exist");
 			return (false);
