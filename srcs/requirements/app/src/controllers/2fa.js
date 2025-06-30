@@ -46,7 +46,7 @@ const sendToken = async (req, reply, dbUser) => {
 	const db = getDB();
 	let token;
 	try {
-		token = await jwtFunc.signJWT({ userId: dbUser.id, email: dbUser.email, name: dbUser.name, iat: Math.floor(Date.now() / 1000)});
+		token = await jwtFunc.signJWT({ userId: dbUser.id, email: dbUser.email, name: dbUser.name, iat: Math.floor(Date.now() / 1000)}, { expiresIn: '1h' });
 	} catch(err) {
 		console.log(err);
 		return reply.status(500).send("Internal server error");

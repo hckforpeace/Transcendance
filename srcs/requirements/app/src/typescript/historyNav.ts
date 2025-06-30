@@ -86,6 +86,12 @@ const routes: Route[] = [
     view: '/html/pong_tournament.html',
     title: 'Tournament',
     function: load_script_t
+  },
+  {
+    path: '/local_menu',
+    view: '/html/local_menu.html',
+	title: 'Play with friends',
+	function: init_localPong
   }
 
 ];

@@ -7,7 +7,7 @@ interface PlayerData {
   alias: string;
 }
 
-const players: Record<string, PlayerData> = {};
+let players: Record<string, PlayerData> = {};
 
 
 const player_nbr_val = [2, 4, 8, 16];
@@ -18,13 +18,38 @@ function extractPlayerAliases(): void {
 
   player1Alias = input1?.value.trim() || '';
   player2Alias = input2?.value.trim() || '';
+
 }
+
+
+
+// LOCAL PLAY
+function init_localPong(): void {
+  player1Alias = '';
+  player2Alias = '';
+  players = {};
+  end_of_tournament_iteration = false;
+  end_game = true;
+  updatePlayButton();
+  add_two_players();
+}
+
+async function playLocalPong() {
+	player1Alias = players['player_1']?.alias || '';
+	player2Alias = players['player_2']?.alias || '';
+	end_game = false;
+    await navigateTo("/pong_tournament");
+    await waitForEndGame();
+
+}
+
 
 /**
  * Initialise les événements, le slider et les joueurs au chargement
  */
 function init_tournamentMenu(): void {
   winners.length = 0;
+  // winners = [];
   player1Alias = '';
   player2Alias = '';
   i = 0;

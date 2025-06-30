@@ -399,7 +399,8 @@ async function update_user_stats_t(alias1: string, alias2: string, p1_score: num
 
 /** 
  * @brief Handler on game_t finish and draw results at the screen
- */function finish_game_t() {
+ */
+function finish_game_t() {
 	const resultMessage = document.getElementById("game-result-message");
 	const resultTitle = document.getElementById("result-title");
 	const resultScore = document.getElementById("result-score");
@@ -548,6 +549,56 @@ async function load_script_t() {
 		/* Set events listeners */
 		document.addEventListener("keydown", pressedKeyHandler, false);
 		document.addEventListener("keyup", releasedKeyHandler, false);
+	}
+	catch (err: any) {
+		console.log(err);
+	}
+}
+
+function game_loop_l() {
+	if (game_t.player_1.score >= game_t.score_max || game_t.player_2.score >= game_t.score_max) {
+		update_user_stats_t(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score);
+		update_user_stats_t(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score);
+
+		finish_game_t();
+		clearInterval(game_interval);
+		return;
+	}
+	if (game_t.new_round) {
+		reset_ball_t();
+		setTimeout(start_round_t, 1000);
+		game_t.new_round = false;
+	}
+	draw_t();
+}
+
+async function load_script_l() {
+	try {
+		console.log("p1 -> ", player1Alias, " p2 -> ", player2Alias);
+		const leftName = document.getElementById("left-player-name");
+		if (leftName)
+			leftName.innerHTML = player1Alias;
+		const rightName = document.getElementById("right-player-name");
+		if (rightName)
+			rightName.innerHTML = player2Alias;
+		canvas = document.getElementById("pong_canvas") as HTMLCanvasElement;
+		if (!canvas)
+			throw new Error("Canvas not found");
+		ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+		if (!ctx)
+			throw new Error("Context not found");
+
+		/* Start game_t */
+		if (game_interval)
+			clearInterval(game_interval);
+
+
+		game_interval = setInterval(game_loop_t, 8);
+		launch_game_t(player1Alias, player2Alias);
+		/* Set events listeners */
+		document.addEventListener("keydown", pressedKeyHandler, false);
+		document.addEventListener("keyup", releasedKeyHandler, false);
+
 	}
 	catch (err: any) {
 		console.log(err);
