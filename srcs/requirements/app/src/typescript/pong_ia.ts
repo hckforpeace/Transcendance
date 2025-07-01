@@ -28,9 +28,9 @@ const MSG_POS_RATIO: number = 0.7;
 
 /* Ball */
 let ball_color = "#FFFFFF";
-const BALL_INIT_SPEED: number = 10;
+const BALL_INIT_SPEED: number = 7;
 //const BALL_COLOR: string = "#FFFFFF";
-const BALL_MAX_SPEED: number = 12;
+const BALL_MAX_SPEED: number = 10;
 var BALL_RADIUS: number;
 /* Terrain draw */
 const TERRAIN_COLOR: string = "#FFFFFF";
@@ -57,7 +57,7 @@ const GAMMA: number = 0.7;
 let EPSILON: number = 1;
 let EPSILON_MIN: number = 0.2;
 const epsilon_decay_rate: number = 0.00001;
-let Q_table: number[][] = [[81.78421358339034,149.4271478264472,82.64626941643891],[13.788863231590447,15.063808209200781,17.22358523143376],[-43.43861945316233,-42.58707245905018,-42.69137109987265]];
+let Q_table: number[][] = [[1,3,2],[1,2,3],[1, 3,2]];
 // let Q_table: number[][] = [[21.31108513974205, 75.20125498633924, 23.204609907685626], [-7.970433733155105, -7.631723162062445, -6.697510940912556], [-53.43026720319538, -29.41950667903459, -54.90903501468911]];
 let Q_table_training: number[][] = Array.from({ length: NUM_STATES }, () => new Array(NUM_ACTIONS).fill(0));
 /*                              CLASSES && INTERFACES                         */
@@ -111,7 +111,7 @@ class Pong {
 		if (TRAINING)
 			this.score_max = 30;
 		else
-			this.score_max = 1;
+			this.score_max = 3;
 		this.new_round = true;
 	}
 }
@@ -150,14 +150,14 @@ function draw_terrain() {
 		throw new Error("Context not found");
 
 	// Épaisseur de la ligne horizontale
-	const LINE_THICKNESS = 4;
+	//const LINE_THICKNESS = 4;
 
 	// Position verticale (milieu de l'écran)
-	const y = (canvas.height - LINE_THICKNESS) / 2;
+	//const y = (canvas.height - LINE_THICKNESS) / 2;
 
 	ctx.beginPath();
 	ctx.rect((canvas.width - TERRAIN_LINE_FAT) / 2, 0, TERRAIN_LINE_FAT, canvas.height);
-	ctx.rect(0, y, canvas.width, LINE_THICKNESS); // Ligne horizontale
+	//ctx.rect(0, y, canvas.width, LINE_THICKNESS); // Ligne horizontale
 	ctx.fillStyle = "#FFFFFF"; // Blanc
 	ctx.fill();
 }
@@ -167,49 +167,65 @@ const RANDOM_BOUNCE_ANGLE = 0.5;
  * @brief Update ball direction and speed on collision
  */
 let number = 1;
+
+// Helper: get a random float between min and max
+function randomBetween(min : number, max : number) {
+  return Math.random() * (max - min) + min;
+}
+
+// Update the direction x with random magnitude but same sign
+function applyRandomDirX(dirX : number) {
+  const sign = Math.sign(dirX) || 1; // keep sign or default to positive if 0
+  const magnitude = randomBetween(0.3, 0.6);
+  return sign * magnitude;
+}
+
 function update_ball_state() {
-	let p1 = game.player_1;
-	let p2 = game.player_2;
-	let ball = game.ball;
-	let dir = game.ball.direction;
-	let ball_next_pos = { x: ball.pos.x + ball.speed * dir.x, y: ball.pos.y + ball.speed * dir.y };
+  let p1 = game.player_1;
+  let p2 = game.player_2;
+  let ball = game.ball;
+  let dir = ball.direction;
+  let ball_next_pos = { x: ball.pos.x + ball.speed * dir.x, y: ball.pos.y + ball.speed * dir.y };
 
-	/* Check for wall collision */
-	if (ball_next_pos.y > canvas.height - BALL_RADIUS || ball_next_pos.y < BALL_RADIUS)
-		dir.y = -dir.y;
+  /* Check for wall collision */
+  if (ball_next_pos.y > canvas.height - BALL_RADIUS || ball_next_pos.y < BALL_RADIUS)
+    dir.y = -dir.y;
 
-	if ((ball.pos.x > p1.pos.x && ball.pos.x < p1.pos.x + PLAYER_WIDTH)
-		&& (ball.pos.y > p1.pos.y && ball.pos.y < p1.pos.y + PLAYER_HEIGHT) && number == 0) {
-		number = 1;
-		dir.x = -dir.x;
-		dir.y += 0.08;
-		game.ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
-	}
-	if ((ball.pos.x > p2.pos.x && ball.pos.x < p2.pos.x + PLAYER_WIDTH)
-		&& (ball.pos.y > p2.pos.y && ball.pos.y < p2.pos.y + PLAYER_HEIGHT) && number == 1) {
-		number = 0;
-		dir.x = -dir.x;
-		dir.y += -0.08;
-		ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
-	}
+  /* Paddle collision with player 1 */
+  if ((ball.pos.x > p1.pos.x && ball.pos.x < p1.pos.x + PLAYER_WIDTH) &&
+      (ball.pos.y > p1.pos.y && ball.pos.y < p1.pos.y + PLAYER_HEIGHT) && number == 0) {
+    number = 1;
+    dir.x = -dir.x;                     // reverse horizontal direction
+    dir.x = applyRandomDirX(dir.x);    // apply random magnitude between 0.3 and 0.6 with same sign
+    ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
+  }
 
-	/* Check if player1 win a point */
-	if (ball_next_pos.x > canvas.width - BALL_RADIUS) {
-		p1.score += 1;
-		game.new_round = true;
-	}
+  /* Paddle collision with player 2 */
+  if ((ball.pos.x > p2.pos.x && ball.pos.x < p2.pos.x + PLAYER_WIDTH) &&
+      (ball.pos.y > p2.pos.y && ball.pos.y < p2.pos.y + PLAYER_HEIGHT) && number == 1) {
+    number = 0;
+    dir.x = -dir.x;
+    dir.x = applyRandomDirX(dir.x);
+    ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
+  }
 
-	/* Check if player2 win a point */
-	if (ball_next_pos.x < BALL_RADIUS) {
-		p2.score += 1;
-		game.new_round = true;
-	}
+  /* Check if player1 wins a point */
+  if (ball_next_pos.x > canvas.width - BALL_RADIUS) {
+    p1.score += 1;
+    game.new_round = true;
+  }
 
-	/* Update ball position */
-	game.ball.pos = {
-		x: ball.pos.x + dir.x * ball.speed,
-		y: ball.pos.y + dir.y * ball.speed
-	};
+  /* Check if player2 wins a point */
+  if (ball_next_pos.x < BALL_RADIUS) {
+    p2.score += 1;
+    game.new_round = true;
+  }
+
+  /* Update ball position */
+  ball.pos = {
+    x: ball.pos.x + dir.x * ball.speed,
+    y: ball.pos.y + dir.y * ball.speed
+  };
 }
 
 /**
@@ -267,7 +283,6 @@ function chooseAction(state: number): number {
 	let best_action = 0;
 	if (TRAINING) {
 		EPSILON = Math.max(EPSILON_MIN, EPSILON * (1 - epsilon_decay_rate));
-		// console.log("EPSILON -> ", EPSILON);
 		if (Math.random() < EPSILON)
 			best_action = Math.floor(Math.random() * NUM_ACTIONS);
 		else if (Q_table_training[state]) {
@@ -277,7 +292,6 @@ function chooseAction(state: number): number {
 	else {
 		best_action = Q_table[state].indexOf(Math.max(...Q_table[state]));
 	}
-	//console.log("state => ", state, "best_action => ", best_action);
 	return (best_action);
 }
 
@@ -311,28 +325,35 @@ let up = false;
 let down = false;
 
 let state = 0;
+ 
 function update_ia_pos() {
 	currTimeIA = Date.now();
 	let p2 = game.player_2;
 	let ball = game.ball;
 	let action = 0;
 
-	currTimeIA = Date.now();
-
+	// Réactualise la position future de la balle
 	if (currTimeIA - lastTimeIA > 1000) {
 		future_pos_y = getFutureY();
 		lastTimeIA = currTimeIA;
 	}
-	state = getState();
-	action = chooseAction(state); // Action choisie par l'IA
-	// console.log("State = ", state, "Action = ", action);
 
+	state = getState();
+
+	let noiseChance = Math.random();
+	if (noiseChance < 0.71) {
+		action = Math.floor(Math.random() * NUM_ACTIONS);
+	} else {
+		action = chooseAction(state);
+	}
+
+	// Appliquer l'action choisie
 	if (action == 1)
 		p2.pos.y -= p2.speed;
 	if (action == 2)
 		p2.pos.y += p2.speed;
 
-	// Limit of the screen for the player
+	// Limites d'écran
 	if (p2.pos.y < 0)
 		p2.pos.y = 0;
 	if (p2.pos.y > canvas.height - PLAYER_HEIGHT)
@@ -344,6 +365,7 @@ function update_ia_pos() {
 		updateTable(state, action, instant_reward, next_state);
 	}
 }
+
 
 function update_player_pos() {
 	let p1 = game.player_1;
@@ -396,17 +418,17 @@ function draw_player(player: Player) {
  * @brief Draw ball  on screen
 */
 function draw_ball(ball: Ball) {
-	currTime = Date.now();
+	//currTime = Date.now();
 	if (!ctx)
 		throw new Error("Context not found.");
 	ctx.beginPath();
 	ctx.arc(ball.pos.x, ball.pos.y, BALL_RADIUS, 0, 2 * Math.PI);
-	if (currTime - lastTime > 1000) {
-		ball_color = "#FF0000";
-		lastTime = currTime;
-	}
-	if (currTime - lastTime > 200)
-		ball_color = "#FFFFFF";
+	// if (currTime - lastTime > 1000) {
+	// 	ball_color = "#FF0000";
+	// 	lastTime = currTime;
+	// }
+	// if (currTime - lastTime > 200)
+	// 	ball_color = "#FFFFFF";
 	ctx.fillStyle = ball_color;
 	ctx.fill();
 }
@@ -567,7 +589,20 @@ function finish_game() {
 		const p1Score = game.player_1.score;
 		const p2Score = game.player_2.score;
 
-		resultTitle.textContent = p1Score >= game.score_max ? "YOU WIN" : "YOU LOSE";
+		//resultTitle.textContent = p1Score >= game.score_max ? "YOU WIN" : "YOU LOSE";
+		
+		resultTitle.classList.remove("text-green-500", "text-red-500");
+
+		if (p1Score >= game.score_max) {
+			resultTitle.textContent = "YOU WIN";
+			resultTitle.classList.add("text-green-500");
+			resultScore.classList.add("text-green-500");
+		} else {
+			resultTitle.textContent = "YOU LOSE";
+			resultTitle.classList.add("text-red-500");
+			resultScore.classList.add("text-red-500");
+		}
+
 		resultScore.textContent = `${p1Score} - ${p2Score}`;
 	}
 	draw_finish();
@@ -579,7 +614,7 @@ async function update_user_stats(alias1: string, alias2: string, p1_score: numbe
 		const response = await fetch('/updateUserStats', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ alias1, alias2, p1_score, p2_score}) // Send the scores to the backend
+			body: JSON.stringify({ alias1, alias2, p1_score, p2_score, trnmnt_winner:"NULL" }) // Send the scores to the backend
 		});
 
 		if (!response.ok) {

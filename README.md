@@ -1,11 +1,6 @@
 - Check bind mounts UID problem ?
 - Change win message on local pong ==> Damien
 - Affichage pong et scrollbar ==> Damien
-- paufiner privacy policy ==> Mel
-- IA ===> Mel
-- Resolve /rgpd routes ==> Pablo
-- Remove /api/users routes ==> Pablo
-
 
 ### Modules
 
