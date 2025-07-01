@@ -1,8 +1,8 @@
-node_modules/
-./src/public/**/*.js
+**/node_modules/
+./srcs/requirements/app/src/public/**/*.js
 src/.env
-./src/secret/**
+./srcs/requirements/app/src/secret/**
 vault
-./src/mydatabase.db
 bin/
 init.json
+./srcs/requirements/nginxModSec/log/modsec_audit.log

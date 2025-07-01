@@ -439,7 +439,10 @@ function finish_game_t() {
 			button!.textContent = "Ready ?";
 		}
 		else {
-			next_players!.textContent = "Congratulations " + winners[0] + ", you won the tournament !";
+			if (localGame == false)
+				next_players!.textContent = "Congratulations " + winners[0] + ", you won the tournament !";
+			else
+				next_players!.textContent = "Congratulations " + winners[0] + ", you won!";
 			button!.textContent = "Back to home";
 		}
 		button?.addEventListener("click", endGameFlag);
