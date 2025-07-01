@@ -381,13 +381,13 @@ function start_round_t() {
 }
 
 
-async function update_user_stats(alias1: string, alias2: string, p1_score: number, p2_score: number): Promise<void> {
+async function update_user_stats_t(alias1: string, alias2: string, p1_score: number, p2_score: number, trnmnt_winner: boolean): Promise<void> {
 	try {
 
 		const response = await fetch('/updateUserStats', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ alias1, alias2, p1_score, p2_score}) // Send the scores to the backend
+			body: JSON.stringify({ alias1, alias2, p1_score, p2_score, trnmnt_winner: trnmnt_winner}) // Send the scores to the backend
 		});
 
 		if (!response.ok) {
@@ -495,8 +495,15 @@ function game_loop_t() {
 	if (game_t.player_1.score >= game_t.score_max || game_t.player_2.score >= game_t.score_max) {
 		i++;
 		removeWinner();
-		update_user_stats(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score);
-		update_user_stats(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score);
+
+    if (winners.length == 1)
+      trnmnt_winner = true;
+
+    if (localGame)
+      trnmnt_winner = false;
+
+		update_user_stats_t(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score, trnmnt_winner);
+		update_user_stats_t(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score, trnmnt_winner);
 		finish_game_t();
 		clearInterval(game_interval);
 		return;
