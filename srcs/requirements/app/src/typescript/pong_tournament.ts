@@ -251,7 +251,6 @@ function draw_ball_t(ball_T: Ball_T) {
 	ctx.fill();
 }
 
-
 /**
  * @brief Draw the pong_T game_t frame
  */
@@ -380,7 +379,6 @@ function start_round_t() {
 		game_t.ball_T.direction = { x: 0.45, y: 0.55 };
 }
 
-
 async function update_user_stats_t(alias1: string, alias2: string, p1_score: number, p2_score: number, trnmnt_winner: boolean): Promise<void> {
 	try {
 
@@ -444,14 +442,13 @@ function finish_game_t() {
 			else
 				next_players!.textContent = "Congratulations " + winners[0] + ", you won!";
 			button!.textContent = "Back to home";
+			disableScroll = false;
 		}
 		button?.addEventListener("click", endGameFlag);
 		button?.removeEventListener("click", startGameFlag);
 	}
 	draw_finish_t();
 }
-
-
 
 function removeWinner() {
 	if (game_t.player_1.score < game_t.player_2.score) {
@@ -535,10 +532,10 @@ function launch_game_t(p1_name: string, p2_name: string) {
 /* ************************************************************************* */
 /*                                    SPECIAL                                 */
 /* ************************************************************************** */
+
 /**
  * @brief REsize canvas for "Responsivness"
  */
-
 function resizeCanvas_t() {
 	if (!ctx)
 		throw new Error("Context not found");
@@ -564,6 +561,7 @@ function resizeCanvas_t() {
 async function load_script_t() {
 	try {
 		//const data = await getUserName_t();
+		disableScroll = true;
 		console.log("p1 -> ", player1Alias, " p2 -> ", player2Alias);
 		const leftName = document.getElementById("left-player-name");
 		if (leftName)
@@ -589,55 +587,6 @@ async function load_script_t() {
 		/* Set events listeners */
 		document.addEventListener("keydown", pressedKeyHandler, false);
 		document.addEventListener("keyup", releasedKeyHandler, false);
-	}
-	catch (err: any) {
-		console.log(err);
-	}
-}
-
-// function game_loop_l() {
-// 	if (game_t.player_1.score >= game_t.score_max || game_t.player_2.score >= game_t.score_max) {
-// 		update_user_stats_t(player1Alias, player2Alias, game_t.player_1.score, game_t.player_2.score);
-// 		update_user_stats_t(player2Alias, player1Alias, game_t.player_2.score, game_t.player_1.score);
-
-// 		finish_game_t();
-// 		clearInterval(game_interval);
-// 		return;
-// 	}
-// 	if (game_t.new_round) {
-// 		reset_ball_t();
-// 		setTimeout(start_round_t, 1000);
-// 		game_t.new_round = false;
-// 	}
-// 	draw_t();
-// }
-
-async function load_script_l() {
-	try {
-		console.log("p1 -> ", player1Alias, " p2 -> ", player2Alias);
-		const leftName = document.getElementById("left-player-name");
-		if (leftName)
-			leftName.innerHTML = player1Alias;
-		const rightName = document.getElementById("right-player-name");
-		if (rightName)
-			rightName.innerHTML = player2Alias;
-		canvas = document.getElementById("pong_canvas") as HTMLCanvasElement;
-		if (!canvas)
-			throw new Error("Canvas not found");
-		ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-		if (!ctx)
-			throw new Error("Context not found");
-
-		/* Start game_t */
-		if (game_interval)
-			clearInterval(game_interval);
-		game_interval = setInterval(game_loop_t, 8);
-
-		launch_game_t(player1Alias, player2Alias);
-		/* Set events listeners */
-		document.addEventListener("keydown", pressedKeyHandler, false);
-		document.addEventListener("keyup", releasedKeyHandler, false);
-
 	}
 	catch (err: any) {
 		console.log(err);

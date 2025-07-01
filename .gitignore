@@ -5,4 +5,4 @@ src/.env
 vault
 bin/
 init.json
-./srcs/requirements/nginxModSec/log/modsec_audit.log
+srcs/requirements/nginxModSec/log/modsec_audit.log

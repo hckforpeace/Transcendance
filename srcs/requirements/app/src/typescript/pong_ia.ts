@@ -9,8 +9,7 @@ var canvas: HTMLCanvasElement;
 var ctx: CanvasRenderingContext2D;
 var reset_button: HTMLButtonElement;
 
-/*
- * Define drawing var
+/* Define drawing var
  */
 const GOLDEN_NUMBER: number = 1.618033;
 const PLAYER_WIDTH_RATIO: number = 0.009;
@@ -602,8 +601,8 @@ function finish_game() {
 			resultTitle.classList.add("text-red-500");
 			resultScore.classList.add("text-red-500");
 		}
-
 		resultScore.textContent = `${p1Score} - ${p2Score}`;
+		disableScroll = false;
 	}
 	draw_finish();
 }
@@ -726,6 +725,7 @@ async function load_script() {
 		/* Set events listeners */
 		document.addEventListener("keydown", pressedKeyHandler, false);
 		document.addEventListener("keyup", releasedKeyHandler, false);
+		disableScroll = true;
 	}
 	catch (err: any) {
 		console.log(err);
