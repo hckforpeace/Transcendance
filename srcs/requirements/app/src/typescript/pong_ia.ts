@@ -1,4 +1,4 @@
-const TRAINING: boolean = false;
+const TRAINING: boolean = true;
 
 /* ************************************************************************** */
 /*                                GLOBAL VARIABLES                            */
@@ -57,7 +57,8 @@ const GAMMA: number = 0.7;
 let EPSILON: number = 1;
 let EPSILON_MIN: number = 0.2;
 const epsilon_decay_rate: number = 0.00001;
-let Q_table: number[][] = [[21.31108513974205, 75.20125498633924, 23.204609907685626], [-7.970433733155105, -7.631723162062445, -6.697510940912556], [-53.43026720319538, -29.41950667903459, -54.90903501468911]];
+// let Q_table: number[][] = [[81.78421358339034,149.4271478264472,82.64626941643891],[13.788863231590447,15.063808209200781,17.22358523143376],[-43.43861945316233,-42.58707245905018,-42.69137109987265]];
+// let Q_table: number[][] = [[21.31108513974205, 75.20125498633924, 23.204609907685626], [-7.970433733155105, -7.631723162062445, -6.697510940912556], [-53.43026720319538, -29.41950667903459, -54.90903501468911]];
 let Q_table_training: number[][] = Array.from({ length: NUM_STATES }, () => new Array(NUM_ACTIONS).fill(0));
 /*                              CLASSES && INTERFACES                         */
 /* ************************************************************************** */
@@ -108,7 +109,7 @@ class Pong {
 		this.player_2 = new Player(player_2_name, { x: canvas.width - player_offset, y: (canvas.height - PLAYER_HEIGHT) / 2 });
 		this.ball = new Ball(center);
 		if (TRAINING)
-			this.score_max = 150;
+			this.score_max = 30;
 		else
 			this.score_max = 1;
 		this.new_round = true;
