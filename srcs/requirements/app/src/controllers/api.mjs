@@ -49,21 +49,7 @@ const login = async (req, reply) => {
 		return reply
 		.code(200).send();
 	}
-    const payload = { userId: user.id, email: user.email, name: user.name, iat: Math.floor(Date.now() / 1000)};
-    const JWT = await jwtFunc.signJWT(payload);
-    
-
-
-    await db.run("UPDATE users SET connected = 1 WHERE name = ?", name);
-    await db.run("UPDATE users SET token_exp = ? WHERE id = ?", [Date.now(), user.id]);
-
-    reply.setCookie("token", JWT, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "lax",
-      path: "/"
-    });
-    profileRequests.updateFriended(user.id)
+ 
 
   }
   catch (error) {

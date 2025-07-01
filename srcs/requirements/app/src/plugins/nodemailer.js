@@ -9,8 +9,6 @@ async function mailConnector(fastify, options) {
            port: 465,
            secure: true,
                auth: {
-                       // user: "mppd.42.transcendence@gmail.com",
-                       // pass: "txcj prjh exya uuop"
                        user: process.env.MAILER_USER,
                        pass: process.env.MAILER_PASS,
                },
