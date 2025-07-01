@@ -209,8 +209,6 @@ function update_ball_state() {
     ball.speed = Math.min(BALL_MAX_SPEED, ball.speed + 1);
   }
 
-  console.log("dir.x angle -> ", dir.x);
-
   /* Check if player1 wins a point */
   if (ball_next_pos.x > canvas.width - BALL_RADIUS) {
     p1.score += 1;
@@ -285,7 +283,6 @@ function chooseAction(state: number): number {
 	let best_action = 0;
 	if (TRAINING) {
 		EPSILON = Math.max(EPSILON_MIN, EPSILON * (1 - epsilon_decay_rate));
-		// console.log("EPSILON -> ", EPSILON);
 		if (Math.random() < EPSILON)
 			best_action = Math.floor(Math.random() * NUM_ACTIONS);
 		else if (Q_table_training[state]) {
@@ -295,7 +292,6 @@ function chooseAction(state: number): number {
 	else {
 		best_action = Q_table[state].indexOf(Math.max(...Q_table[state]));
 	}
-	//console.log("state => ", state, "best_action => ", best_action);
 	return (best_action);
 }
 
@@ -593,7 +589,20 @@ function finish_game() {
 		const p1Score = game.player_1.score;
 		const p2Score = game.player_2.score;
 
-		resultTitle.textContent = p1Score >= game.score_max ? "YOU WIN" : "YOU LOSE";
+		//resultTitle.textContent = p1Score >= game.score_max ? "YOU WIN" : "YOU LOSE";
+		
+		resultTitle.classList.remove("text-green-500", "text-red-500");
+
+		if (p1Score >= game.score_max) {
+			resultTitle.textContent = "YOU WIN";
+			resultTitle.classList.add("text-green-500");
+			resultScore.classList.add("text-green-500");
+		} else {
+			resultTitle.textContent = "YOU LOSE";
+			resultTitle.classList.add("text-red-500");
+			resultScore.classList.add("text-red-500");
+		}
+
 		resultScore.textContent = `${p1Score} - ${p2Score}`;
 	}
 	draw_finish();
