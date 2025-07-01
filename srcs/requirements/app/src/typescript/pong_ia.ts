@@ -1,4 +1,4 @@
-const TRAINING: boolean = false;
+const TRAINING: boolean = true;
 
 /* ************************************************************************** */
 /*                                GLOBAL VARIABLES                            */
@@ -57,7 +57,8 @@ const GAMMA: number = 0.7;
 let EPSILON: number = 1;
 let EPSILON_MIN: number = 0.2;
 const epsilon_decay_rate: number = 0.00001;
-let Q_table: number[][] = [[21.31108513974205, 75.20125498633924, 23.204609907685626], [-7.970433733155105, -7.631723162062445, -6.697510940912556], [-53.43026720319538, -29.41950667903459, -54.90903501468911]];
+// let Q_table: number[][] = [[81.78421358339034,149.4271478264472,82.64626941643891],[13.788863231590447,15.063808209200781,17.22358523143376],[-43.43861945316233,-42.58707245905018,-42.69137109987265]];
+// let Q_table: number[][] = [[21.31108513974205, 75.20125498633924, 23.204609907685626], [-7.970433733155105, -7.631723162062445, -6.697510940912556], [-53.43026720319538, -29.41950667903459, -54.90903501468911]];
 let Q_table_training: number[][] = Array.from({ length: NUM_STATES }, () => new Array(NUM_ACTIONS).fill(0));
 /*                              CLASSES && INTERFACES                         */
 /* ************************************************************************** */
@@ -108,7 +109,7 @@ class Pong {
 		this.player_2 = new Player(player_2_name, { x: canvas.width - player_offset, y: (canvas.height - PLAYER_HEIGHT) / 2 });
 		this.ball = new Ball(center);
 		if (TRAINING)
-			this.score_max = 150;
+			this.score_max = 30;
 		else
 			this.score_max = 1;
 		this.new_round = true;
@@ -552,23 +553,6 @@ function saveQTableToFile() {
 	URL.revokeObjectURL(url);
 }
 
-async function update_user_stats(p1_score: number, p2_score: number): Promise<void> {
-	try {
-
-		const response = await fetch('/updateUserStats', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ p1_score, p2_score, player2_id: 0}) // Send the scores to the backend
-		});
-
-		if (!response.ok) {
-			throw new Error('Failed to update user stats');
-		}
-	} catch (error) {
-		console.error('Error updating user stats:', error);
-	}
-}
-
 /**
  * @brief Handler on game finish and draw results at the screen
  */
@@ -595,7 +579,7 @@ function finish_game() {
 function game_loop() {
 	if (game.player_1.score >= game.score_max || game.player_2.score >= game.score_max) {
 		end_game = true;
-		update_user_stats(game.player_1.score, game.player_2.score);
+		update_user_stats(game.player_1.name, game.player_2.name, game.player_1.score, game.player_2.score);
 		if (TRAINING == true)
 			saveQTableToFile();
 		finish_game();

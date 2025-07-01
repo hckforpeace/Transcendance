@@ -1,5 +1,4 @@
-import { getDB } from "../database/database.js";
-// import jwtFunctions from '../jwt.js' 
+import { getDB } from "../database/database.js"
 
 const updateUserStats = async (req, reply) => {
   try {
