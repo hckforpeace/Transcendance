@@ -103,7 +103,103 @@ services:
       - vault-file:/vault
     networks:
       - Transcendence
-    command: vault server -dev -dev-root-token-id=dev-token -dev-listen-address=0.0.0.0:8200
+    command: >
+      sh -c "
+        vault server -dev -dev-root-token-id=dev-token -dev-listen-address=0.0.0.0:8200 &
+        sleep 3 &&
+        export VAULT_ADDR=http://127.0.0.1:8200 &&
+        export VAULT_TOKEN=dev-token &&
+        vault kv put secret/app SMTP_USER=example@mail.com SMTP_PASS=SuperSecretPassword &&
+        wait
+      "
+
+
+  vault-agent:
+      image: hashicorp/vault:1.15.5
+      container_name: vault-agent
+      environment:
+        - VAULT_ADDR=http://vault:8200
+        - VAULT_TOKEN=dev-token
+      depends_on:
+        - vault
+      cap_add:
+        - IPC_LOCK
+      command: >
+        sh -c "
+          sleep 5 &&
+          echo 'dev-token' > /tmp/vault-token &&
+          vault agent -config=/etc/vault-agent/config.hcl -log-level=info
+        "
+      volumes:
+        - ./requirements/vault-agent/config.hcl:/etc/vault-agent/config.hcl
+        - ./requirements/vault-agent/template.tpl:/etc/vault-agent/template.tpl
+        - ./secrets:/etc/secrets
+      ports:
+        - "8100:8100"
+      networks:
+        - Transcendence
+
+
+  # vault-agent:
+  #   image: hashicorp/vault:1.15.5
+  #   container_name: vault-agent
+  #   environment:
+  #     - VAULT_ADDR=http://vault:8200
+  #     - VAULT_TOKEN=dev-token
+  #   depends_on:
+  #     - vault
+  #   cap_add:
+  #     - IPC_LOCK
+  #   command: vault agent -config=/etc/vault-agent/vault-agent-config.hcl -log-level=info
+  #   volumes:
+  #     - ./requirements/vault-agent/vault-agent-config.hcl:/etc/vault-agent/vault-agent-config.hcl
+  #     - ./requirements/vault-agent/template.tpl:/etc/vault-agent/template.tpl
+  #     - ./secrets:/etc/secrets
+  #   ports:
+  #     - "8100:8100"
+  #   networks:
+  #     - Transcendence
+
+
+
+
+
+      # vault-agent:
+  #   image: hashicorp/vault:1.15.5
+  #   container_name: vault-agent
+  #   environment:
+  #     - VAULT_ADDR=http://vault:8200
+  #     - VAULT_TOKEN=dev-token
+  #   cap_add:
+  #     - IPC_LOCK
+  #   command: vault agent -config=/etc/vault-agent/config.hcl -log-level=info
+  #   volumes:
+  #     - ./requirements/vault-agent/config.hcl:/etc/vault-agent/config.hcl
+  #     - ./requirements/vault-agent/template.tpl:/etc/vault-agent/template.tpl
+  #     - ./secrets:/etc/secrets
+  #   ports:
+  #     - "8100:8100"   # if you want to expose the listener outside container
+  #   networks:
+  #     - Transcendence
+
+  # vault-agent:
+  #   image: hashicorp/vault:1.15.5
+  #   container_name: vault-agent
+  #   environment:
+  #     - VAULT_ADDR=http://vault:8200
+  #     - VAULT_TOKEN=dev-token
+  #   depends_on:
+  #     - vault
+  #   cap_add:
+  #     - IPC_LOCK
+  #   volumes:
+  #     - ./requirements/vault-agent/vault-agent-config.hcl:/etc/vault-agent/config.hcl
+  #     - ./requirements/vault-agent/template.tpl:/etc/vault-agent/template.tpl
+  #     - ./secrets:/etc/secrets
+  #   command: >
+  #     vault agent -config=/etc/vault-agent/config.hcl -log-level=info
+  #   networks:
+  #     - Transcendence
 
   # vault:
   #   image: hashicorp/vault:1.15.5

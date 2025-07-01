@@ -6,3 +6,4 @@ vault
 ./src/mydatabase.db
 bin/
 init.json
+secrets/
