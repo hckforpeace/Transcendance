@@ -96,7 +96,7 @@ class Pong_T {
 		this.player_1 = new Player_T(player_1_name, { x: player_offset, y: (canvas.height - PLAYER_HEIGHT_T) / 2 });
 		this.player_2 = new Player_T(player_2_name, { x: canvas.width - player_offset, y: (canvas.height - PLAYER_HEIGHT_T) / 2 });
 		this.ball_T = new Ball_T(center);
-		this.score_max = 1;
+		this.score_max = 5;
 		this.new_round = true;
 	}
 }

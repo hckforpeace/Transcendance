@@ -1,4 +1,4 @@
-const TRAINING: boolean = true;
+const TRAINING: boolean = false;
 
 /* ************************************************************************** */
 /*                                GLOBAL VARIABLES                            */
@@ -57,7 +57,7 @@ const GAMMA: number = 0.7;
 let EPSILON: number = 1;
 let EPSILON_MIN: number = 0.2;
 const epsilon_decay_rate: number = 0.00001;
-// let Q_table: number[][] = [[81.78421358339034,149.4271478264472,82.64626941643891],[13.788863231590447,15.063808209200781,17.22358523143376],[-43.43861945316233,-42.58707245905018,-42.69137109987265]];
+let Q_table: number[][] = [[81.78421358339034,149.4271478264472,82.64626941643891],[13.788863231590447,15.063808209200781,17.22358523143376],[-43.43861945316233,-42.58707245905018,-42.69137109987265]];
 // let Q_table: number[][] = [[21.31108513974205, 75.20125498633924, 23.204609907685626], [-7.970433733155105, -7.631723162062445, -6.697510940912556], [-53.43026720319538, -29.41950667903459, -54.90903501468911]];
 let Q_table_training: number[][] = Array.from({ length: NUM_STATES }, () => new Array(NUM_ACTIONS).fill(0));
 /*                              CLASSES && INTERFACES                         */
@@ -571,6 +571,23 @@ function finish_game() {
 		resultScore.textContent = `${p1Score} - ${p2Score}`;
 	}
 	draw_finish();
+}
+
+async function update_user_stats(alias1: string, alias2: string, p1_score: number, p2_score: number): Promise<void> {
+	try {
+
+		const response = await fetch('/updateUserStats', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ alias1, alias2, p1_score, p2_score}) // Send the scores to the backend
+		});
+
+		if (!response.ok) {
+			console.log('User not in the DB');
+		}
+	} catch (error) {
+		console.error('Error updating user stats:', error);
+	}
 }
 
 /**
