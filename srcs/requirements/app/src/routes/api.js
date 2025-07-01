@@ -4,7 +4,7 @@ import api from '../controllers/api.mjs';
 async function routes(fastify, options) {
 
 
-  fastify.get('/api/users', api.users);
+  //fastify.get('/api/users', api.users);
 
   // fastify.get('/ping', async () => { return { message: 'pong' }; });
 
