@@ -5,7 +5,7 @@ services:
     container_name: app
     build: requirements/app
     volumes:
-      - ./secrets/env.sh:/etc/secrets/env.sh    # env_file:
+      - ./secrets:/etc/secrets/    # env_file:
       - database:/app/database/
     depends_on: # insures that wordpress service starts before Nginx
       - vault 

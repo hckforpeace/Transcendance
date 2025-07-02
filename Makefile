@@ -23,6 +23,7 @@ down:
 
 clean: down
 	sudo rm -rf $(VOLUME_VAULT)
+	rm -f ./srcs/secrets/env.sh
 	@rm -f init.json
 	@rm -f $(MODSEC_AUDIT)
 
