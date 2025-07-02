@@ -1,26 +1,3 @@
-<!-- Script to resize canvas proportionally
-<script>
-  function resizeCanvas() {
-    const canvas = document.getElementById("pong_canvas");
-    const aspectRatio = 1200 / 1000; // Original width/height
-
-    const maxWidth = Math.min(window.innerWidth * 0.9, 1400);
-    const width = maxWidth;
-    const height = width / aspectRatio;
-
-    canvas.width = width;
-    canvas.height = height;
-
-    // Optional: scale container size too if needed
-    const container = canvas.parentElement;
-    container.style.width = width + "px";
-    container.style.height = height + "px";
-  }
-
-  window.addEventListener("resize", resizeCanvas);
-  window.addEventListener("DOMContentLoaded", resizeCanvas);
-</script> -->
-
 <!-- Responsive and centered container -->
 <div class="flex justify-center mt-10">
   <div class="relative">

@@ -68,7 +68,6 @@ function register() {
 	};
 
 	xhttp.open("POST", "/api/register", true);
-	// console.log(formData);
 	xhttp.send(formData);
 
 }

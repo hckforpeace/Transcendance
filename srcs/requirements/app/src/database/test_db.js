@@ -24,7 +24,6 @@ import { open } from 'sqlite';
 
     // Fetch users
     const users = await db.all("SELECT * FROM users");
-    console.log("Users:", users);
 
     await db.close();
 })();

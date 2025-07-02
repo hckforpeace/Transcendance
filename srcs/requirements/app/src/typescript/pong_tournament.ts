@@ -568,7 +568,6 @@ async function load_script_t() {
 	try {
 		//const data = await getUserName_t();
 		disableScroll = true;
-		console.log("p1 -> ", player1Alias, " p2 -> ", player2Alias);
 		const leftName = document.getElementById("left-player-name");
 		if (leftName)
 			leftName.innerHTML = player1Alias;
