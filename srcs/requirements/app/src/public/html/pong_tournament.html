@@ -1,4 +1,4 @@
-<!-- Script pour adapter dynamiquement la taille du canvas -->
+<!-- Script pour adapter dynamiquement la taille du canvas
 <script>
   function resizeCanvas() {
     const canvas = document.getElementById("pong_canvas");
@@ -31,13 +31,13 @@
 
   window.addEventListener("resize", resizeCanvas);
   window.addEventListener("DOMContentLoaded", resizeCanvas);
-</script>
+</script> -->
 
 <!-- Conteneur principal centré -->
 <div class="flex justify-center mt-10">
   <div class="relative">
     <!-- Canvas du jeu Pong -->
-    <canvas id="pong_canvas" class="block border-2 border-white rounded"></canvas>
+    <canvas id="pong_canvas" class="block border-2 border-white rounded w-[80vw] h-[80vh]"></canvas>
 
     <!-- End message centré sur le canvas -->
     <div id="game-result-message"

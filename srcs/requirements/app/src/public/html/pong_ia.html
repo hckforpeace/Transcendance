@@ -1,4 +1,4 @@
-<!-- Script to resize canvas proportionally -->
+<!-- Script to resize canvas proportionally
 <script>
   function resizeCanvas() {
     const canvas = document.getElementById("pong_canvas");
@@ -19,13 +19,13 @@
 
   window.addEventListener("resize", resizeCanvas);
   window.addEventListener("DOMContentLoaded", resizeCanvas);
-</script>
+</script> -->
 
 <!-- Responsive and centered container -->
 <div class="flex justify-center mt-10">
   <div class="relative">
     <!-- Canvas -->
-    <canvas id="pong_canvas" class="block w-full h-full"></canvas>
+    <canvas id="pong_canvas" class="block border-2 border-white rounded w-[80vw] h-[80vh]"></canvas>
 
     <!-- Game result message centered -->
     <div id="game-result-message"

@@ -29,6 +29,7 @@ function init_localPong(): void {
   localGame = true;
   player1Alias = '';
   player2Alias = '';
+  winners = [];
   players = {};
   end_of_tournament_iteration = false;
   end_game = true;

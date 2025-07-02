@@ -222,6 +222,12 @@ function update_player_pos_t() {
 		p1.pos.y = canvas.height - PLAYER_HEIGHT_T;
 	if (p1.pos.y < 0)
 		p1.pos.y = 0;
+
+	/* Check for out of bound */
+	if (p2.pos.y > canvas.height - PLAYER_HEIGHT_T)
+		p2.pos.y = canvas.height - PLAYER_HEIGHT_T;
+	if (p2.pos.y < 0)
+		p2.pos.y = 0;
 }
 
 /**
