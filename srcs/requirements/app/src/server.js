@@ -27,6 +27,7 @@ import mailConnector from './plugins/nodemailer.js'
 import metricsPlugin from 'fastify-metrics'
 
 
+process.env.TZ = 'Europe/Paris';
 dotenv.config();
 // setting up the PORT TODO: use .env ?
 const PORT = 3000;

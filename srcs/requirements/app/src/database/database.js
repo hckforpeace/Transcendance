@@ -80,7 +80,7 @@ export const initDB = async () => {
         player2_id TEXT,
         player1_score INTEGER DEFAULT 0,
         player2_score INTEGER DEFAULT 0,
-        date DATETIME DEFAULT CURRENT_TIMESTAMP,
+        date DATETIME DEFAULT (datetime('now', 'localtime')),
         FOREIGN KEY (player1_id) REFERENCES users(id),
         FOREIGN KEY (player2_id) REFERENCES users(id)
     )`);

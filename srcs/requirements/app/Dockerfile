@@ -32,6 +32,7 @@ RUN npm run build
 # run the script with sh and make the env changes persistent, then launch the server
 # CMD ["/bin/sh", "-c", ". /entrypoint.sh && exec npm run dev"]
 
+# RUN timedatectl set-timezone Europe/Paris
 
 # ENTRYPOINT ["npm"]
 RUN chmod +x /app/entrypoint.sh
