@@ -1,18 +1,40 @@
-<!-- Conteneur principal centré -->
+<!-- Script to resize canvas proportionally -->
+<script>
+  function resizeCanvas() {
+    const canvas = document.getElementById("pong_canvas");
+    const aspectRatio = 1200 / 1000; // Original width/height
+
+    const maxWidth = Math.min(window.innerWidth * 0.9, 1400);
+    const width = maxWidth;
+    const height = width / aspectRatio;
+
+    canvas.width = width;
+    canvas.height = height;
+
+    // Optional: scale container size too if needed
+    const container = canvas.parentElement;
+    container.style.width = width + "px";
+    container.style.height = height + "px";
+  }
+
+  window.addEventListener("resize", resizeCanvas);
+  window.addEventListener("DOMContentLoaded", resizeCanvas);
+</script>
+
+<!-- Responsive and centered container -->
 <div class="flex justify-center mt-10">
-  <div class="relative w-[1400px] h-[1000px]">
+  <div class="relative">
+    <!-- Canvas -->
+    <canvas id="pong_canvas" class="block w-full h-full"></canvas>
 
-    <!-- Canvas du jeu Pong -->
-    <canvas id="pong_canvas" width="1200" height="1000" class="block"></canvas>
-
-    <!-- End message centré sur le canvas -->
+    <!-- Game result message centered -->
     <div id="game-result-message"
-      class="absolute top-0 left-0 w-[1300px] h-[800px] flex flex-col items-center justify-center text-center z-20 hidden">
+      class="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center text-center z-20 hidden">
       <div class="text-6xl font-bold" id="result-title"></div>
       <div class="text-3xl mt-4" id="result-score"></div>
     </div>
 
-    <!-- Noms des joueurs -->
+    <!-- Player names -->
     <div class="absolute top-4 left-6 text-white text-2xl font-bold z-30" id="left-player-name">left</div>
     <div class="absolute top-4 right-6 text-white text-2xl font-bold z-30 text-right" id="right-player-name">Bot</div>
   </div>
