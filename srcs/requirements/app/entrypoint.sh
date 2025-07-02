@@ -1,4 +1,17 @@
-# #!/bin/sh
+##!/bin/sh
+set -e
+
+# Source environment variables if the file exists
+if [ -f "/app/env.sh" ]; then
+    echo "Sourcing environment variables from /app/env.sh"
+    . /app/env.sh
+else
+    echo "Warning: /app/env.sh not found - proceeding without environment variables"
+fi
+
+# Run the command (npm run start by default)
+echo "Starting application..."
+exec "$@" #!/bin/sh
 
 # # Wait until init.json exists
 # while [ ! -f /vault/init.json ]; do

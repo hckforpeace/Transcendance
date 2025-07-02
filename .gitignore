@@ -6,3 +6,4 @@ vault
 bin/
 init.json
 srcs/requirements/nginxModSec/log/modsec_audit.log
+secrets/

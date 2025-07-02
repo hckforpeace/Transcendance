@@ -19,6 +19,7 @@ RUN npm install
 # Copy everything in host current dir to the WORDIR
 COPY . .
 
+COPY entrypoint.sh /app/entrypoint.sh
 #Copy startup script
 # COPY entrypoint.sh /entrypoint.sh
 
@@ -26,8 +27,18 @@ COPY . .
 # RUN chmod +x /entrypoint.sh
 
 RUN npm run build
+# RUN touch /app/env.sh && chmod +x /app/env.sh
 
 # run the script with sh and make the env changes persistent, then launch the server
 # CMD ["/bin/sh", "-c", ". /entrypoint.sh && exec npm run dev"]
-ENTRYPOINT ["npm"]
-CMD ["run", "start"]
+
+
+# ENTRYPOINT ["npm"]
+RUN chmod +x /app/entrypoint.sh
+
+# ENTRYPOINT ["/app/entrypoint.sh"]
+# CMD ["/app/entrypoint.sh", "&&" , "npm", "run", "start"]
+
+# ENTRYPOINT ["npm"]
+
+# CMD ["run", "start"]
