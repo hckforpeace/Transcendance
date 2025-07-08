@@ -102,7 +102,7 @@ services:
     cap_add:
       - IPC_LOCK
     volumes:
-      - ./requirements/vault/init/envirenment.sh:/init/envirenment.sh
+      - ./requirements/vault/init/environment.sh:/init/environment.sh
       - vault-file:/vault
     networks:
       - Transcendence
@@ -112,7 +112,7 @@ services:
         sleep 3 &&
         export VAULT_ADDR=http://127.0.0.1:8200 &&
         export VAULT_TOKEN=dev-token &&
-        sh /init/envirenment.sh
+        sh /init/environment.sh
         wait
       "
 
